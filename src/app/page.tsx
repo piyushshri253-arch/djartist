@@ -38,6 +38,9 @@ import { TicketModal } from "@/components/ui/TicketModal";
 import { WhatsAppFloatButton } from "@/components/ui/WhatsAppFloatButton";
 import ReviewModal from "@/components/reviews/ReviewModal";
 import { ReviewItem } from "@/types";
+import rawPastEvents from "@/data/past-events.json";
+
+const INITIAL_HOMEPAGE_PAST_EVENTS = (rawPastEvents as any[]).slice(0, 4);
 
 // Social Media Platforms Reach Data (Official Verified Platforms Only)
 const SOCIAL_PLATFORMS = [
@@ -405,7 +408,7 @@ export default function HomePage() {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [reviewsList, setReviewsList] = useState<ReviewItem[]>(ARTIST_REVIEWS as any);
   const [upcomingEvents, setUpcomingEvents] = useState<any[]>(UPCOMING_EVENTS);
-  const [homepagePastEvents, setHomepagePastEvents] = useState<any[]>([]);
+  const [homepagePastEvents, setHomepagePastEvents] = useState<any[]>(INITIAL_HOMEPAGE_PAST_EVENTS);
   const [latestPosts, setLatestPosts] = useState<any[]>(LATEST_POSTS);
   const [selectedTicketEvent, setSelectedTicketEvent] = useState<any | null>(null);
   const [siteSettings, setSiteSettings] = useState<any | null>(null);
@@ -870,12 +873,12 @@ export default function HomePage() {
                           {event.title}
                         </Link>
                       </h3>
-                      <div className="flex items-center gap-1.5 text-xs text-[#929292] font-mono mb-3">
+                      <div className="flex items-center gap-1.5 text-xs text-[#8A8D93] font-mono mb-3">
                         <MapPin className="w-3.5 h-3.5 text-[#00E5FF] shrink-0" />
                         <span className="truncate">{event.venue}, {event.city}</span>
                       </div>
-                      <p className="text-xs text-[#8A8A8A] line-clamp-2 leading-relaxed">
-                        {event.description || event.summary || "Massive headline performance featuring high-speed RGB lasers and custom live VIP edits."}
+                      <p className="text-xs text-[#8A8D93] line-clamp-2 leading-relaxed">
+                        {event.description || event.excerpt || event.summary || "Massive headline performance featuring high-speed RGB lasers and custom live VIP edits."}
                       </p>
                     </div>
                   </div>

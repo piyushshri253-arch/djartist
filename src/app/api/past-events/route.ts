@@ -16,13 +16,33 @@ export async function GET(req: Request) {
     const toDate = searchParams.get("to");
     const sort = searchParams.get("sort") || "latest"; // "latest" | "oldest"
 
-    const allEvents = await readJsonFile<EventData[]>("events.json");
+    const [allEvents, dedicatedPastEvents] = await Promise.all([
+      readJsonFile<EventData[]>("events.json").catch(() => []),
+      readJsonFile<any[]>("past-events.json").catch(() => []),
+    ]);
     
+    const eventsList = Array.isArray(allEvents) ? allEvents : [];
+
     // Auto-filter: Only events whose date has passed or are marked completed, and published
-    let pastEvents = (allEvents || []).filter((ev) => {
+    let pastEvents = eventsList.filter((ev) => {
       if (ev.isPublished === false) return false;
       return isEventPast(ev.date) || ev.status === "COMPLETED";
     });
+
+    // Merge dedicated past events if not already included
+    if (Array.isArray(dedicatedPastEvents) && dedicatedPastEvents.length > 0) {
+      const existingKeys = new Set(pastEvents.map((e) => e.slug || e.id));
+      for (const d of dedicatedPastEvents) {
+        if (!existingKeys.has(d.slug) && !existingKeys.has(d.id)) {
+          pastEvents.push({
+            ...d,
+            status: "COMPLETED",
+            isPublished: true,
+          });
+          existingKeys.add(d.slug || d.id);
+        }
+      }
+    }
 
     // Search filter
     if (query) {

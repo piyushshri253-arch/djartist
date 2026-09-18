@@ -16,9 +16,11 @@ import {
   CalendarDays
 } from "lucide-react";
 
+import rawPastEvents from "@/data/past-events.json";
+
 export default function PastEventsPage() {
-  const [events, setEvents] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [events, setEvents] = useState<any[]>(rawPastEvents as any[]);
+  const [loading, setLoading] = useState(false);
 
   // Search & Filter State
   const [searchQuery, setSearchQuery] = useState("");
