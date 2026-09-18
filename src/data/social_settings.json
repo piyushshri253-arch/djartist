@@ -1,0 +1,19 @@
+{
+  "facebook": {
+    "url": "https://www.facebook.com/share/1BxXiXLitH/",
+    "enabled": true
+  },
+  "youtube": {
+    "channelUrl": "https://youtube.com/@djg-spark",
+    "enabled": true
+  },
+  "instagram": {
+    "enabled": true,
+    "connected": false,
+    "username": "djgspark",
+    "accountName": "DJ G SPARK",
+    "profilePicture": "/images/dj_hero.jpg",
+    "profileUrl": "https://www.instagram.com/djgspark",
+    "lastSyncedAt": null
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "connection": {
+    "id": "ig-conn-1789713282411",
+    "instagramUserId": "real-1789713282411",
+    "username": "mr_ankit_srivastava_",
+    "profilePicture": "/images/DJ-G-SPARK-Light.png",
+    "status": "disconnected",
+    "connectedAt": "2026-09-18T06:34:42.410Z",
+    "lastSyncedAt": "2026-09-18T06:34:42.410Z",
+    "createdAt": "2026-09-18T06:00:00.000Z",
+    "updatedAt": "2026-09-18T06:50:06.401Z"
+  },
+  "settings": {
+    "id": "social-settings-1",
+    "instagramEnabled": false,
+    "autoSyncIntervalHours": 6,
+    "createdAt": "2026-09-18T06:00:00.000Z",
+    "updatedAt": "2026-09-18T06:50:06.401Z"
+  },
+  "reels": []
+}

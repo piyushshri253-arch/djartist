@@ -1,0 +1,56 @@
+[
+  {
+    "id": "vid-1",
+    "title": "Mainstage Headline Performance",
+    "tag": "SONY CINEMATIC 4K // 50 FPS",
+    "duration": "00:11",
+    "thumbnail": "/images/thumb_C5083.jpg",
+    "videoSrc": "/images/C5083.MP4",
+    "createdAt": "2026-09-18T00:00:00.000Z"
+  },
+  {
+    "id": "vid-2",
+    "title": "Viral Festival Drop & Pyro Blast",
+    "tag": "4K 60FPS REEL // BASS CLIMAX",
+    "duration": "00:30",
+    "thumbnail": "/images/thumb_lv_0_20250622150320.jpg",
+    "videoSrc": "/images/lv_0_20250622150320.mp4",
+    "createdAt": "2026-09-18T00:00:00.000Z"
+  },
+  {
+    "id": "vid-3",
+    "title": "Behind The Decks: Stadium POV",
+    "tag": "LIVE BOOTH CROWD CAM",
+    "duration": "00:38",
+    "thumbnail": "/images/thumb_IMG_7608.jpg",
+    "videoSrc": "/images/IMG_7608.mp4",
+    "createdAt": "2026-09-18T00:00:00.000Z"
+  },
+  {
+    "id": "vid-4",
+    "title": "Sunburn Goa 55,000 Crowd Climax",
+    "tag": "STADIUM HEADLINER DROP",
+    "duration": "18:45",
+    "thumbnail": "/images/past_event_crowd.jpg",
+    "videoSrc": "/images/tour_09_arena_climax.mp4",
+    "createdAt": "2026-09-18T00:00:00.000Z"
+  },
+  {
+    "id": "vid-5",
+    "title": "Tomorrowland Sunset Mainstage 2026",
+    "tag": "LIVE FESTIVAL SET // 4K",
+    "duration": "24:18",
+    "thumbnail": "/images/past_event_sunset.jpg",
+    "videoSrc": "/images/tour_06_crowd_rise.mp4",
+    "createdAt": "2026-09-18T00:00:00.000Z"
+  },
+  {
+    "id": "vid-6",
+    "title": "Spark Theory (Official 4K Music Video)",
+    "tag": "OFFICIAL CINEMATIC RELEASE",
+    "duration": "04:32",
+    "thumbnail": "/images/concert_led_wall.jpg",
+    "videoSrc": "/images/tour_05_led_tunnel.mp4",
+    "createdAt": "2026-09-18T00:00:00.000Z"
+  }
+]

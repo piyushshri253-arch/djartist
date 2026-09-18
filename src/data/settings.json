@@ -1,0 +1,164 @@
+{
+  "profile": {
+    "name": "DJ G SPARK",
+    "stageName": "DJ G SPARK",
+    "tagline": "International Arena Headliner & Producer",
+    "bio": "Pioneering stadium electronic dance music worldwide.",
+    "avatar": "/images/dj_hero.jpg",
+    "email": "management@djgspark.com",
+    "phone": "+91 95406 81934",
+    "genres": "Progressive House / Melodic Techno",
+    "bookingAgent": "Redline Global Talent"
+  },
+  "instagram": {
+    "connected": true,
+    "enabled": false,
+    "handle": "@djgspark.music",
+    "profileUrl": "https://instagram.com/djgspark.music",
+    "followers": "240K+",
+    "totalViews": "20M+ Views",
+    "bioSnippet": "Official DJ G Spark • Sunburn Headliner • 4K Live Sets & Arena Drops",
+    "selectedReelIds": [
+      "reel-1",
+      "reel-2",
+      "reel-3",
+      "reel-4"
+    ],
+    "reels": [
+      {
+        "id": "reel-1",
+        "title": "55,000 Hands In The Air — Sunburn Festival Sunset Drop",
+        "views": "5.4M Views",
+        "likes": "485K",
+        "videoSrc": "/images/lv_0_20250622150320.mp4",
+        "thumbnail": "/images/past_event_crowd.jpg",
+        "reelUrl": "https://instagram.com/djgspark.music",
+        "tag": "VIRAL FESTIVAL DROP",
+        "date": "2 WEEKS AGO"
+      },
+      {
+        "id": "reel-2",
+        "title": "When the 4-Deck CDJ-3000 Mashup hits 130 BPM at 2 AM",
+        "views": "3.9M Views",
+        "likes": "320K",
+        "videoSrc": "/images/tour_09_arena_climax.mp4",
+        "thumbnail": "/images/gallery_stage_lasers.jpg",
+        "reelUrl": "https://instagram.com/djgspark.music",
+        "tag": "DECKS POV",
+        "date": "1 MONTH AGO"
+      },
+      {
+        "id": "reel-3",
+        "title": "Dubai Coca-Cola Arena 360 Laser Array Climax",
+        "views": "4.2M Views",
+        "likes": "395K",
+        "videoSrc": "/images/c5083.mp4",
+        "thumbnail": "/images/concert_led.jpg",
+        "reelUrl": "https://instagram.com/djgspark.music",
+        "tag": "ARENA FINALE",
+        "date": "1 MONTH AGO"
+      },
+      {
+        "id": "reel-4",
+        "title": "Studio Secrets: Designing the Bass Frequency for Spark Theory",
+        "views": "2.8M Views",
+        "likes": "215K",
+        "videoSrc": "/images/lv_0_20250622150320.mp4",
+        "thumbnail": "/images/gallery_dj_decks_pov.jpg",
+        "reelUrl": "https://instagram.com/djgspark.music",
+        "tag": "STUDIO SESSION",
+        "date": "2 MONTHS AGO"
+      }
+    ],
+    "mediaLibrary": [
+      {
+        "id": "reel-1",
+        "title": "55,000 Hands In The Air — Sunburn Festival Sunset Drop",
+        "views": "5.4M Views",
+        "likes": "485K",
+        "videoSrc": "/images/lv_0_20250622150320.mp4",
+        "thumbnail": "/images/past_event_crowd.jpg",
+        "reelUrl": "https://instagram.com/djgspark.music",
+        "tag": "VIRAL FESTIVAL DROP",
+        "date": "2 WEEKS AGO"
+      },
+      {
+        "id": "reel-2",
+        "title": "When the 4-Deck CDJ-3000 Mashup hits 130 BPM at 2 AM",
+        "views": "3.9M Views",
+        "likes": "320K",
+        "videoSrc": "/images/tour_09_arena_climax.mp4",
+        "thumbnail": "/images/gallery_stage_lasers.jpg",
+        "reelUrl": "https://instagram.com/djgspark.music",
+        "tag": "DECKS POV",
+        "date": "1 MONTH AGO"
+      },
+      {
+        "id": "reel-3",
+        "title": "Dubai Coca-Cola Arena 360 Laser Array Climax",
+        "views": "4.2M Views",
+        "likes": "395K",
+        "videoSrc": "/images/c5083.mp4",
+        "thumbnail": "/images/concert_led.jpg",
+        "reelUrl": "https://instagram.com/djgspark.music",
+        "tag": "ARENA FINALE",
+        "date": "1 MONTH AGO"
+      },
+      {
+        "id": "reel-4",
+        "title": "Studio Secrets: Designing the Bass Frequency for Spark Theory",
+        "views": "2.8M Views",
+        "likes": "215K",
+        "videoSrc": "/images/lv_0_20250622150320.mp4",
+        "thumbnail": "/images/gallery_dj_decks_pov.jpg",
+        "reelUrl": "https://instagram.com/djgspark.music",
+        "tag": "STUDIO SESSION",
+        "date": "2 MONTHS AGO"
+      },
+      {
+        "id": "reel-5",
+        "title": "Pyro Cannon Countdown — 3, 2, 1 Mainstage Blast",
+        "views": "6.1M Views",
+        "likes": "590K",
+        "videoSrc": "/images/c5083.mp4",
+        "thumbnail": "/images/gallery_crowd_hands.jpg",
+        "reelUrl": "https://instagram.com/djgspark.music",
+        "tag": "PYRO BLAST",
+        "date": "3 WEEKS AGO"
+      },
+      {
+        "id": "reel-6",
+        "title": "Unreleased Track ID Dropped Live at 3:00 AM Crowd Reaction",
+        "views": "3.4M Views",
+        "likes": "280K",
+        "videoSrc": "/images/tour_09_arena_climax.mp4",
+        "thumbnail": "/images/gallery_headphones_mixing.jpg",
+        "reelUrl": "https://instagram.com/djgspark.music",
+        "tag": "EXCLUSIVE ID",
+        "date": "2 MONTHS AGO"
+      },
+      {
+        "id": "reel-7",
+        "title": "Tomorrowland Sunset Session: Analog Synth Solo Live",
+        "views": "4.7M Views",
+        "likes": "410K",
+        "videoSrc": "/images/lv_0_20250622150320.mp4",
+        "thumbnail": "/images/past_event_crowd.jpg",
+        "reelUrl": "https://instagram.com/djgspark.music",
+        "tag": "FESTIVAL LIVE",
+        "date": "3 MONTHS AGO"
+      },
+      {
+        "id": "reel-8",
+        "title": "Soundcheck POV: Testing 120kW Subwoofers in Empty Stadium",
+        "views": "1.9M Views",
+        "likes": "165K",
+        "videoSrc": "/images/c5083.mp4",
+        "thumbnail": "/images/gallery_stage_lasers.jpg",
+        "reelUrl": "https://instagram.com/djgspark.music",
+        "tag": "SOUNDCHECK",
+        "date": "4 MONTHS AGO"
+      }
+    ]
+  }
+}

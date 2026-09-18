@@ -2,20 +2,184 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --bg-base: #050505;
+    --bg-surface: #0B0B0E;
+    --bg-card: #0E0E14;
+    --text-primary: #FFFFFF;
+    --text-muted: #A1A1AA;
+    --spark-amber: #FF6A00;
+    --spark-orange: #FF7A00;
+    --spark-silver: #E2E8F0;
+    --spark-chrome: #CBD5E1;
+    --spark-purple: #7A4CFF;
+  }
+
+  html {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    scroll-behavior: auto; /* Handled by Lenis */
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  body {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* Lenis smooth scrolling rules */
+  html.lenis, html.lenis body {
+    height: auto;
+  }
+
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  .lenis.lenis-scrolling iframe {
+    pointer-events: none;
+  }
+
+  /* Custom minimal dark scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #050505;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #222228;
+    border-radius: 99px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #FF6A00;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .glass-header {
+    background: rgba(5, 5, 5, 0.78);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .btn-header-cta {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 106, 0, 0.1) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #FFFFFF;
+    border-radius: 6px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-size: 11px;
+    padding: 10px 22px;
+    transition: all 0.3s ease;
+  }
+  .btn-header-cta:hover {
+    background: #FF6A00;
+    color: #050505;
+    border-color: #FF6A00;
+    box-shadow: 0 0 25px rgba(255, 106, 0, 0.5);
+  }
+
+  .glass-card {
+    background: rgba(11, 11, 14, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
+  }
+
+  .glass-card:hover {
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 25px rgba(255, 106, 0, 0.2);
+  }
+
+  .cinematic-viewfinder {
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(11, 11, 14, 0.88);
+    backdrop-filter: blur(16px);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .cinematic-viewfinder::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 14px;
+    height: 14px;
+    border-top: 2px solid #FF6A00;
+    border-left: 2px solid #FF6A00;
+    z-index: 10;
+    pointer-events: none;
+  }
+  .cinematic-viewfinder::after {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    width: 14px;
+    height: 14px;
+    border-bottom: 2px solid #FF6A00;
+    border-right: 2px solid #FF6A00;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .spark-text-gradient {
+    background: linear-gradient(135deg, #FFFFFF 15%, #E2E8F0 40%, #FF8400 78%, #FF6A00 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .chrome-text-gradient {
+    background: linear-gradient(180deg, #FFFFFF 0%, #E2E8F0 45%, #94A3B8 80%, #64748B 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .text-stroke-watermark {
+    -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.15);
+    color: transparent;
+  }
+
+  .text-stroke-amber {
+    -webkit-text-stroke: 1.5px rgba(255, 106, 0, 0.45);
+    color: transparent;
+  }
+
+  .perspective-container {
+    perspective: 1200px;
+    transform-style: preserve-3d;
+  }
+
+  .glass-card-awwwards {
+    background: rgba(9, 9, 13, 0.88);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  }
+
+  .glass-card-awwwards:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 35px 80px rgba(0, 0, 0, 0.95), 0 0 30px rgba(255, 106, 0, 0.2);
+  }
 }

@@ -1,0 +1,150 @@
+[
+  {
+    "id": "PAST-GOA-2025",
+    "slug": "sunburn-goa-beach-2025",
+    "title": "Sunburn Beach Arena Goa 2025",
+    "year": "2025",
+    "city": "GOA",
+    "country": "INDIA",
+    "venue": "Vagator Coastal Arena",
+    "date": "2025-12-28",
+    "dateDisplay": "28 DEC 2025",
+    "attendance": "55,000+ Fans",
+    "image": "/images/past_event_sunset.jpg",
+    "excerpt": "A legendary sunset-to-midnight seaside journey with 55,000 festivalgoers and the global debut of the 'Feel The Spark' anthem.",
+    "description": "Performing on the main stage as dusk settled over the Arabian Sea, DJ G SPARK delivered a 3.5-hour masterclass in progressive melodic techno and high-energy bass. Over 200 pyro drones coordinated above the crowd, syncing with the bass drops.",
+    "highlights": [
+      "Premiere of 'Ignite The Night' Live VIP Mix",
+      "200 Pyro Drone Aerial Formation",
+      "55,000 Verified Ticketed Attendance",
+      "Streamed live to 1.8M viewers worldwide"
+    ],
+    "tracklist": [
+      "01. DJ G SPARK - Feel The Spark (Intro VIP)",
+      "02. DJ G SPARK - Quantum Drift (Extended Mix)",
+      "03. DJ G SPARK - Redline Pulse (Live Edit)",
+      "04. DJ G SPARK - Aftershock (Club Version)"
+    ]
+  },
+  {
+    "id": "PAST-MIAMI-2025",
+    "slug": "ultra-music-festival-miami-2025",
+    "title": "Ultra Music Festival Miami 2025",
+    "year": "2025",
+    "city": "MIAMI",
+    "country": "USA",
+    "venue": "Bayfront Park Worldwide Stage",
+    "date": "2025-03-23",
+    "dateDisplay": "23 MAR 2025",
+    "attendance": "70,000+ Fans",
+    "image": "/images/past_event_crowd.jpg",
+    "excerpt": "Closing headline performance on the iconic Worldwide Stage under a canopy of 32 synchronized multi-color lasers.",
+    "description": "DJ G SPARK commanded Bayfront Park with relentless 135 BPM energy. The set drew the largest crowd in the history of the Worldwide Stage, with a broadcast that reached 4.5 million fans across YouTube and SiriusXM.",
+    "highlights": [
+      "Largest crowd in Worldwide Stage history",
+      "Synchronized 32-laser aerial matrix",
+      "Billboard Dance 'Top 3 Sets of Miami Music Week'"
+    ],
+    "tracklist": [
+      "01. DJ G SPARK - Miami Overdrive",
+      "02. DJ G SPARK - Cyber Realm",
+      "03. DJ G SPARK - Bass Resonance",
+      "04. DJ G SPARK - Horizon Glow"
+    ]
+  },
+  {
+    "id": "PAST-BELGIUM-2024",
+    "slug": "tomorrowland-freedom-stage-2024",
+    "title": "Tomorrowland Freedom Stage 2024",
+    "year": "2024",
+    "city": "BOOM",
+    "country": "BELGIUM",
+    "venue": "Freedom Stage Indoor Holosphere",
+    "date": "2024-07-27",
+    "dateDisplay": "27 JUL 2024",
+    "attendance": "45,000+ Fans",
+    "image": "/images/concert_led.jpg",
+    "excerpt": "A visual masterpiece featuring custom 3D Holosphere projection mapping that redefined the indoor festival experience.",
+    "description": "Widely voted one of the most innovative audio-visual sets of Tomorrowland 2024. The Freedom Stage was transformed into an interactive holographic hypercube responding directly to DJ G SPARK's turntable manipulations.",
+    "highlights": [
+      "Recognized by DJ Mag as Top Visual Set 2024",
+      "Proprietary 3D Holosphere projection system",
+      "Full 90-minute 4K broadcast archived on YouTube"
+    ],
+    "tracklist": [
+      "01. DJ G SPARK - Holosphere Awakening",
+      "02. DJ G SPARK - Subatomic Wave",
+      "03. DJ G SPARK - Neon Catalyst"
+    ]
+  },
+  {
+    "id": "PAST-DELHI-2024",
+    "slug": "delhi-arena-homecoming-2024",
+    "title": "Delhi Arena Homecoming Showcase 2024",
+    "year": "2024",
+    "city": "NEW DELHI",
+    "country": "INDIA",
+    "venue": "Indira Gandhi Indoor Arena",
+    "date": "2024-11-15",
+    "dateDisplay": "15 NOV 2024",
+    "attendance": "28,000+ Fans",
+    "image": "/images/dj_hero.jpg",
+    "excerpt": "A triumphant sold-out arena homecoming show celebrating DJ G SPARK's #1 global streaming milestone.",
+    "description": "28,000 die-hard fans packed the IGI Stadium for a non-stop 4-hour musical journey with full stadium pyrotechnics, moving truss ceiling, and surprise vocal collaborators.",
+    "highlights": [
+      "Sold out in under 18 minutes",
+      "First Indian electronic artist with full moving ceiling rig",
+      "Official live album recorded on venue"
+    ],
+    "tracklist": [
+      "01. DJ G SPARK - New Delhi Sunset",
+      "02. DJ G SPARK - Royal Bassline",
+      "03. DJ G SPARK - Pulse of the Capital"
+    ]
+  },
+  {
+    "id": "PAST-DUBAI-2023",
+    "slug": "dubai-superdome-skyline-2023",
+    "title": "Dubai Skyline Showcase 2023",
+    "year": "2023",
+    "city": "DUBAI",
+    "country": "UAE",
+    "venue": "Coca-Cola Arena",
+    "date": "2023-12-08",
+    "dateDisplay": "08 DEC 2023",
+    "attendance": "16,500+ Fans",
+    "image": "/images/tour_poster.jpg",
+    "excerpt": "A glittering night in the desert with luxury production, laser canopy, and VIP superyacht afterparty.",
+    "description": "DJ G SPARK electrified the UAE with an unreleased setlist featuring Middle Eastern melodic scales woven into heavy driving techno basslines.",
+    "highlights": [
+      "Highest grossing indoor electronic set in UAE 2023",
+      "Full drone lighting matrix"
+    ],
+    "tracklist": [
+      "01. DJ G SPARK - Desert Mirage",
+      "02. DJ G SPARK - Midnight Skyline"
+    ]
+  },
+  {
+    "id": "PAST-AMSTERDAM-2023",
+    "slug": "amsterdam-warehouse-marathon-2023",
+    "title": "Amsterdam ADE Warehouse Marathon 2023",
+    "year": "2023",
+    "city": "AMSTERDAM",
+    "country": "NETHERLANDS",
+    "venue": "Gashouder Industrial Hall",
+    "date": "2023-10-20",
+    "dateDisplay": "20 OCT 2023",
+    "attendance": "14,000+ Fans",
+    "image": "/images/album_art.jpg",
+    "excerpt": "An intimate, raw 8-hour industrial warehouse marathon set hailed by European critics.",
+    "description": "Stripped of conventional spectacle, the Gashouder warehouse was filled with raw concrete reverberation, monochrome strobes, and relentless dark techno groove.",
+    "highlights": [
+      "8-hour continuous uninterrupted performance",
+      "Critical acclaim across European dance press"
+    ],
+    "tracklist": [
+      "01. DJ G SPARK - Gashouder Protocol (Live Marathon Mix)"
+    ]
+  }
+]

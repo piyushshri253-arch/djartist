@@ -1,0 +1,66 @@
+[
+  {
+    "id": "gal-1",
+    "src": "/images/gallery_eep09781.jpg",
+    "title": "Live Stadium Headliner",
+    "subtitle": "Arena Grand Stage Climax",
+    "category": "live",
+    "createdAt": "2026-09-18T00:00:00.000Z"
+  },
+  {
+    "id": "gal-2",
+    "src": "/images/gallery_festival_sunset.jpg",
+    "title": "Outdoor Sunset Festival",
+    "subtitle": "Synth Horizon & Bass Run",
+    "category": "festivals",
+    "createdAt": "2026-09-18T00:00:00.000Z"
+  },
+  {
+    "id": "gal-3",
+    "src": "/images/gallery_stage_lasers.jpg",
+    "title": "Laser Volumetric Array",
+    "subtitle": "Spectacular Stage Pyrotechnics",
+    "category": "live",
+    "createdAt": "2026-09-18T00:00:00.000Z"
+  },
+  {
+    "id": "gal-4",
+    "src": "/images/gallery_dj_decks_pov.jpg",
+    "title": "Decks Command POV",
+    "subtitle": "CDJ-3000 & DJM-V10 Control",
+    "category": "backstage",
+    "createdAt": "2026-09-18T00:00:00.000Z"
+  },
+  {
+    "id": "gal-5",
+    "src": "/images/gallery_club_energy.jpg",
+    "title": "Club Nights & Light Sculptures",
+    "subtitle": "Hypnotic Progressive Set",
+    "category": "live",
+    "createdAt": "2026-09-18T00:00:00.000Z"
+  },
+  {
+    "id": "gal-6",
+    "src": "/images/gallery_crowd_pulse.webp",
+    "title": "Electric Crowd Movement",
+    "subtitle": "30,000 Fans United",
+    "category": "festivals",
+    "createdAt": "2026-09-18T00:00:00.000Z"
+  },
+  {
+    "id": "gal-7",
+    "src": "/images/gallery_visual_art.webp",
+    "title": "Visual Identity & Artwork",
+    "subtitle": "Architectural Music Experience",
+    "category": "backstage",
+    "createdAt": "2026-09-18T00:00:00.000Z"
+  },
+  {
+    "id": "gal-8",
+    "src": "/images/gallery_backstage_moment.jpg",
+    "title": "Backstage Access & Focus",
+    "subtitle": "Green Room Pre-Show Ritual",
+    "category": "backstage",
+    "createdAt": "2026-09-18T00:00:00.000Z"
+  }
+]
