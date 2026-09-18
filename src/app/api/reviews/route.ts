@@ -205,9 +205,9 @@ export async function POST(req: Request) {
       : "VERIFIED ATTENDEE";
 
     const badgeColor = isArticleReview
-      ? "text-[#FF8400] bg-[#FF6A00]/10 border-[#FF6A00]/30"
+      ? "text-[#00B4D8] bg-[#00E5FF]/10 border-[#00E5FF]/30"
       : category === "promoter"
-      ? "text-[#FF8400] bg-[#FF6A00]/10 border-[#FF6A00]/30"
+      ? "text-[#00B4D8] bg-[#00E5FF]/10 border-[#00E5FF]/30"
       : category === "critic"
       ? "text-[#00E5FF] bg-[#00E5FF]/10 border-[#00E5FF]/30"
       : "text-[#10B981] bg-[#10B981]/10 border-[#10B981]/30";

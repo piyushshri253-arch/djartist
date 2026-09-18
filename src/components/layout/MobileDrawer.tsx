@@ -30,7 +30,7 @@ export function MobileDrawer({ isOpen, onClose, links }: MobileDrawerProps) {
       />
 
       {/* Drawer Panel */}
-      <div className="fixed top-0 right-0 w-full max-w-[320px] h-full bg-[#0b0b0e] border-l border-white/10 p-6 flex flex-col justify-between z-10">
+      <div className="fixed top-0 right-0 w-full max-w-[320px] h-full bg-[#1F2833] border-l border-white/10 p-6 flex flex-col justify-between z-10">
         <div>
           {/* Header */}
           <div className="flex items-center justify-between pb-6 border-b border-white/10">
@@ -38,12 +38,12 @@ export function MobileDrawer({ isOpen, onClose, links }: MobileDrawerProps) {
               <img
                 src="/images/DJ-G-SPARK-Light.png"
                 alt="DJ G SPARK"
-                className="h-11 sm:h-12 w-auto object-contain drop-shadow-[0_0_18px_rgba(255,255,255,0.4)]"
+                className="h-11 sm:h-12 w-auto object-contain drop-shadow-[0_0_18px_rgba(245,246,250,0.4)]"
               />
             </Link>
             <button
               onClick={onClose}
-              className="p-1 text-[#969696] hover:text-white transition-colors"
+              className="p-1 text-[#8A8D93] hover:text-[#F5F6FA] transition-colors"
               aria-label="Close navigation"
             >
               <X className="w-6 h-6" />
@@ -60,11 +60,11 @@ export function MobileDrawer({ isOpen, onClose, links }: MobileDrawerProps) {
                   href={link.href}
                   onClick={onClose}
                   className={`text-sm tracking-[0.16em] font-medium transition-colors py-2 flex items-center justify-between ${
-                    isActive ? "text-[#FF8400]" : "text-[#F4F1EA]/80 hover:text-white"
+                    isActive ? "text-[#00E5FF] font-bold" : "text-[#8A8D93] hover:text-[#F5F6FA]"
                   }`}
                 >
                   <span>{link.label}</span>
-                  {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#FF6A00]" />}
+                  {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#00E5FF] shadow-[0_0_8px_#00E5FF]" />}
                 </Link>
               );
             })}
@@ -74,7 +74,7 @@ export function MobileDrawer({ isOpen, onClose, links }: MobileDrawerProps) {
             <Link
               href="/booking"
               onClick={onClose}
-              className="block w-full py-3 text-center rounded-full bg-gradient-to-r from-[#FF6A00] to-[#FF8400] text-black font-semibold text-xs tracking-[0.14em] uppercase"
+              className="block w-full py-3 text-center rounded-full bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-[#0B0C10] font-black text-xs tracking-[0.14em] uppercase shadow-[0_0_20px_rgba(0,229,255,0.4)]"
             >
               Book DJ G Spark
             </Link>
@@ -83,15 +83,15 @@ export function MobileDrawer({ isOpen, onClose, links }: MobileDrawerProps) {
 
         {/* Footer */}
         <div className="pt-6 border-t border-white/10">
-          <p className="text-[11px] tracking-[0.2em] text-[#969696] uppercase mb-4">
+          <p className="text-[11px] tracking-[0.2em] text-[#8A8D93] uppercase mb-4">
             FEEL THE SPARK. ENTER THE SOUND.
           </p>
-          <div className="flex items-center gap-4 text-[#969696]">
+          <div className="flex items-center gap-4 text-[#8A8D93]">
             <a
               href="https://www.facebook.com/share/1BxXiXLitH/"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-[#FF8400] transition-colors"
+              className="hover:text-[#00E5FF] transition-colors"
               aria-label="Facebook"
             >
               <FacebookIcon className="w-4 h-4" />
@@ -100,7 +100,7 @@ export function MobileDrawer({ isOpen, onClose, links }: MobileDrawerProps) {
               href="https://www.instagram.com/djgspark"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-[#FF8400] transition-colors"
+              className="hover:text-[#00E5FF] transition-colors"
               aria-label="Instagram"
             >
               <InstagramIcon className="w-4 h-4" />
@@ -109,7 +109,7 @@ export function MobileDrawer({ isOpen, onClose, links }: MobileDrawerProps) {
               href="https://youtube.com/@djg-spark"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-[#FF8400] transition-colors"
+              className="hover:text-[#00E5FF] transition-colors"
               aria-label="YouTube"
             >
               <YouTubeIcon className="w-4 h-4" />

@@ -18,7 +18,7 @@ export function Events3D() {
         {/* Amber LED Perimeter Border */}
         <mesh position={[0, 0, 0.14]}>
           <boxGeometry args={[4.05, 3.05, 0.02]} />
-          <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+          <meshBasicMaterial color="#00E5FF" toneMapped={false} />
         </mesh>
         {/* Dark Screen Surface */}
         <mesh position={[0, 0, 0.16]}>
@@ -30,7 +30,7 @@ export function Events3D() {
           <Text
             position={[-1.7, 0.95, 0]}
             fontSize={0.16}
-            color="#FF6A00"
+            color="#00E5FF"
             anchorX="left"
             letterSpacing={0.22}
             material-toneMapped={false}
@@ -69,7 +69,7 @@ export function Events3D() {
           </Text>
         </group>
         {/* Ground Floodlight */}
-        <pointLight color="#FF8400" intensity={2.5} distance={8} position={[0, -1.8, 0.8]} />
+        <pointLight color="#00B4D8" intensity={2.5} distance={8} position={[0, -1.8, 0.8]} />
       </group>
 
       {/* 2. Monolith #2: Mumbai (Right Side, Angled Inward) */}
@@ -80,7 +80,7 @@ export function Events3D() {
         </mesh>
         <mesh position={[0, 0, 0.14]}>
           <boxGeometry args={[4.05, 3.05, 0.02]} />
-          <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+          <meshBasicMaterial color="#00E5FF" toneMapped={false} />
         </mesh>
         <mesh position={[0, 0, 0.16]}>
           <planeGeometry args={[3.95, 2.95]} />
@@ -90,7 +90,7 @@ export function Events3D() {
           <Text
             position={[-1.7, 0.95, 0]}
             fontSize={0.16}
-            color="#FF6A00"
+            color="#00E5FF"
             anchorX="left"
             letterSpacing={0.22}
             material-toneMapped={false}
@@ -128,7 +128,7 @@ export function Events3D() {
             CAPACITY: 42,000 • SENSORY STAGE
           </Text>
         </group>
-        <pointLight color="#FF6A00" intensity={2.5} distance={8} position={[0, -1.8, 0.8]} />
+        <pointLight color="#00E5FF" intensity={2.5} distance={8} position={[0, -1.8, 0.8]} />
       </group>
 
       {/* 3. Physical Tour Poster Monolith (Center Right) */}
@@ -151,7 +151,7 @@ export function Events3D() {
         </mesh>
         <mesh position={[0, 0, 0.17]}>
           <planeGeometry args={[10.7, 0.95]} />
-          <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+          <meshBasicMaterial color="#00E5FF" toneMapped={false} />
         </mesh>
         <Text
           position={[0, 0.05, 0.2]}

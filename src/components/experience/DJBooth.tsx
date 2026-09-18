@@ -59,20 +59,20 @@ export function DJBooth() {
       {/* 1. Elevated Diamond-Plate Stage Riser Platform */}
       <mesh position={[0, 0.45, 0]}>
         <boxGeometry args={[16, 0.9, 12]} />
-        <meshStandardMaterial color="#0b0b0e" roughness={0.35} metalness={0.75} />
+        <meshStandardMaterial color="#1F2833" roughness={0.35} metalness={0.75} />
       </mesh>
       {/* Amber Glowing Perimeter LED Step Trim */}
       <mesh position={[0, 0.9, 6.01]}>
         <boxGeometry args={[16.1, 0.05, 0.04]} />
-        <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+        <meshBasicMaterial color="#00E5FF" toneMapped={false} />
       </mesh>
       <mesh position={[-8.01, 0.9, 0]}>
         <boxGeometry args={[0.04, 0.05, 12.1]} />
-        <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+        <meshBasicMaterial color="#00E5FF" toneMapped={false} />
       </mesh>
       <mesh position={[8.01, 0.9, 0]}>
         <boxGeometry args={[0.04, 0.05, 12.1]} />
-        <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+        <meshBasicMaterial color="#00E5FF" toneMapped={false} />
       </mesh>
 
       {/* 2. DJ Command Console Desk */}
@@ -110,11 +110,11 @@ export function DJBooth() {
           </mesh>
           <mesh ref={jogLeftRef} position={[0, 0.06, 0.1]}>
             <cylinderGeometry args={[0.24, 0.24, 0.03, 32]} />
-            <meshStandardMaterial color="#FF6A00" metalness={0.8} roughness={0.2} />
+            <meshStandardMaterial color="#00E5FF" metalness={0.8} roughness={0.2} />
           </mesh>
           <mesh position={[0, 0.06, -0.3]} rotation={[-0.25, 0, 0]}>
             <planeGeometry args={[0.42, 0.22]} />
-            <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+            <meshBasicMaterial color="#00E5FF" toneMapped={false} />
           </mesh>
         </group>
 
@@ -131,7 +131,7 @@ export function DJBooth() {
               <meshBasicMaterial ref={i === 2 ? vuMeterRef : undefined} color="#00FF66" toneMapped={false} />
             </mesh>
           ))}
-          <pointLight color="#FF8400" intensity={1.8} distance={2.5} position={[0, 0.4, 0]} />
+          <pointLight color="#00B4D8" intensity={1.8} distance={2.5} position={[0, 0.4, 0]} />
         </group>
 
         {/* Pioneer CDJ-3000 Player #3 (Center Right) */}
@@ -142,11 +142,11 @@ export function DJBooth() {
           </mesh>
           <mesh ref={jogRightRef} position={[0, 0.06, 0.1]}>
             <cylinderGeometry args={[0.24, 0.24, 0.03, 32]} />
-            <meshStandardMaterial color="#FF6A00" metalness={0.8} roughness={0.2} />
+            <meshStandardMaterial color="#00E5FF" metalness={0.8} roughness={0.2} />
           </mesh>
           <mesh position={[0, 0.06, -0.3]} rotation={[-0.25, 0, 0]}>
             <planeGeometry args={[0.42, 0.22]} />
-            <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+            <meshBasicMaterial color="#00E5FF" toneMapped={false} />
           </mesh>
         </group>
 
@@ -171,8 +171,8 @@ export function DJBooth() {
       <mesh position={[0, 5.2, -3.5]}>
         <cylinderGeometry args={[12, 12, 7.5, 32, 1, true, -Math.PI / 4, Math.PI / 2]} />
         <meshStandardMaterial
-          color="#060608"
-          emissive="#FF6A00"
+          color="#0B0C10"
+          emissive="#00E5FF"
           emissiveIntensity={0.65}
           roughness={0.25}
           side={THREE.DoubleSide}
@@ -207,7 +207,7 @@ export function DJBooth() {
       <spotLight
         ref={beam2Ref}
         position={[6, 8, 2]}
-        color="#FF6A00"
+        color="#00E5FF"
         intensity={9.0}
         angle={0.4}
         penumbra={0.5}
@@ -218,7 +218,7 @@ export function DJBooth() {
         <mesh position={[0, 0, 8]} rotation={[Math.PI / 2, 0, 0]}>
           <cylinderGeometry args={[0.2, 3.4, 16, 24, 1, true]} />
           <meshBasicMaterial
-            color="#FF6A00"
+            color="#00E5FF"
             transparent={true}
             opacity={0.14}
             blending={THREE.AdditiveBlending}

@@ -111,14 +111,14 @@ export function EventReviewSection({ eventId, eventSlug, eventTitle }: EventRevi
       {/* Section Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF6A00]/10 border border-[#FF6A00]/30 text-xs font-mono font-bold tracking-[0.2em] text-[#FF8400] uppercase mb-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/30 text-xs font-mono font-bold tracking-[0.2em] text-[#00B4D8] uppercase mb-3">
             <Sparkles className="w-3.5 h-3.5" />
             <span>COMMUNITY FEEDBACK & AUDIENCE RATINGS</span>
           </div>
           <h2 className="text-3xl font-extrabold text-white tracking-tight uppercase">
-            CONCERT <span className="text-[#FF6A00]">REVIEWS</span> & RATINGS
+            CONCERT <span className="text-[#00E5FF]">REVIEWS</span> & RATINGS
           </h2>
-          <p className="text-sm text-[#969696] max-w-2xl mt-2 leading-relaxed">
+          <p className="text-sm text-[#8A8D93] max-w-2xl mt-2 leading-relaxed">
             Verified fan experiences, acoustics ratings, and crowd impressions from {eventTitle}. Submit your feedback below.
           </p>
         </div>
@@ -127,12 +127,12 @@ export function EventReviewSection({ eventId, eventSlug, eventTitle }: EventRevi
         <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/10">
           <div className="text-center">
             <div className="text-3xl font-black text-white font-mono">{stats.averageRating.toFixed(1)}</div>
-            <div className="flex items-center justify-center gap-0.5 text-[#FF8400] mt-1">
+            <div className="flex items-center justify-center gap-0.5 text-[#00B4D8] mt-1">
               {[1, 2, 3, 4, 5].map((s) => (
                 <Star
                   key={s}
                   className={`w-3.5 h-3.5 ${
-                    s <= Math.round(stats.averageRating) ? "fill-[#FF8400] text-[#FF8400]" : "text-white/20"
+                    s <= Math.round(stats.averageRating) ? "fill-[#00B4D8] text-[#00B4D8]" : "text-white/20"
                   }`}
                 />
               ))}
@@ -151,7 +151,7 @@ export function EventReviewSection({ eventId, eventSlug, eventTitle }: EventRevi
           <div className="glass-card p-6 sm:p-8 rounded-2xl border border-white/10 space-y-6">
             <div>
               <h3 className="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                <MessageSquare className="w-4 h-4 text-[#FF8400]" />
+                <MessageSquare className="w-4 h-4 text-[#00B4D8]" />
                 <span>Rate This Experience</span>
               </h3>
               <p className="text-xs text-[#888888] mt-1">
@@ -196,14 +196,14 @@ export function EventReviewSection({ eventId, eventSlug, eventTitle }: EventRevi
                         <Star
                           className={`w-6 h-6 ${
                             star <= (hoverRating || rating)
-                              ? "fill-[#FF8400] text-[#FF8400]"
+                              ? "fill-[#00B4D8] text-[#00B4D8]"
                               : "text-white/20"
                           }`}
                         />
                       </button>
                     ))}
                   </div>
-                  <span className="font-mono text-xs font-bold text-[#FF8400] ml-2">
+                  <span className="font-mono text-xs font-bold text-[#00B4D8] ml-2">
                     {ratingDescriptions[hoverRating || rating]}
                   </span>
                 </div>
@@ -218,7 +218,7 @@ export function EventReviewSection({ eventId, eventSlug, eventTitle }: EventRevi
                   placeholder="e.g. Sahil Kapoor"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-[#111116] border border-white/10 focus:border-[#FF6A00] rounded-xl px-4 py-2.5 text-white focus:outline-none transition-colors placeholder:text-[#555]"
+                  className="w-full bg-[#1F2833] border border-white/10 focus:border-[#00E5FF] rounded-xl px-4 py-2.5 text-white focus:outline-none transition-colors placeholder:text-[#555]"
                 />
               </div>
 
@@ -232,7 +232,7 @@ export function EventReviewSection({ eventId, eventSlug, eventTitle }: EventRevi
                   placeholder="e.g. sahil@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-[#111116] border border-white/10 focus:border-[#FF6A00] rounded-xl px-4 py-2.5 text-white focus:outline-none transition-colors placeholder:text-[#555]"
+                  className="w-full bg-[#1F2833] border border-white/10 focus:border-[#00E5FF] rounded-xl px-4 py-2.5 text-white focus:outline-none transition-colors placeholder:text-[#555]"
                 />
               </div>
 
@@ -242,7 +242,7 @@ export function EventReviewSection({ eventId, eventSlug, eventTitle }: EventRevi
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
-                  className="w-full bg-[#111116] border border-white/10 focus:border-[#FF6A00] rounded-xl px-4 py-2.5 text-white focus:outline-none transition-colors"
+                  className="w-full bg-[#1F2833] border border-white/10 focus:border-[#00E5FF] rounded-xl px-4 py-2.5 text-white focus:outline-none transition-colors"
                 >
                   <option value="Concert Attendee">Concert Attendee (Arena Floor)</option>
                   <option value="VIP Lounge Guest">VIP Lounge Guest</option>
@@ -263,7 +263,7 @@ export function EventReviewSection({ eventId, eventSlug, eventTitle }: EventRevi
                   placeholder="How was the sound clarity, lighting rig, crowd energy, and track selection?"
                   value={reviewText}
                   onChange={(e) => setReviewText(e.target.value)}
-                  className="w-full bg-[#111116] border border-white/10 focus:border-[#FF6A00] rounded-xl px-4 py-2.5 text-white focus:outline-none transition-colors placeholder:text-[#555] leading-relaxed"
+                  className="w-full bg-[#1F2833] border border-white/10 focus:border-[#00E5FF] rounded-xl px-4 py-2.5 text-white focus:outline-none transition-colors placeholder:text-[#555] leading-relaxed"
                 />
               </div>
 
@@ -271,7 +271,7 @@ export function EventReviewSection({ eventId, eventSlug, eventTitle }: EventRevi
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-3 rounded-full bg-gradient-to-r from-[#FF6A00] to-[#FF8400] text-black font-heading font-bold text-xs tracking-[0.16em] uppercase hover:shadow-spark transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full py-3 rounded-full bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black font-heading font-bold text-xs tracking-[0.16em] uppercase hover:shadow-spark transition-all flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <span>Submitting Review...</span>
@@ -303,7 +303,7 @@ export function EventReviewSection({ eventId, eventSlug, eventTitle }: EventRevi
             <div className="text-center py-12 text-sm text-[#888]">Loading audience reviews...</div>
           ) : reviews.length === 0 ? (
             <div className="p-8 rounded-2xl bg-white/[0.02] border border-white/5 text-center space-y-3">
-              <div className="w-12 h-12 rounded-full bg-white/5 mx-auto flex items-center justify-center text-[#FF8400]">
+              <div className="w-12 h-12 rounded-full bg-white/5 mx-auto flex items-center justify-center text-[#00B4D8]">
                 <Star className="w-5 h-5" />
               </div>
               <h4 className="font-bold text-white text-sm">Be the first to review this concert!</h4>
@@ -316,11 +316,11 @@ export function EventReviewSection({ eventId, eventSlug, eventTitle }: EventRevi
               {reviews.map((rev) => (
                 <div
                   key={rev.id}
-                  className="p-5 rounded-2xl bg-[#0e0e14] border border-white/10 hover:border-[#FF6A00]/30 transition-colors space-y-3"
+                  className="p-5 rounded-2xl bg-[#1F2833] border border-white/10 hover:border-[#00E5FF]/30 transition-colors space-y-3"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FF6A00] to-[#FF8400] text-black font-black flex items-center justify-center font-heading text-sm shadow-spark">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00E5FF] to-[#00B4D8] text-black font-black flex items-center justify-center font-heading text-sm shadow-spark">
                         {rev.initials || "DJ"}
                       </div>
                       <div>
@@ -334,12 +334,12 @@ export function EventReviewSection({ eventId, eventSlug, eventTitle }: EventRevi
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-0.5 text-[#FF8400]">
+                    <div className="flex items-center gap-0.5 text-[#00B4D8]">
                       {[1, 2, 3, 4, 5].map((s) => (
                         <Star
                           key={s}
                           className={`w-3.5 h-3.5 ${
-                            s <= rev.rating ? "fill-[#FF8400] text-[#FF8400]" : "text-white/20"
+                            s <= rev.rating ? "fill-[#00B4D8] text-[#00B4D8]" : "text-white/20"
                           }`}
                         />
                       ))}

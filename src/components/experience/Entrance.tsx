@@ -72,19 +72,19 @@ export function Entrance() {
         {/* Neon Amber Glowing Inset Border */}
         <mesh position={[0, 3.2, 0.32]}>
           <boxGeometry args={[12.6, 0.1, 0.04]} />
-          <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+          <meshBasicMaterial color="#00E5FF" toneMapped={false} />
         </mesh>
         <mesh position={[-6.2, 0, 0.32]}>
           <boxGeometry args={[0.1, 6.4, 0.04]} />
-          <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+          <meshBasicMaterial color="#00E5FF" toneMapped={false} />
         </mesh>
         <mesh position={[6.2, 0, 0.32]}>
           <boxGeometry args={[0.1, 6.4, 0.04]} />
-          <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+          <meshBasicMaterial color="#00E5FF" toneMapped={false} />
         </mesh>
 
         {/* Powerful Arch Floodlight illuminating the ramp */}
-        <pointLight color="#FF8400" intensity={4.5} distance={16} position={[0, 2.8, 0]} />
+        <pointLight color="#00B4D8" intensity={4.5} distance={16} position={[0, 2.8, 0]} />
       </group>
 
       {/* 5. Entrance Vista Backdrop (Reference Image 2) */}

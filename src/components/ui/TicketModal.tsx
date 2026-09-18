@@ -159,11 +159,11 @@ export function TicketModal({
         {/* Modal Header */}
         <div className="p-5 sm:p-6 border-b border-white/10 flex items-center justify-between bg-[#12121a]">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#FF6A00]/15 border border-[#FF6A00]/40 flex items-center justify-center text-[#FF6A00]">
+            <div className="w-8 h-8 rounded-lg bg-[#00E5FF]/15 border border-[#00E5FF]/40 flex items-center justify-center text-[#00E5FF]">
               <Ticket className="w-4 h-4" />
             </div>
             <div>
-              <div className="flex items-center gap-1.5 text-[10px] font-mono tracking-[0.2em] text-[#FF8400] uppercase">
+              <div className="flex items-center gap-1.5 text-[10px] font-mono tracking-[0.2em] text-[#00B4D8] uppercase">
                 <Sparkles className="w-3 h-3" />
                 <span>OFFICIAL ARENA PASSES</span>
               </div>
@@ -175,7 +175,7 @@ export function TicketModal({
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#969696] hover:text-white hover:bg-white/10 transition-colors"
+            className="p-1.5 rounded-lg text-[#8A8D93] hover:text-white hover:bg-white/10 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -189,10 +189,10 @@ export function TicketModal({
             /* ============================================================ */
             <div className="py-6 text-center flex flex-col items-center gap-5 animate-in fade-in zoom-in-95 duration-300">
               <div className="relative">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-[#00FF88]/20 to-[#FF6A00]/20 border-2 border-[#00FF88] flex items-center justify-center text-[#00FF88] shadow-[0_0_40px_rgba(0,255,136,0.35)]">
+                <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-[#00FF88]/20 to-[#00E5FF]/20 border-2 border-[#00FF88] flex items-center justify-center text-[#00FF88] shadow-[0_0_40px_rgba(0,255,136,0.35)]">
                   <CheckCircle2 className="w-10 h-10" />
                 </div>
-                <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-[#FF6A00] flex items-center justify-center text-black shadow-lg">
+                <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-[#00E5FF] flex items-center justify-center text-black shadow-lg">
                   <Sparkles className="w-3.5 h-3.5 fill-black" />
                 </div>
               </div>
@@ -224,7 +224,7 @@ export function TicketModal({
                 </div>
                 <div className="flex justify-between border-b border-white/5 pb-2">
                   <span className="text-[#888888]">Pass Tier:</span>
-                  <span className="text-[#FF8400] font-bold">{tierName} × {quantity}</span>
+                  <span className="text-[#00B4D8] font-bold">{tierName} × {quantity}</span>
                 </div>
                 {showPrice && (
                   <div className="flex justify-between border-b border-white/5 pb-2">
@@ -247,7 +247,7 @@ export function TicketModal({
               {/* Status Notice */}
               <div className="p-3.5 rounded-xl bg-[#14141d] border border-emerald-500/25 flex items-start gap-3 text-left w-full">
                 <ShieldCheck className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                <p className="text-[11px] text-[#A1A1AA] leading-relaxed">
+                <p className="text-[11px] text-[#8A8D93] leading-relaxed">
                   Your request is safely registered. Our official concierge will reach out to you directly on WhatsApp ({phone}) with pass delivery details and entry verification.
                 </p>
               </div>
@@ -257,7 +257,7 @@ export function TicketModal({
                 <button
                   type="button"
                   onClick={handleResetAndClose}
-                  className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-[#FF6A00] to-[#FF8400] hover:brightness-110 text-black font-heading font-black text-xs sm:text-sm tracking-[0.14em] uppercase transition-all shadow-[0_0_25px_rgba(255,106,0,0.35)] cursor-pointer"
+                  className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] hover:brightness-110 text-black font-heading font-black text-xs sm:text-sm tracking-[0.14em] uppercase transition-all shadow-[0_0_25px_rgba(0, 229, 255, 0.35)] cursor-pointer"
                 >
                   DONE / CONTINUE BROWSING
                 </button>
@@ -290,7 +290,7 @@ export function TicketModal({
 
               {/* 1. Pass Tier Selection */}
               <div>
-                <label className="text-[10px] font-mono tracking-widest text-[#FF8400] uppercase block mb-3 font-semibold">
+                <label className="text-[10px] font-mono tracking-widest text-[#00B4D8] uppercase block mb-3 font-semibold">
                   SELECT PASS CATEGORY
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
@@ -325,7 +325,7 @@ export function TicketModal({
                         }}
                         className={`p-3 rounded-xl border text-left transition-all relative ${
                           isSelected
-                            ? "bg-[#FF6A00]/15 border-[#FF6A00] shadow-[0_0_20px_rgba(255,106,0,0.25)]"
+                            ? "bg-[#00E5FF]/15 border-[#00E5FF] shadow-[0_0_20px_rgba(0, 229, 255, 0.25)]"
                             : "bg-white/[0.02] border-white/10 hover:border-white/20"
                         }`}
                       >
@@ -339,7 +339,7 @@ export function TicketModal({
                           {tier.sub}
                         </div>
                         {showPrice && (
-                          <div className="text-xs font-mono text-[#FF8400] font-bold mt-2">
+                          <div className="text-xs font-mono text-[#00B4D8] font-bold mt-2">
                             ₹{Math.round(numericINR * (tier.mult === 1 ? 1 : tier.mult === 2.2 ? 2.4 : 4)).toLocaleString("en-IN")}
                           </div>
                         )}
@@ -352,7 +352,7 @@ export function TicketModal({
               {/* 2. Number of Passes */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="text-[10px] font-mono tracking-widest text-[#FF8400] uppercase font-semibold">
+                  <label className="text-[10px] font-mono tracking-widest text-[#00B4D8] uppercase font-semibold">
                     NUMBER OF PASSES
                   </label>
                   <span className="text-xs font-mono text-white font-bold">{quantity} PASS{quantity > 1 ? "ES" : ""}</span>
@@ -365,7 +365,7 @@ export function TicketModal({
                       onClick={() => setQuantity(num)}
                       className={`flex-1 py-2 rounded-lg text-xs font-mono font-bold transition-all ${
                         quantity === num
-                          ? "bg-[#FF6A00] text-black shadow-md"
+                          ? "bg-[#00E5FF] text-black shadow-md"
                           : "bg-white/5 text-[#888888] hover:text-white border border-white/10"
                       }`}
                     >
@@ -377,7 +377,7 @@ export function TicketModal({
 
               {/* 3. Customer Contact Info */}
               <div className="space-y-3 pt-1">
-                <label className="text-[10px] font-mono tracking-widest text-[#FF8400] uppercase block font-semibold">
+                <label className="text-[10px] font-mono tracking-widest text-[#00B4D8] uppercase block font-semibold">
                   YOUR CONTACT DETAILS
                 </label>
 
@@ -391,7 +391,7 @@ export function TicketModal({
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Your Full Name *"
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-xs sm:text-sm focus:outline-none focus:border-[#FF6A00] transition-colors"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-xs sm:text-sm focus:outline-none focus:border-[#00E5FF] transition-colors"
                     />
                   </div>
                 </div>
@@ -399,14 +399,14 @@ export function TicketModal({
                 {/* Phone */}
                 <div>
                   <div className="relative">
-                    <Phone className="w-4 h-4 text-[#FF8400] absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <Phone className="w-4 h-4 text-[#00B4D8] absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input
                       type="tel"
                       required
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="Phone / Mobile Number (e.g. +91 98765 43210) *"
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-xs sm:text-sm focus:outline-none focus:border-[#FF6A00] transition-colors"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-xs sm:text-sm focus:outline-none focus:border-[#00E5FF] transition-colors"
                     />
                   </div>
                 </div>
@@ -420,7 +420,7 @@ export function TicketModal({
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Email Address (for confirmation pass slip)"
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-xs sm:text-sm focus:outline-none focus:border-[#FF6A00] transition-colors"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-xs sm:text-sm focus:outline-none focus:border-[#00E5FF] transition-colors"
                     />
                   </div>
                 </div>
@@ -434,7 +434,7 @@ export function TicketModal({
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
                       placeholder="Special VIP table request, backstage inquiry, or preferred seating (optional)..."
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-xs sm:text-sm focus:outline-none focus:border-[#FF6A00] transition-colors resize-none"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-xs sm:text-sm focus:outline-none focus:border-[#00E5FF] transition-colors resize-none"
                     />
                   </div>
                 </div>
@@ -442,12 +442,12 @@ export function TicketModal({
 
               {/* Price Calculation Summary */}
               {showPrice ? (
-                <div className="p-4 rounded-xl bg-[#14141d] border border-[#FF6A00]/30 flex items-center justify-between">
+                <div className="p-4 rounded-xl bg-[#14141d] border border-[#00E5FF]/30 flex items-center justify-between">
                   <div>
                     <span className="text-[10px] font-mono text-[#888888] uppercase block">
                       Estimated Pass Total ({quantity} Passes)
                     </span>
-                    <span className="text-xs text-[#FF8400]">
+                    <span className="text-xs text-[#00B4D8]">
                       ₹{inrPerTicket.toLocaleString("en-IN")} / pass (${usdPerTicket})
                     </span>
                   </div>
@@ -465,7 +465,7 @@ export function TicketModal({
                   <span className="text-xs font-mono text-[#AAAAAA] uppercase">
                     Pass Inventory Status
                   </span>
-                  <span className="text-xs font-mono font-bold text-[#FF8400] uppercase">
+                  <span className="text-xs font-mono font-bold text-[#00B4D8] uppercase">
                     Pricing Confirmed Upon Inquiry
                   </span>
                 </div>
@@ -475,14 +475,14 @@ export function TicketModal({
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-4 rounded-xl bg-gradient-to-r from-[#FF6A00] to-[#FF8400] hover:brightness-110 text-black font-heading font-black text-xs sm:text-sm tracking-[0.16em] uppercase flex items-center justify-center gap-2.5 shadow-[0_0_30px_rgba(255,106,0,0.45)] transition-all disabled:opacity-50 cursor-pointer"
+                className="w-full py-4 rounded-xl bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] hover:brightness-110 text-black font-heading font-black text-xs sm:text-sm tracking-[0.16em] uppercase flex items-center justify-center gap-2.5 shadow-[0_0_30px_rgba(0, 229, 255, 0.45)] transition-all disabled:opacity-50 cursor-pointer"
               >
                 <span>{isSubmitting ? "REGISTERING REQUEST..." : "CONFIRM PASS RESERVATION"}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
               <div className="flex items-center justify-center gap-2 text-[10px] font-mono text-[#888888]">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#FF6A00]" />
+                <ShieldCheck className="w-3.5 h-3.5 text-[#00E5FF]" />
                 <span>100% Official Artist Reservation • Direct Concierge Verification</span>
               </div>
             </form>

@@ -54,7 +54,7 @@ export function ArenaStage() {
       {/* Amber Glowing Stage Trim */}
       <mesh position={[0, 0.92, 10]}>
         <boxGeometry args={[32.1, 0.06, 0.06]} />
-        <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+        <meshBasicMaterial color="#00E5FF" toneMapped={false} />
       </mesh>
 
       {/* 3. Massive Stadium Center LED Video Wall (Back of Stage) */}
@@ -99,7 +99,7 @@ export function ArenaStage() {
         {/* Neon Amber Underglow Ring */}
         <mesh position={[0, -0.22, 0]}>
           <torusGeometry args={[11.9, 0.08, 12, 64]} />
-          <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+          <meshBasicMaterial color="#00E5FF" toneMapped={false} />
         </mesh>
         {/* Downward Stadium Floodlights mounted on halo */}
         {[-8, -4, 0, 4, 8].map((x, i) => (

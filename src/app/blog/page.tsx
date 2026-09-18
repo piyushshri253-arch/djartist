@@ -30,13 +30,13 @@ export default function BlogPage() {
     <main className="min-h-screen pt-32 pb-24 px-6 sm:px-10 max-w-[1400px] mx-auto">
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto mb-16">
-        <span className="text-xs font-bold tracking-[0.24em] text-[#FF8400] uppercase block mb-3">
+        <span className="text-xs font-bold tracking-[0.24em] text-[#00B4D8] uppercase block mb-3">
           EDITORIAL & DISPATCHES
         </span>
         <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight mb-4">
-          STUDIO <span className="text-[#FF6A00]">CHRONICLES</span>
+          STUDIO <span className="text-[#00E5FF]">CHRONICLES</span>
         </h1>
-        <p className="text-sm sm:text-base text-[#969696] leading-relaxed">
+        <p className="text-sm sm:text-base text-[#8A8D93] leading-relaxed">
           Deep dives into sound architecture, analog modular synthesis, international festival culture, and reflections from the touring universe.
         </p>
 
@@ -53,8 +53,8 @@ export default function BlogPage() {
               onClick={() => setFilter(tab.id)}
               className={`px-5 py-2 rounded-full text-xs font-bold tracking-[0.14em] uppercase transition-all ${
                 filter === tab.id
-                  ? "bg-[#FF6A00] text-black shadow-spark"
-                  : "bg-white/5 text-[#969696] hover:text-white border border-white/10"
+                  ? "bg-[#00E5FF] text-black shadow-spark"
+                  : "bg-white/5 text-[#8A8D93] hover:text-white border border-white/10"
               }`}
             >
               {tab.label}
@@ -68,7 +68,7 @@ export default function BlogPage() {
         {filtered.map((post) => (
           <article
             key={post.id}
-            className="glass-card rounded-2xl overflow-hidden border border-white/10 hover:border-[#FF6A00]/40 transition-all duration-300 flex flex-col justify-between group"
+            className="glass-card rounded-2xl overflow-hidden border border-white/10 hover:border-[#00E5FF]/40 transition-all duration-300 flex flex-col justify-between group"
           >
             <div className="relative h-60 w-full overflow-hidden bg-black/60">
               <img
@@ -76,26 +76,26 @@ export default function BlogPage() {
                 alt={post.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/80 backdrop-blur-md text-[10px] font-bold tracking-wider text-[#FF8400] uppercase border border-white/10">
+              <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/80 backdrop-blur-md text-[10px] font-bold tracking-wider text-[#00B4D8] uppercase border border-white/10">
                 {post.category}
               </span>
             </div>
 
             <div className="p-6 flex-1 flex flex-col justify-between">
               <div>
-                <div className="flex items-center gap-3 text-xs text-[#969696] font-mono mb-2">
+                <div className="flex items-center gap-3 text-xs text-[#8A8D93] font-mono mb-2">
                   <span>{post.dateDisplay}</span>
                   <span>•</span>
                   <span>{post.readTime}</span>
                 </div>
 
-                <h3 className="text-xl font-bold text-white tracking-tight group-hover:text-[#FF8400] transition-colors mb-3">
+                <h3 className="text-xl font-bold text-white tracking-tight group-hover:text-[#00B4D8] transition-colors mb-3">
                   <Link href={`/blog/${post.slug || post.id}`}>
                     {post.title}
                   </Link>
                 </h3>
 
-                <p className="text-xs text-[#969696] leading-relaxed line-clamp-3 mb-6">
+                <p className="text-xs text-[#8A8D93] leading-relaxed line-clamp-3 mb-6">
                   {post.excerpt}
                 </p>
               </div>
@@ -106,7 +106,7 @@ export default function BlogPage() {
                 </span>
                 <Link
                   href={`/blog/${post.slug || post.id}`}
-                  className="text-xs font-bold tracking-wider text-[#FF8400] hover:text-white transition-colors flex items-center gap-1.5"
+                  className="text-xs font-bold tracking-wider text-[#00B4D8] hover:text-white transition-colors flex items-center gap-1.5"
                 >
                   <span>Read Article</span>
                   <ArrowRight className="w-3.5 h-3.5" />

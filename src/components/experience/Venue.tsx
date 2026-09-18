@@ -29,7 +29,7 @@ export function Venue() {
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, -85]} receiveShadow>
         <planeGeometry args={[44, 520]} />
         <meshStandardMaterial
-          color="#060608"
+          color="#0B0C10"
           roughness={0.32}
           metalness={0.4}
         />
@@ -38,11 +38,11 @@ export function Venue() {
       {/* 2. Perimeter Amber Guide LED Strip (Floor Left & Right) */}
       <mesh position={[-7.9, 0.02, -85]}>
         <boxGeometry args={[0.08, 0.03, 510]} />
-        <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+        <meshBasicMaterial color="#00E5FF" toneMapped={false} />
       </mesh>
       <mesh position={[7.9, 0.02, -85]}>
         <boxGeometry args={[0.08, 0.03, 510]} />
-        <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+        <meshBasicMaterial color="#00E5FF" toneMapped={false} />
       </mesh>
 
       {/* 3. Structural Heavy Steel I-Beam Columns */}
@@ -51,12 +51,12 @@ export function Venue() {
           {/* Main vertical column */}
           <mesh castShadow receiveShadow>
             <boxGeometry args={[0.45, 9.0, 0.45]} />
-            <meshStandardMaterial color="#0b0b0e" roughness={0.4} metalness={0.8} />
+            <meshStandardMaterial color="#1F2833" roughness={0.4} metalness={0.8} />
           </mesh>
           {/* Base mounting plate */}
           <mesh position={[0, -4.4, 0]}>
             <boxGeometry args={[0.85, 0.2, 0.85]} />
-            <meshStandardMaterial color="#111116" roughness={0.3} metalness={0.85} />
+            <meshStandardMaterial color="#1F2833" roughness={0.3} metalness={0.85} />
           </mesh>
         </group>
       ))}

@@ -17,9 +17,9 @@ export function EmberParticles({ count = 800 }: EmberParticlesProps) {
     const sca = new Float32Array(count);
     const spd = new Float32Array(count);
 
-    // Color gradient between flame orange (#FF6A00), golden amber (#FF8400), and gold (#FFB020)
-    const colorA = new THREE.Color("#FF6A00");
-    const colorB = new THREE.Color("#FF8400");
+    // Color gradient between flame orange (#00E5FF), golden amber (#00B4D8), and gold (#FFB020)
+    const colorA = new THREE.Color("#00E5FF");
+    const colorB = new THREE.Color("#00B4D8");
     const colorC = new THREE.Color("#FFC837");
 
     for (let i = 0; i < count; i++) {

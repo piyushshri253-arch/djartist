@@ -33,13 +33,13 @@ export function Backstage() {
         {/* Stacked smaller case */}
         <mesh position={[0.1, 1.7, 0]} castShadow>
           <boxGeometry args={[1.1, 0.8, 0.9]} />
-          <meshStandardMaterial color="#111116" roughness={0.35} metalness={0.75} />
+          <meshStandardMaterial color="#1F2833" roughness={0.35} metalness={0.75} />
         </mesh>
 
         {/* Stencil Label Plate */}
         <mesh position={[0.71, 0.7, 0]} rotation={[0, Math.PI / 2, 0]}>
           <planeGeometry args={[0.9, 0.3]} />
-          <meshBasicMaterial color="#FF6A00" />
+          <meshBasicMaterial color="#00E5FF" />
         </mesh>
       </group>
 
@@ -51,11 +51,11 @@ export function Backstage() {
         </mesh>
         <mesh position={[-0.1, 1.85, 0]} castShadow>
           <boxGeometry args={[1.2, 0.7, 0.9]} />
-          <meshStandardMaterial color="#111116" roughness={0.35} metalness={0.75} />
+          <meshStandardMaterial color="#1F2833" roughness={0.35} metalness={0.75} />
         </mesh>
         <mesh position={[-0.76, 0.8, 0]} rotation={[0, -Math.PI / 2, 0]}>
           <planeGeometry args={[0.9, 0.3]} />
-          <meshBasicMaterial color="#FF8400" />
+          <meshBasicMaterial color="#00B4D8" />
         </mesh>
       </group>
 
@@ -73,7 +73,7 @@ export function Backstage() {
       <group position={[-5.2, 3.2, 2]}>
         <mesh>
           <cylinderGeometry args={[0.04, 0.04, 4.5, 16]} />
-          <meshBasicMaterial color="#FF8400" toneMapped={false} />
+          <meshBasicMaterial color="#00B4D8" toneMapped={false} />
         </mesh>
         <pointLight color="#FFA030" intensity={2.8} distance={7} />
       </group>
@@ -81,9 +81,9 @@ export function Backstage() {
       <group position={[5.2, 3.2, -6]}>
         <mesh>
           <cylinderGeometry args={[0.04, 0.04, 4.5, 16]} />
-          <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+          <meshBasicMaterial color="#00E5FF" toneMapped={false} />
         </mesh>
-        <pointLight color="#FF6A00" intensity={2.8} distance={7} />
+        <pointLight color="#00E5FF" intensity={2.8} distance={7} />
       </group>
     </group>
   );

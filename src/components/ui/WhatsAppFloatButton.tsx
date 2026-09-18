@@ -25,7 +25,7 @@ export function WhatsAppFloatButton({
     >
       {/* Floating Tooltip / Banner (dismissible) */}
       {showTooltip && (
-        <div className="relative group bg-[#111116] border border-[#25D366]/40 text-white rounded-2xl p-3.5 shadow-[0_10px_35px_rgba(0,0,0,0.8),0_0_20px_rgba(37,211,102,0.15)] max-w-xs animate-in fade-in slide-in-from-bottom-3 duration-300 backdrop-blur-md">
+        <div className="relative group bg-[#1F2833] border border-[#25D366]/40 text-white rounded-2xl p-3.5 shadow-[0_10px_35px_rgba(0,0,0,0.8),0_0_20px_rgba(37,211,102,0.15)] max-w-xs animate-in fade-in slide-in-from-bottom-3 duration-300 backdrop-blur-md">
           {/* Close button for tooltip */}
           <button
             type="button"
@@ -50,7 +50,7 @@ export function WhatsAppFloatButton({
               <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#25D366] to-[#128C7E] flex items-center justify-center text-white shadow-[0_0_15px_rgba(37,211,102,0.35)]">
                 <WhatsAppIcon className="w-5 h-5 fill-white" />
               </div>
-              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#00FF88] border-2 border-[#111116] animate-pulse" />
+              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#00FF88] border-2 border-[#1F2833] animate-pulse" />
             </div>
 
             <div className="min-w-0 pr-1">

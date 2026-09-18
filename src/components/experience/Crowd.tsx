@@ -70,7 +70,7 @@ export function Crowd() {
       {/* 2. Instanced Glowing Amber Concert Wristbands / Glow Sticks */}
       <instancedMesh ref={glowMeshRef} args={[undefined, undefined, count]}>
         <sphereGeometry args={[0.04, 6, 6]} />
-        <meshBasicMaterial color="#FF8400" toneMapped={false} />
+        <meshBasicMaterial color="#00B4D8" toneMapped={false} />
       </instancedMesh>
 
       {/* 3. Sweeping Stage Spotlight Cutting Through the Crowd Haze */}

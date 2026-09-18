@@ -26,7 +26,7 @@ function ArticleCard({ position, rotation = [0, 0, 0], category, title, readTime
       </mesh>
 
       {/* Category */}
-      <Text position={[-1.7, 0.85, 0.06]} fontSize={0.16} color="#FF6A00" anchorX="left" letterSpacing={0.14}>
+      <Text position={[-1.7, 0.85, 0.06]} fontSize={0.16} color="#00E5FF" anchorX="left" letterSpacing={0.14}>
         {category} • {readTime}
       </Text>
 
@@ -35,7 +35,7 @@ function ArticleCard({ position, rotation = [0, 0, 0], category, title, readTime
         position={[-1.7, 0.15, 0.06]}
         fontSize={0.32}
         font="https://fonts.gstatic.com/s/spacegrotesk/v16/V8mDoQDjQSkFtoMM3T6r8E7mPb54C_k3HqUtEw.woff"
-        color="#F4F1EA"
+        color="#F5F6FA"
         anchorX="left"
         maxWidth={3.5}
         lineHeight={1.2}
@@ -44,7 +44,7 @@ function ArticleCard({ position, rotation = [0, 0, 0], category, title, readTime
       </Text>
 
       {/* Action */}
-      <Text position={[-1.7, -0.85, 0.06]} fontSize={0.18} color="#FF8400" anchorX="left" letterSpacing={0.12}>
+      <Text position={[-1.7, -0.85, 0.06]} fontSize={0.18} color="#00B4D8" anchorX="left" letterSpacing={0.12}>
         READ DISPATCH &rarr;
       </Text>
     </group>
@@ -56,14 +56,14 @@ export function BlogRoom3D() {
     <group position={[0, 2.5, -135]}>
       {/* Header */}
       <group position={[0, 3.4, 4]}>
-        <Text fontSize={0.22} color="#FF8400" anchorX="center" letterSpacing={0.2}>
+        <Text fontSize={0.22} color="#00B4D8" anchorX="center" letterSpacing={0.2}>
           CHAPTER 08 • EDITORIAL & DISPATCHES
         </Text>
         <Text
           position={[0, -0.45, 0]}
           fontSize={0.82}
           font="https://fonts.gstatic.com/s/spacegrotesk/v16/V8mDoQDjQSkFtoMM3T6r8E7mPb54C_k3HqUtEw.woff"
-          color="#F4F1EA"
+          color="#F5F6FA"
           anchorX="center"
           letterSpacing={0.1}
         >

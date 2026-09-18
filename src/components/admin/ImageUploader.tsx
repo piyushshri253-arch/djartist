@@ -111,7 +111,7 @@ export function ImageUploader({
             onClick={() => setActiveMode("upload")}
             className={`px-2 py-1 rounded flex items-center gap-1 transition-colors ${
               activeMode === "upload"
-                ? "bg-[#FF6A00] text-black font-bold"
+                ? "bg-[#00E5FF] text-black font-bold"
                 : "text-[#888888] hover:text-white"
             }`}
           >
@@ -124,7 +124,7 @@ export function ImageUploader({
             onClick={() => setActiveMode("presets")}
             className={`px-2 py-1 rounded flex items-center gap-1 transition-colors ${
               activeMode === "presets"
-                ? "bg-[#FF6A00] text-black font-bold"
+                ? "bg-[#00E5FF] text-black font-bold"
                 : "text-[#888888] hover:text-white"
             }`}
           >
@@ -137,7 +137,7 @@ export function ImageUploader({
             onClick={() => setActiveMode("url")}
             className={`px-2 py-1 rounded flex items-center gap-1 transition-colors ${
               activeMode === "url"
-                ? "bg-[#FF6A00] text-black font-bold"
+                ? "bg-[#00E5FF] text-black font-bold"
                 : "text-[#888888] hover:text-white"
             }`}
           >
@@ -191,8 +191,8 @@ export function ImageUploader({
               onClick={() => fileInputRef.current?.click()}
               className={`relative cursor-pointer rounded-xl border-2 border-dashed p-4 text-center transition-all ${
                 isDragging
-                  ? "border-[#FF6A00] bg-[#FF6A00]/10 scale-[0.99]"
-                  : "border-white/15 hover:border-[#FF6A00]/50 hover:bg-white/[0.02]"
+                  ? "border-[#00E5FF] bg-[#00E5FF]/10 scale-[0.99]"
+                  : "border-white/15 hover:border-[#00E5FF]/50 hover:bg-white/[0.02]"
               }`}
             >
               <input
@@ -209,14 +209,14 @@ export function ImageUploader({
 
               {isUploading ? (
                 <div className="flex flex-col items-center justify-center py-2 space-y-2">
-                  <RefreshCw className="w-6 h-6 text-[#FF6A00] animate-spin" />
-                  <span className="text-xs font-mono text-[#FF8400]">
+                  <RefreshCw className="w-6 h-6 text-[#00E5FF] animate-spin" />
+                  <span className="text-xs font-mono text-[#00B4D8]">
                     Uploading image from computer...
                   </span>
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-1 space-y-1.5">
-                  <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-[#FF6A00]">
+                  <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-[#00E5FF]">
                     <UploadCloud className="w-5 h-5" />
                   </div>
                   <div>
@@ -255,13 +255,13 @@ export function ImageUploader({
                     onClick={() => onChange(img)}
                     className={`relative aspect-video rounded-md overflow-hidden border transition-all ${
                       isSelected
-                        ? "border-[#FF6A00] ring-2 ring-[#FF6A00]/50 scale-95"
+                        ? "border-[#00E5FF] ring-2 ring-[#00E5FF]/50 scale-95"
                         : "border-white/10 hover:border-white/40"
                     }`}
                   >
                     <Image src={img} alt="Preset" fill className="object-cover" />
                     {isSelected && (
-                      <div className="absolute inset-0 bg-[#FF6A00]/40 flex items-center justify-center">
+                      <div className="absolute inset-0 bg-[#00E5FF]/40 flex items-center justify-center">
                         <Check className="w-3.5 h-3.5 text-black stroke-[3]" />
                       </div>
                     )}
@@ -283,7 +283,7 @@ export function ImageUploader({
               placeholder="e.g. /images/hero.jpg or https://..."
               value={value}
               onChange={(e) => onChange(e.target.value)}
-              className="w-full bg-[#161622] border border-white/10 rounded-lg p-2.5 text-xs text-white focus:border-[#FF6A00] focus:outline-none font-mono"
+              className="w-full bg-[#161622] border border-white/10 rounded-lg p-2.5 text-xs text-white focus:border-[#00E5FF] focus:outline-none font-mono"
             />
           </div>
         )}

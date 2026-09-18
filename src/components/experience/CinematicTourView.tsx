@@ -72,7 +72,7 @@ export function CinematicTourView({ progress }: CinematicTourViewProps) {
   const transform = `perspective(1200px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) scale(1.03)`;
 
   return (
-    <div className="fixed inset-0 w-screen h-screen overflow-hidden bg-[#050505] select-none">
+    <div className="fixed inset-0 w-screen h-screen overflow-hidden bg-[#0B0C10] select-none">
       {/* 3D Tilted Spatial Canvas Layer */}
       <div
         className="relative w-full h-full transition-transform duration-200 ease-out"
@@ -139,8 +139,8 @@ export function CinematicTourView({ progress }: CinematicTourViewProps) {
           <div className="max-w-3xl">
             {/* Live Telemetry Tag */}
             <div className="flex items-center gap-2.5 mb-3">
-              <span className="w-2 h-2 rounded-full bg-[#FF6A00] animate-pulse shadow-[0_0_12px_#FF6A00]" />
-              <span className="text-[10px] font-mono tracking-[0.26em] text-[#FF6A00] uppercase font-bold">
+              <span className="w-2 h-2 rounded-full bg-[#00E5FF] animate-pulse shadow-[0_0_12px_#00E5FF]" />
+              <span className="text-[10px] font-mono tracking-[0.26em] text-[#00E5FF] uppercase font-bold">
                 {activeSector.telemetry}
               </span>
             </div>

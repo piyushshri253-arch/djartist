@@ -29,7 +29,7 @@ export function LedWallPortal() {
           <planeGeometry args={[14, 10]} />
           <meshStandardMaterial
             map={ledTexture}
-            emissive="#FF6A00"
+            emissive="#00E5FF"
             emissiveIntensity={0.4}
             roughness={0.2}
             metalness={0.8}
@@ -41,7 +41,7 @@ export function LedWallPortal() {
           <planeGeometry args={[14, 10]} />
           <meshStandardMaterial
             map={ledTexture}
-            emissive="#FF6A00"
+            emissive="#00E5FF"
             emissiveIntensity={0.4}
             roughness={0.2}
             metalness={0.8}
@@ -53,7 +53,7 @@ export function LedWallPortal() {
           <planeGeometry args={[10, 3.2]} />
           <meshStandardMaterial
             map={ledTexture}
-            emissive="#FF8400"
+            emissive="#00B4D8"
             emissiveIntensity={0.5}
             roughness={0.2}
           />
@@ -65,7 +65,7 @@ export function LedWallPortal() {
         <Text
           position={[0, 0.5, 0]}
           fontSize={1.1}
-          color="#F5F2EA"
+          color="#F5F6FA"
           anchorX="center"
           anchorY="middle"
           letterSpacing={0.28}
@@ -82,7 +82,7 @@ export function LedWallPortal() {
           letterSpacing={0.35}
         >
           ENTER THE HYPERDIMENSION
-          <meshBasicMaterial color="#F5F2EA" toneMapped={false} />
+          <meshBasicMaterial color="#F5F6FA" toneMapped={false} />
         </Text>
       </group>
 
@@ -91,7 +91,7 @@ export function LedWallPortal() {
         {/* Kinetic Rotating Outer Neon Ring */}
         <mesh ref={kineticRing1} position={[0, 0, -0.1]}>
           <torusGeometry args={[4.2, 0.08, 16, 64]} />
-          <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+          <meshBasicMaterial color="#00E5FF" toneMapped={false} />
         </mesh>
 
         {/* Kinetic Rotating Inner Secondary Purple Ring */}
@@ -104,7 +104,7 @@ export function LedWallPortal() {
         <pointLight
           ref={portalGlow}
           position={[0, 0, -1]}
-          color="#FF8400"
+          color="#00B4D8"
           intensity={4.5}
           distance={16}
           decay={2}
@@ -122,7 +122,7 @@ export function LedWallPortal() {
             >
               <boxGeometry args={[0.04, 0.04, 8]} />
               <meshBasicMaterial
-                color={i % 3 === 0 ? "#7A4CFF" : "#FF6A00"}
+                color={i % 3 === 0 ? "#7A4CFF" : "#00E5FF"}
                 toneMapped={false}
               />
             </mesh>

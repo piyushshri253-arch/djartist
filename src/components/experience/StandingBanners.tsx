@@ -37,7 +37,7 @@ function Standee({ position, rotationY, posterSrc, cityName, dateText }: Standee
       {/* 4. Glowing Amber Edge Frame Trim */}
       <mesh position={[0, 1.7, 0.032]}>
         <boxGeometry args={[1.44, 3.24, 0.01]} />
-        <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+        <meshBasicMaterial color="#00E5FF" toneMapped={false} />
       </mesh>
 
       {/* Top City Header Badge */}

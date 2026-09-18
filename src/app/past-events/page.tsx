@@ -144,14 +144,14 @@ export default function PastEventsPage() {
     <main className="min-h-screen pt-32 pb-28 px-4 sm:px-8 max-w-[1400px] mx-auto">
       {/* Header Banner */}
       <div className="text-center max-w-3xl mx-auto mb-12">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FF6A00]/10 border border-[#FF6A00]/30 text-xs font-bold tracking-[0.2em] text-[#FF8400] uppercase mb-4">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/30 text-xs font-bold tracking-[0.2em] text-[#00B4D8] uppercase mb-4">
           <CalendarDays className="w-3.5 h-3.5" />
           <span>CONCERT ARCHIVES & RETROSPECTIVES</span>
         </div>
         <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tight mb-4 uppercase">
-          LEGENDARY <span className="text-[#FF6A00]">NIGHTS</span>
+          LEGENDARY <span className="text-[#00E5FF]">NIGHTS</span>
         </h1>
-        <p className="text-sm sm:text-base text-[#969696] leading-relaxed">
+        <p className="text-sm sm:text-base text-[#8A8D93] leading-relaxed">
           Echoes of tens of thousands united under volumetric laser arrays and roaring stadium acoustics. Relive the greatest completed arena shows and festival sets in DJ G SPARK history.
         </p>
       </div>
@@ -165,10 +165,10 @@ export default function PastEventsPage() {
           { num: "100%", label: "SOLD OUT ARENAS" },
         ].map((stat, i) => (
           <div key={i} className="glass-card p-5 rounded-2xl text-center border border-white/10 bg-white/[0.02]">
-            <span className="text-2xl sm:text-4xl font-black text-[#FF6A00] block mb-1 font-sans">
+            <span className="text-2xl sm:text-4xl font-black text-[#00E5FF] block mb-1 font-sans">
               {stat.num}
             </span>
-            <span className="text-[10px] font-bold tracking-[0.18em] text-[#969696] uppercase">
+            <span className="text-[10px] font-bold tracking-[0.18em] text-[#8A8D93] uppercase">
               {stat.label}
             </span>
           </div>
@@ -180,13 +180,13 @@ export default function PastEventsPage() {
         {/* Top Row: Search Input + Sorting */}
         <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between">
           <div className="relative flex-1">
-            <Search className="w-4 h-4 text-[#FF8400] absolute left-4 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-[#00B4D8] absolute left-4 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search past events by name, city, or venue..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-10 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder-[#777] focus:outline-none focus:border-[#FF6A00] transition-colors"
+              className="w-full pl-11 pr-10 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder-[#777] focus:outline-none focus:border-[#00E5FF] transition-colors"
             />
             {searchQuery && (
               <button
@@ -199,8 +199,8 @@ export default function PastEventsPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-[#969696]">
-              <ArrowUpDown className="w-3.5 h-3.5 text-[#FF8400]" />
+            <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-[#8A8D93]">
+              <ArrowUpDown className="w-3.5 h-3.5 text-[#00B4D8]" />
               <span>Sort:</span>
               <select
                 value={sortBy}
@@ -215,7 +215,7 @@ export default function PastEventsPage() {
             {hasActiveFilters && (
               <button
                 onClick={resetFilters}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#FF6A00]/10 border border-[#FF6A00]/30 text-xs font-bold text-[#FF8400] hover:bg-[#FF6A00]/20 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#00E5FF]/10 border border-[#00E5FF]/30 text-xs font-bold text-[#00B4D8] hover:bg-[#00E5FF]/20 transition-colors"
               >
                 <X className="w-3.5 h-3.5" />
                 <span>Reset</span>
@@ -234,7 +234,7 @@ export default function PastEventsPage() {
             <select
               value={selectedCity}
               onChange={(e) => setSelectedCity(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-xs focus:outline-none focus:border-[#FF6A00] transition-colors cursor-pointer"
+              className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-xs focus:outline-none focus:border-[#00E5FF] transition-colors cursor-pointer"
             >
               <option value="all" className="bg-[#111] text-white">All Cities ({uniqueCities.length})</option>
               {uniqueCities.map((c) => (
@@ -253,7 +253,7 @@ export default function PastEventsPage() {
             <select
               value={selectedLocation}
               onChange={(e) => setSelectedLocation(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-xs focus:outline-none focus:border-[#FF6A00] transition-colors cursor-pointer"
+              className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-xs focus:outline-none focus:border-[#00E5FF] transition-colors cursor-pointer"
             >
               <option value="all" className="bg-[#111] text-white">All Venues ({uniqueLocations.length})</option>
               {uniqueLocations.map((v) => (
@@ -272,7 +272,7 @@ export default function PastEventsPage() {
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-xs focus:outline-none focus:border-[#FF6A00] transition-colors cursor-pointer"
+              className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-xs focus:outline-none focus:border-[#00E5FF] transition-colors cursor-pointer"
             >
               <option value="all" className="bg-[#111] text-white">All Years</option>
               {uniqueYears.map((yr) => (
@@ -293,7 +293,7 @@ export default function PastEventsPage() {
                 type="date"
                 value={fromDate}
                 onChange={(e) => setFromDate(e.target.value)}
-                className="w-1/2 px-2 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-[11px] focus:outline-none focus:border-[#FF6A00] transition-colors"
+                className="w-1/2 px-2 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-[11px] focus:outline-none focus:border-[#00E5FF] transition-colors"
                 placeholder="From"
               />
               <span className="text-[#666] text-xs">-</span>
@@ -301,7 +301,7 @@ export default function PastEventsPage() {
                 type="date"
                 value={toDate}
                 onChange={(e) => setToDate(e.target.value)}
-                className="w-1/2 px-2 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-[11px] focus:outline-none focus:border-[#FF6A00] transition-colors"
+                className="w-1/2 px-2 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-[11px] focus:outline-none focus:border-[#00E5FF] transition-colors"
                 placeholder="To"
               />
             </div>
@@ -315,7 +315,7 @@ export default function PastEventsPage() {
             <strong className="text-white">{events.length}</strong> past events
           </span>
           {hasActiveFilters && (
-            <span className="text-[#FF8400] text-[11px]">
+            <span className="text-[#00B4D8] text-[11px]">
               Active filter conditions applied
             </span>
           )}
@@ -334,14 +334,14 @@ export default function PastEventsPage() {
       {/* Empty State */}
       {!loading && filteredEvents.length === 0 && (
         <div className="text-center py-20 glass-card rounded-2xl border border-white/10 max-w-lg mx-auto p-8">
-          <Calendar className="w-12 h-12 text-[#FF6A00]/40 mx-auto mb-4" />
+          <Calendar className="w-12 h-12 text-[#00E5FF]/40 mx-auto mb-4" />
           <h3 className="text-lg font-bold text-white mb-2">No Past Events Found</h3>
-          <p className="text-xs text-[#969696] mb-6">
+          <p className="text-xs text-[#8A8D93] mb-6">
             No past concerts or festivals match your search criteria. Try clearing or relaxing your filters.
           </p>
           <button
             onClick={resetFilters}
-            className="px-5 py-2.5 rounded-full bg-white/10 text-white hover:bg-[#FF6A00] hover:text-black font-bold text-xs uppercase tracking-wider transition-all"
+            className="px-5 py-2.5 rounded-full bg-white/10 text-white hover:bg-[#00E5FF] hover:text-black font-bold text-xs uppercase tracking-wider transition-all"
           >
             Clear All Filters
           </button>
@@ -358,7 +358,7 @@ export default function PastEventsPage() {
             return (
               <article
                 key={ev.id}
-                className="glass-card rounded-2xl overflow-hidden border border-white/10 hover:border-[#FF6A00]/40 transition-all duration-300 flex flex-col justify-between group shadow-lg hover:shadow-2xl"
+                className="glass-card rounded-2xl overflow-hidden border border-white/10 hover:border-[#00E5FF]/40 transition-all duration-300 flex flex-col justify-between group shadow-lg hover:shadow-2xl"
               >
                 {/* Event Image */}
                 <div className="relative h-64 w-full overflow-hidden bg-black/60">
@@ -369,20 +369,20 @@ export default function PastEventsPage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
                   
-                  <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/80 backdrop-blur-md text-[10px] font-bold tracking-wider text-[#FF8400] uppercase border border-white/10">
+                  <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/80 backdrop-blur-md text-[10px] font-bold tracking-wider text-[#00B4D8] uppercase border border-white/10">
                     {eventYear} ARCHIVE
                   </span>
 
-                  <span className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/80 backdrop-blur-md text-[10px] font-mono text-[#F4F1EA] border border-white/10">
-                    <Users className="w-3 h-3 text-[#FF6A00]" />
+                  <span className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/80 backdrop-blur-md text-[10px] font-mono text-[#F5F6FA] border border-white/10">
+                    <Users className="w-3 h-3 text-[#00E5FF]" />
                     <span>{ev.attendance ? ev.attendance.toLocaleString() : (ev.capacity || "10,000+")} Fans</span>
                   </span>
 
                   <div className="absolute bottom-4 left-4 right-4">
-                    <span className="text-[11px] font-mono text-[#FF8400] font-bold block mb-0.5">
+                    <span className="text-[11px] font-mono text-[#00B4D8] font-bold block mb-0.5">
                       {ev.dateDisplay || ev.date}
                     </span>
-                    <h3 className="text-lg font-bold text-white tracking-tight leading-snug drop-shadow group-hover:text-[#FF8400] transition-colors">
+                    <h3 className="text-lg font-bold text-white tracking-tight leading-snug drop-shadow group-hover:text-[#00B4D8] transition-colors">
                       <Link href={detailUrl}>
                         {ev.title}
                       </Link>
@@ -393,21 +393,21 @@ export default function PastEventsPage() {
                 {/* Event Information */}
                 <div className="p-6 flex-1 flex flex-col justify-between">
                   <div>
-                    <div className="flex items-center gap-2 text-xs text-[#969696] mb-3">
-                      <MapPin className="w-3.5 h-3.5 text-[#FF8400] shrink-0" />
+                    <div className="flex items-center gap-2 text-xs text-[#8A8D93] mb-3">
+                      <MapPin className="w-3.5 h-3.5 text-[#00B4D8] shrink-0" />
                       <span className="truncate">
                         {ev.venue}, <strong className="text-white">{ev.city}</strong>
                       </span>
                     </div>
 
-                    <p className="text-xs text-[#969696] leading-relaxed line-clamp-3 mb-4">
+                    <p className="text-xs text-[#8A8D93] leading-relaxed line-clamp-3 mb-4">
                       {ev.description || ev.summary || "A monumental headline performance featuring synchronized laser gantries, live uncompressed 24-bit audio, and peak crowd energy."}
                     </p>
 
                     {(ev.highlightTrack || ev.highlight_track) && (
-                      <div className="flex items-center gap-2 text-xs text-[#F4F1EA] bg-white/5 p-3 rounded-lg border border-white/5 mb-4">
-                        <Music className="w-3.5 h-3.5 text-[#FF6A00] shrink-0" />
-                        <span className="text-[#969696] shrink-0">Peak Anthem:</span>
+                      <div className="flex items-center gap-2 text-xs text-[#F5F6FA] bg-white/5 p-3 rounded-lg border border-white/5 mb-4">
+                        <Music className="w-3.5 h-3.5 text-[#00E5FF] shrink-0" />
+                        <span className="text-[#8A8D93] shrink-0">Peak Anthem:</span>
                         <strong className="text-white truncate">{ev.highlightTrack || ev.highlight_track}</strong>
                       </div>
                     )}
@@ -417,7 +417,7 @@ export default function PastEventsPage() {
                   <div className="pt-4 border-t border-white/10 flex items-center justify-between">
                     <Link
                       href={detailUrl}
-                      className="w-full py-2.5 rounded-xl bg-white/5 hover:bg-[#FF6A00] text-white hover:text-black font-bold text-xs tracking-wider uppercase flex items-center justify-center gap-2 transition-all border border-white/10 group-hover:border-[#FF6A00]"
+                      className="w-full py-2.5 rounded-xl bg-white/5 hover:bg-[#00E5FF] text-white hover:text-black font-bold text-xs tracking-wider uppercase flex items-center justify-center gap-2 transition-all border border-white/10 group-hover:border-[#00E5FF]"
                     >
                       <span>View Event</span>
                       <ArrowRight className="w-3.5 h-3.5" />

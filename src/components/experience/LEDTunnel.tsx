@@ -31,7 +31,7 @@ export function LEDTunnel() {
         <cylinderGeometry args={[6.2, 6.2, 54, 36, 1, true]} />
         <meshStandardMaterial
           map={ledTexture}
-          emissive="#FF6A00"
+          emissive="#00E5FF"
           emissiveIntensity={0.55}
           roughness={0.2}
           side={THREE.BackSide}
@@ -45,7 +45,7 @@ export function LEDTunnel() {
             <mesh>
               <torusGeometry args={[5.9, 0.08, 12, 48]} />
               <meshBasicMaterial
-                color={idx % 2 === 0 ? "#FF6A00" : "#7A4CFF"}
+                color={idx % 2 === 0 ? "#00E5FF" : "#7A4CFF"}
                 toneMapped={false}
               />
             </mesh>
@@ -65,7 +65,7 @@ export function LEDTunnel() {
           <cylinderGeometry args={[8.5, 8.5, 3.2, 32, 1, true, -Math.PI / 3, (2 * Math.PI) / 3]} />
           <meshStandardMaterial
             color="#08080c"
-            emissive="#FF6A00"
+            emissive="#00E5FF"
             emissiveIntensity={0.7}
             roughness={0.3}
             side={THREE.DoubleSide}
@@ -75,7 +75,7 @@ export function LEDTunnel() {
         {/* Center Fly-Through Arch Trim */}
         <mesh position={[0, 2.5, 0]}>
           <torusGeometry args={[3.6, 0.12, 16, 36, Math.PI]} />
-          <meshBasicMaterial ref={portalGlowRef} color="#FF6A00" toneMapped={false} />
+          <meshBasicMaterial ref={portalGlowRef} color="#00E5FF" toneMapped={false} />
         </mesh>
       </group>
 

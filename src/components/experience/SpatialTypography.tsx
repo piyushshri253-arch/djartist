@@ -21,7 +21,7 @@ export function SpatialTypography() {
         <Text
           position={[0, -0.85, 0]}
           fontSize={0.4}
-          color="#FF6A00"
+          color="#00E5FF"
           anchorX="center"
           anchorY="middle"
           letterSpacing={0.25}
@@ -46,7 +46,7 @@ export function SpatialTypography() {
       <group position={[-3.8, 2.6, 58]} rotation={[0, Math.PI / 2.2, 0]}>
         <Text
           fontSize={0.25}
-          color="#FF6A00"
+          color="#00E5FF"
           anchorX="left"
           anchorY="middle"
           letterSpacing={0.24}
@@ -57,7 +57,7 @@ export function SpatialTypography() {
         <Text
           position={[0, -0.5, 0]}
           fontSize={0.48}
-          color="#F5F2EA"
+          color="#F5F6FA"
           anchorX="left"
           anchorY="middle"
           letterSpacing={0.06}
@@ -83,7 +83,7 @@ export function SpatialTypography() {
       <group position={[0, 5.2, 22]}>
         <Text
           fontSize={0.26}
-          color="#FF6A00"
+          color="#00E5FF"
           anchorX="center"
           anchorY="middle"
           letterSpacing={0.28}
@@ -108,7 +108,7 @@ export function SpatialTypography() {
       <group position={[3.6, 2.8, -7]} rotation={[0, -Math.PI / 2.4, 0]}>
         <Text
           fontSize={0.24}
-          color="#FF6A00"
+          color="#00E5FF"
           anchorX="left"
           anchorY="middle"
           letterSpacing={0.22}
@@ -119,7 +119,7 @@ export function SpatialTypography() {
         <Text
           position={[0, -0.45, 0]}
           fontSize={0.52}
-          color="#F5F2EA"
+          color="#F5F6FA"
           anchorX="left"
           anchorY="middle"
           letterSpacing={0.08}
@@ -156,7 +156,7 @@ export function SpatialTypography() {
         <Text
           position={[0, -0.55, 0]}
           fontSize={0.3}
-          color="#FF6A00"
+          color="#00E5FF"
           anchorX="left"
           anchorY="middle"
           letterSpacing={0.22}
@@ -170,7 +170,7 @@ export function SpatialTypography() {
       <group position={[0, 6.2, -120]}>
         <Text
           fontSize={0.3}
-          color="#FF6A00"
+          color="#00E5FF"
           anchorX="center"
           anchorY="middle"
           letterSpacing={0.28}
@@ -206,7 +206,7 @@ export function SpatialTypography() {
         <Text
           position={[0, -1.6, 0]}
           fontSize={0.85}
-          color="#FF6A00"
+          color="#00E5FF"
           anchorX="center"
           anchorY="middle"
           letterSpacing={0.24}

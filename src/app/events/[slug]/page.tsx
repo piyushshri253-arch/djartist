@@ -40,19 +40,19 @@ export default function EventSinglePage({ params }: { params: Promise<{ slug: st
             }')`,
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0B0C10] via-transparent to-transparent" />
 
         <div className="relative z-10 max-w-[1400px] mx-auto w-full">
           <Link
             href="/events"
-            className="inline-flex items-center gap-2 text-xs font-bold tracking-[0.16em] text-[#FF8400] uppercase hover:text-white transition-colors mb-6"
+            className="inline-flex items-center gap-2 text-xs font-bold tracking-[0.16em] text-[#00B4D8] uppercase hover:text-white transition-colors mb-6"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>All Tour Dates</span>
           </Link>
 
           <div className="flex items-center gap-3 mb-4">
-            <span className="px-3 py-1 rounded-full bg-[#FF6A00]/20 border border-[#FF6A00]/40 text-xs font-bold text-[#FF8400] uppercase">
+            <span className="px-3 py-1 rounded-full bg-[#00E5FF]/20 border border-[#00E5FF]/40 text-xs font-bold text-[#00B4D8] uppercase">
               {event.city} • {event.country}
             </span>
             <span className="px-3 py-1 rounded-full bg-white/10 text-xs font-bold text-white uppercase">
@@ -64,17 +64,17 @@ export default function EventSinglePage({ params }: { params: Promise<{ slug: st
             {event.title}
           </h1>
 
-          <div className="flex flex-wrap items-center gap-8 text-sm text-[#F4F1EA]">
+          <div className="flex flex-wrap items-center gap-8 text-sm text-[#F5F6FA]">
             <div className="flex items-center gap-2.5">
-              <Calendar className="w-4 h-4 text-[#FF8400]" />
+              <Calendar className="w-4 h-4 text-[#00B4D8]" />
               <span>{event.dateDisplay}</span>
             </div>
             <div className="flex items-center gap-2.5">
-              <Clock className="w-4 h-4 text-[#FF8400]" />
+              <Clock className="w-4 h-4 text-[#00B4D8]" />
               <span>{event.time}</span>
             </div>
             <div className="flex items-center gap-2.5">
-              <MapPin className="w-4 h-4 text-[#FF8400]" />
+              <MapPin className="w-4 h-4 text-[#00B4D8]" />
               <span>{event.venue}, {event.city}</span>
             </div>
           </div>
@@ -90,10 +90,10 @@ export default function EventSinglePage({ params }: { params: Promise<{ slug: st
               <h2 className="text-2xl font-bold text-white tracking-tight mb-4">
                 About The Arena Production
               </h2>
-              <p className="text-base text-[#969696] leading-relaxed mb-4">
+              <p className="text-base text-[#8A8D93] leading-relaxed mb-4">
                 {event.description}
               </p>
-              <p className="text-sm text-[#969696] leading-relaxed">
+              <p className="text-sm text-[#8A8D93] leading-relaxed">
                 Featuring the touring <strong>Spark Theory 360</strong> architecture with uncompressed L-Acoustics K1 line arrays, synchronized cryogenic jet cannons, and custom kinetic laser gantries calibrated specifically for {event.venue}.
               </p>
             </div>
@@ -114,16 +114,16 @@ export default function EventSinglePage({ params }: { params: Promise<{ slug: st
                     key={i}
                     className={`p-4 rounded-xl border flex items-start gap-4 ${
                       i === 3
-                        ? "bg-[#FF6A00]/10 border-[#FF6A00]/40 shadow-spark"
+                        ? "bg-[#00E5FF]/10 border-[#00E5FF]/40 shadow-spark"
                         : "bg-white/5 border-white/10"
                     }`}
                   >
-                    <span className="font-mono text-xs font-bold text-[#FF8400] min-w-[90px]">
+                    <span className="font-mono text-xs font-bold text-[#00B4D8] min-w-[90px]">
                       {slot.time}
                     </span>
                     <div>
                       <h4 className="text-sm font-bold text-white">{slot.title}</h4>
-                      <p className="text-xs text-[#969696]">{slot.desc}</p>
+                      <p className="text-xs text-[#8A8D93]">{slot.desc}</p>
                     </div>
                   </div>
                 ))}
@@ -134,14 +134,14 @@ export default function EventSinglePage({ params }: { params: Promise<{ slug: st
           {/* Sidebar */}
           <div className="space-y-8">
             <div className="glass-card p-6 rounded-2xl border border-white/10">
-              <span className="text-xs font-bold tracking-wider text-[#FF8400] uppercase block mb-1">
+              <span className="text-xs font-bold tracking-wider text-[#00B4D8] uppercase block mb-1">
                 Official Ticketing
               </span>
 
               <div className="space-y-4 mb-6">
                 {event.showPrice !== false ? (
                   <div>
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#969696] block mb-1">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#8A8D93] block mb-1">
                       Tier 1 Starting Price
                     </span>
                     <div className="flex items-baseline gap-2">
@@ -150,7 +150,7 @@ export default function EventSinglePage({ params }: { params: Promise<{ slug: st
                           ? `₹ ${Number(String(event.priceINR).replace(/[^0-9]/g, "")).toLocaleString("en-IN")}`
                           : "₹ 2,499"}
                       </span>
-                      <span className="text-sm font-bold text-[#FF8400] font-mono">
+                      <span className="text-sm font-bold text-[#00B4D8] font-mono">
                         / ${event.priceUSD || 35} USD
                       </span>
                     </div>
@@ -160,7 +160,7 @@ export default function EventSinglePage({ params }: { params: Promise<{ slug: st
                   </div>
                 ) : (
                   <div>
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#969696] block mb-1">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#8A8D93] block mb-1">
                       Admission Policy
                     </span>
                     <div className="text-xl font-bold text-[#00FF88] font-mono">
@@ -181,28 +181,28 @@ export default function EventSinglePage({ params }: { params: Promise<{ slug: st
                 </div>
                 <div className="flex items-center justify-between text-xs py-1">
                   <span className="text-white font-medium">VIP Elevated Lounge</span>
-                  <span className="text-[#FF8400] font-mono">Filling Fast</span>
+                  <span className="text-[#00B4D8] font-mono">Filling Fast</span>
                 </div>
                 <div className="flex items-center justify-between text-xs py-1">
                   <span className="text-white font-medium">Spark Ultra Backstage Table</span>
-                  <span className="text-[#FF6A00] font-mono">Inquiry Only</span>
+                  <span className="text-[#00E5FF] font-mono">Inquiry Only</span>
                 </div>
               </div>
 
-              <div className="space-y-3 mb-6 text-xs text-[#969696]">
+              <div className="space-y-3 mb-6 text-xs text-[#8A8D93]">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-[#00FF88]" />
                   <span>100% Guaranteed Official RFID Barcode</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Ticket className="w-4 h-4 text-[#FF8400]" />
+                  <Ticket className="w-4 h-4 text-[#00B4D8]" />
                   <span>Instant Mobile Ticket & Entry Pass Delivery</span>
                 </div>
               </div>
 
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#FF6A00] to-[#FF8400] text-black font-bold text-xs tracking-[0.14em] uppercase hover:shadow-spark transition-all flex items-center justify-center gap-2"
+                className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black font-bold text-xs tracking-[0.14em] uppercase hover:shadow-spark transition-all flex items-center justify-center gap-2"
               >
                 <Ticket className="w-4 h-4" />
                 <span>{event.showPrice !== false ? "Book Passes Now" : "Request Pass Access"}</span>
@@ -213,7 +213,7 @@ export default function EventSinglePage({ params }: { params: Promise<{ slug: st
               <h4 className="text-sm font-bold text-white uppercase tracking-wider">
                 Venue Logistics & Doors
               </h4>
-              <ul className="text-xs text-[#969696] space-y-2.5">
+              <ul className="text-xs text-[#8A8D93] space-y-2.5">
                 <li>• <strong>Doors Open:</strong> {event.doors || "18:00 (Entry gates open 2 hours prior)"}</li>
                 <li>• <strong>Age Policy:</strong> 18+ valid government photo ID required at gate.</li>
                 <li>• <strong>Address:</strong> {event.address || event.venue}</li>

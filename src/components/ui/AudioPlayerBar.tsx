@@ -60,7 +60,7 @@ export function AudioPlayerBar() {
         onClick={handleSeek}
       >
         <div
-          className="h-full bg-gradient-to-r from-[#FF6A00] to-[#FF8400] group-hover:h-[5px] transition-all duration-100 shadow-spark"
+          className="h-full bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] group-hover:h-[5px] transition-all duration-100 shadow-spark"
           style={{ width: `${progressPercent}%` }}
         />
       </div>
@@ -77,10 +77,10 @@ export function AudioPlayerBar() {
             />
           </div>
           <div className="flex flex-col min-w-0">
-            <span className="text-xs sm:text-sm font-bold text-[#F4F1EA] truncate">
+            <span className="text-xs sm:text-sm font-bold text-[#F5F6FA] truncate">
               {currentTrack.title}
             </span>
-            <span className="text-[11px] text-[#969696] truncate">
+            <span className="text-[11px] text-[#8A8D93] truncate">
               {currentTrack.album} • {currentTrack.bpm} BPM
             </span>
           </div>
@@ -91,7 +91,7 @@ export function AudioPlayerBar() {
           <div className="flex items-center gap-4">
             <button
               onClick={prevTrack}
-              className="p-1.5 text-[#969696] hover:text-white transition-colors"
+              className="p-1.5 text-[#8A8D93] hover:text-white transition-colors"
               title="Previous Track"
             >
               <SkipBack className="w-4 h-4" />
@@ -99,7 +99,7 @@ export function AudioPlayerBar() {
 
             <button
               onClick={togglePlay}
-              className="w-9 h-9 rounded-full bg-gradient-to-r from-[#FF6A00] to-[#FF8400] text-black flex items-center justify-center hover:scale-105 transition-transform shadow-spark"
+              className="w-9 h-9 rounded-full bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black flex items-center justify-center hover:scale-105 transition-transform shadow-spark"
               title={isPlaying ? "Pause" : "Play"}
             >
               {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current translate-x-0.5" />}
@@ -107,14 +107,14 @@ export function AudioPlayerBar() {
 
             <button
               onClick={nextTrack}
-              className="p-1.5 text-[#969696] hover:text-white transition-colors"
+              className="p-1.5 text-[#8A8D93] hover:text-white transition-colors"
               title="Next Track"
             >
               <SkipForward className="w-4 h-4" />
             </button>
           </div>
 
-          <div className="hidden sm:flex items-center gap-2 text-[10px] font-mono text-[#969696]">
+          <div className="hidden sm:flex items-center gap-2 text-[10px] font-mono text-[#8A8D93]">
             <span>{formatTime(currentTime)}</span>
             <span>/</span>
             <span>{formatTime(duration)}</span>
@@ -124,7 +124,7 @@ export function AudioPlayerBar() {
         {/* Right: Volume & Catalog Link */}
         <div className="flex items-center gap-4">
           <div className="hidden md:flex items-center gap-2">
-            <button onClick={toggleMute} className="text-[#969696] hover:text-white">
+            <button onClick={toggleMute} className="text-[#8A8D93] hover:text-white">
               {volume === 0 || isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
             </button>
             <input
@@ -134,13 +134,13 @@ export function AudioPlayerBar() {
               step="0.05"
               value={volume}
               onChange={(e) => setVolume(parseFloat(e.target.value))}
-              className="w-20 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer accent-[#FF6A00]"
+              className="w-20 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer accent-[#00E5FF]"
             />
           </div>
 
           <Link
             href="/music"
-            className="hidden sm:flex items-center gap-1.5 text-xs font-semibold tracking-[0.1em] text-[#FF8400] hover:text-white transition-colors px-3 py-1.5 rounded bg-white/5 border border-white/10"
+            className="hidden sm:flex items-center gap-1.5 text-xs font-semibold tracking-[0.1em] text-[#00B4D8] hover:text-white transition-colors px-3 py-1.5 rounded bg-white/5 border border-white/10"
           >
             <Disc className="w-3.5 h-3.5" />
             <span>DISCOGRAPHY</span>

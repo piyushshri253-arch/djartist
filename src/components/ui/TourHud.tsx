@@ -47,7 +47,7 @@ export function TourHud({
       <div className="flex items-center justify-between w-full">
         {/* Left Telemetry */}
         <div className="flex items-center gap-3">
-          <span className="w-2 h-2 rounded-full bg-[#FF6A00] animate-pulse shadow-[0_0_12px_#FF6A00]" />
+          <span className="w-2 h-2 rounded-full bg-[#00E5FF] animate-pulse shadow-[0_0_12px_#00E5FF]" />
           <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3">
             <span className="text-[10px] tracking-[0.24em] uppercase text-white font-mono font-semibold">
               DJ G SPARK LIVE 3D
@@ -67,7 +67,7 @@ export function TourHud({
               <span
                 key={i}
                 className={`w-[2px] rounded-full transition-all duration-300 ${
-                  isPlaying ? "bg-[#FF6A00] animate-pulse" : "bg-white/30 h-1"
+                  isPlaying ? "bg-[#00E5FF] animate-pulse" : "bg-white/30 h-1"
                 }`}
                 style={{
                   height: isPlaying ? `${Math.max(4, scale * 16)}px` : "4px",
@@ -81,8 +81,8 @@ export function TourHud({
             onClick={onToggleAutoTour}
             className={`px-3.5 py-1.5 rounded-md text-[10px] tracking-[0.2em] uppercase font-semibold transition-all flex items-center gap-2 border ${
               isAutoTouring
-                ? "bg-[#FF6A00] text-black border-[#FF6A00] shadow-[0_0_15px_rgba(255,106,0,0.5)]"
-                : "bg-[#0B0B0B]/80 text-[#F5F2EA] border-white/10 hover:border-[#FF6A00]/50"
+                ? "bg-[#00E5FF] text-black border-[#00E5FF] shadow-[0_0_15px_rgba(0, 229, 255, 0.5)]"
+                : "bg-[#0B0B0B]/80 text-[#F5F6FA] border-white/10 hover:border-[#00E5FF]/50"
             }`}
           >
             <Compass className="w-3.5 h-3.5" />
@@ -91,10 +91,10 @@ export function TourHud({
 
           <button
             onClick={togglePlay}
-            className="w-8 h-8 rounded-md bg-[#0B0B0B]/80 border border-white/10 flex items-center justify-center text-[#F5F2EA] hover:text-[#FF6A00] transition-colors"
+            className="w-8 h-8 rounded-md bg-[#0B0B0B]/80 border border-white/10 flex items-center justify-center text-[#F5F6FA] hover:text-[#00E5FF] transition-colors"
             title="Toggle Audio"
           >
-            {isPlaying ? <Volume2 className="w-3.5 h-3.5 text-[#FF6A00]" /> : <VolumeX className="w-3.5 h-3.5" />}
+            {isPlaying ? <Volume2 className="w-3.5 h-3.5 text-[#00E5FF]" /> : <VolumeX className="w-3.5 h-3.5" />}
           </button>
         </div>
       </div>
@@ -106,7 +106,7 @@ export function TourHud({
           <div className="absolute right-[5px] top-0 bottom-0 w-[1px] bg-white/10" />
           {/* Progress Travelling Pip */}
           <div
-            className="absolute right-[3.5px] w-[4px] h-4 rounded-full bg-[#FF6A00] shadow-[0_0_10px_#FF6A00] transition-all duration-150"
+            className="absolute right-[3.5px] w-[4px] h-4 rounded-full bg-[#00E5FF] shadow-[0_0_10px_#00E5FF] transition-all duration-150"
             style={{ top: `${Math.min(94, Math.max(0, progress * 100))}%` }}
           />
 
@@ -121,7 +121,7 @@ export function TourHud({
                 <span
                   className={`transition-all duration-300 text-[9px] font-mono tracking-[0.2em] uppercase px-2.5 py-0.5 rounded border whitespace-nowrap ${
                     isActive
-                      ? "opacity-100 bg-[#0B0B0B]/95 text-[#FF6A00] border-[#FF6A00]/40 shadow-[0_0_15px_rgba(255,106,0,0.2)]"
+                      ? "opacity-100 bg-[#0B0B0B]/95 text-[#00E5FF] border-[#00E5FF]/40 shadow-[0_0_15px_rgba(0, 229, 255, 0.2)]"
                       : "opacity-0 group-hover:opacity-100 bg-[#0B0B0B]/80 text-[#929292] border-white/10"
                   }`}
                 >
@@ -130,8 +130,8 @@ export function TourHud({
                 <span
                   className={`rounded-full transition-all duration-300 ${
                     isActive
-                      ? "w-2.5 h-2.5 bg-[#FF6A00] shadow-[0_0_12px_#FF6A00] scale-125"
-                      : "w-1.5 h-1.5 bg-white/30 group-hover:bg-[#FF6A00] group-hover:scale-110"
+                      ? "w-2.5 h-2.5 bg-[#00E5FF] shadow-[0_0_12px_#00E5FF] scale-125"
+                      : "w-1.5 h-1.5 bg-white/30 group-hover:bg-[#00E5FF] group-hover:scale-110"
                   }`}
                 />
               </button>
@@ -146,11 +146,11 @@ export function TourHud({
           progress < 0.03 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
         }`}
       >
-        <span className="text-[10px] tracking-[0.3em] text-[#F5F2EA]/90 uppercase font-medium">
+        <span className="text-[10px] tracking-[0.3em] text-[#F5F6FA]/90 uppercase font-medium">
           SCROLL TO ENTER VENUE
         </span>
         <div className="w-[1px] h-8 bg-white/20 relative overflow-hidden">
-          <div className="w-full h-3 bg-[#FF6A00] animate-pulse" />
+          <div className="w-full h-3 bg-[#00E5FF] animate-pulse" />
         </div>
       </div>
 
@@ -158,12 +158,12 @@ export function TourHud({
       <div className="flex items-end justify-between w-full">
         <div className="flex flex-col">
           <div className="flex items-baseline gap-2">
-            <span className="font-heading text-3xl sm:text-4xl font-black text-[#FF6A00]">
+            <span className="font-heading text-3xl sm:text-4xl font-black text-[#00E5FF]">
               {current.num}
             </span>
             <span className="text-[12px] font-mono text-[#929292]">/ 10</span>
           </div>
-          <span className="text-xs sm:text-sm font-heading font-bold tracking-[0.24em] text-[#F5F2EA] uppercase">
+          <span className="text-xs sm:text-sm font-heading font-bold tracking-[0.24em] text-[#F5F6FA] uppercase">
             {current.label}
           </span>
         </div>
@@ -179,7 +179,7 @@ export function TourHud({
         <div className="hidden sm:flex items-center gap-3">
           <div className="w-32 h-[2px] bg-white/10 overflow-hidden rounded-full">
             <div
-              className="h-full bg-[#FF6A00] transition-all duration-100 shadow-[0_0_8px_#FF6A00]"
+              className="h-full bg-[#00E5FF] transition-all duration-100 shadow-[0_0_8px_#00E5FF]"
               style={{ width: `${(progress * 100).toFixed(0)}%` }}
             />
           </div>

@@ -37,11 +37,11 @@ export function EntrancePortal() {
       {/* Yellow/Black Safety Chevron Stripes along ramp edges */}
       <mesh position={[-5.4, 0.82, 6]} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[0.3, 22]} />
-        <meshBasicMaterial color="#FF6A00" />
+        <meshBasicMaterial color="#00E5FF" />
       </mesh>
       <mesh position={[5.4, 0.82, 6]} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[0.3, 22]} />
-        <meshBasicMaterial color="#FF6A00" />
+        <meshBasicMaterial color="#00E5FF" />
       </mesh>
 
       {/* 2. Concrete Architectural Side Pylons */}
@@ -136,7 +136,7 @@ export function EntrancePortal() {
         <pointLight
           ref={glowLightRef}
           position={[0, -0.4, 1.0]}
-          color="#FF8400"
+          color="#00B4D8"
           intensity={3.8}
           distance={18}
           decay={2}

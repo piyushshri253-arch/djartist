@@ -52,7 +52,7 @@ export function FinalArenaStage() {
           map={crowdTexture}
           roughness={0.65}
           metalness={0.15}
-          emissive="#FF6A00"
+          emissive="#00E5FF"
           emissiveIntensity={0.08}
         />
       </mesh>
@@ -66,7 +66,7 @@ export function FinalArenaStage() {
       {/* Stage Front Amber Glow Strip */}
       <mesh position={[0, 2.82, 8.01]}>
         <boxGeometry args={[32.1, 0.08, 0.06]} />
-        <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+        <meshBasicMaterial color="#00E5FF" toneMapped={false} />
       </mesh>
 
       {/* 3. Circular Truss Overhead LED Halo (Iconic G SPARK Halo from Reference Photo) */}
@@ -79,7 +79,7 @@ export function FinalArenaStage() {
         {/* Inner 360-Degree LED Ribbon Screen */}
         <mesh position={[0, 0, 0]}>
           <cylinderGeometry args={[9.2, 9.2, 2.8, 64, 1, true]} />
-          <meshBasicMaterial color="#FF8400" toneMapped={false} side={THREE.DoubleSide} />
+          <meshBasicMaterial color="#00B4D8" toneMapped={false} side={THREE.DoubleSide} />
         </mesh>
         {/* Halo Illuminated Artist Branding */}
         <Text
@@ -111,7 +111,7 @@ export function FinalArenaStage() {
           <planeGeometry args={[28, 14]} />
           <meshStandardMaterial
             color="#08080a"
-            emissive="#FF6A00"
+            emissive="#00E5FF"
             emissiveIntensity={0.55}
             roughness={0.2}
           />
@@ -130,13 +130,13 @@ export function FinalArenaStage() {
         <Text
           position={[0, -2.2, 0.1]}
           fontSize={1.2}
-          color="#F5F2EA"
+          color="#F5F6FA"
           anchorX="center"
           anchorY="middle"
           letterSpacing={0.35}
         >
           FEEL THE SPARK. ENTER THE SOUND.
-          <meshBasicMaterial color="#F5F2EA" toneMapped={false} />
+          <meshBasicMaterial color="#F5F6FA" toneMapped={false} />
         </Text>
       </group>
 
@@ -145,7 +145,7 @@ export function FinalArenaStage() {
         <planeGeometry args={[8, 10]} />
         <meshStandardMaterial
           map={crowdTexture}
-          emissive="#FF6A00"
+          emissive="#00E5FF"
           emissiveIntensity={0.4}
           roughness={0.3}
         />
@@ -154,7 +154,7 @@ export function FinalArenaStage() {
         <planeGeometry args={[8, 10]} />
         <meshStandardMaterial
           map={crowdTexture}
-          emissive="#FF6A00"
+          emissive="#00E5FF"
           emissiveIntensity={0.4}
           roughness={0.3}
         />
@@ -179,7 +179,7 @@ export function FinalArenaStage() {
                 opacity={0.8}
               />
             </mesh>
-            <pointLight position={[0, 4.5, 0]} color="#FF8400" intensity={5.0} distance={14} />
+            <pointLight position={[0, 4.5, 0]} color="#00B4D8" intensity={5.0} distance={14} />
           </group>
         ))}
       </group>
@@ -198,7 +198,7 @@ export function FinalArenaStage() {
       <spotLight
         ref={beam2Ref}
         position={[14, 22, 2]}
-        color="#FF6A00"
+        color="#00E5FF"
         intensity={16.0}
         angle={0.5}
         penumbra={0.6}

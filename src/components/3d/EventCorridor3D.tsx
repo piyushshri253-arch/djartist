@@ -20,7 +20,7 @@ function EventBillboard({ position, rotation = [0, 0, 0], city, venue, date, sta
       <mesh>
         <boxGeometry args={[4.4, 2.6, 0.08]} />
         <meshStandardMaterial
-          color="#121218"
+          color="#1F2833"
           roughness={0.15}
           metalness={0.8}
           transparent
@@ -30,7 +30,7 @@ function EventBillboard({ position, rotation = [0, 0, 0], city, venue, date, sta
       {/* Amber Glowing Edge Border */}
       <mesh position={[0, 0, 0.04]}>
         <boxGeometry args={[4.44, 2.64, 0.02]} />
-        <meshBasicMaterial color="#FF6A00" wireframe />
+        <meshBasicMaterial color="#00E5FF" wireframe />
       </mesh>
 
       {/* Date Pill */}
@@ -52,7 +52,7 @@ function EventBillboard({ position, rotation = [0, 0, 0], city, venue, date, sta
         position={[0, 0.15, 0.06]}
         fontSize={0.62}
         font="https://fonts.gstatic.com/s/spacegrotesk/v16/V8mDoQDjQSkFtoMM3T6r8E7mPb54C_k3HqUtEw.woff"
-        color="#F4F1EA"
+        color="#F5F6FA"
         anchorX="center"
         letterSpacing={0.1}
       >
@@ -63,7 +63,7 @@ function EventBillboard({ position, rotation = [0, 0, 0], city, venue, date, sta
       <Text
         position={[0, -0.45, 0.06]}
         fontSize={0.2}
-        color="#969696"
+        color="#8A8D93"
         anchorX="center"
         letterSpacing={0.08}
       >
@@ -74,7 +74,7 @@ function EventBillboard({ position, rotation = [0, 0, 0], city, venue, date, sta
       <Text
         position={[0, -0.85, 0.06]}
         fontSize={0.18}
-        color="#FF8400"
+        color="#00B4D8"
         anchorX="center"
         letterSpacing={0.14}
       >
@@ -91,7 +91,7 @@ export function EventCorridor3D() {
       <group position={[0, 3.8, 8]}>
         <Text
           fontSize={0.24}
-          color="#FF8400"
+          color="#00B4D8"
           anchorX="center"
           letterSpacing={0.2}
         >
@@ -101,7 +101,7 @@ export function EventCorridor3D() {
           position={[0, -0.55, 0]}
           fontSize={0.88}
           font="https://fonts.gstatic.com/s/spacegrotesk/v16/V8mDoQDjQSkFtoMM3T6r8E7mPb54C_k3HqUtEw.woff"
-          color="#F4F1EA"
+          color="#F5F6FA"
           anchorX="center"
           letterSpacing={0.1}
         >

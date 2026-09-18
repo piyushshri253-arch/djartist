@@ -349,7 +349,7 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
         <span>&rsaquo;</span>
         <span>SOCIAL MEDIA</span>
         <span>&rsaquo;</span>
-        <span className="text-[#FF8400] font-bold">INSTAGRAM INTEGRATION</span>
+        <span className="text-[#00B4D8] font-bold">INSTAGRAM INTEGRATION</span>
       </div>
 
       {/* ============================================================ */}
@@ -408,7 +408,7 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
                   </a>
                   <span>&bull;</span>
                   <span className="flex items-center gap-1 text-[#AAAAAA]">
-                    <Clock className="w-3 h-3 text-[#FF6A00]" />
+                    <Clock className="w-3 h-3 text-[#00E5FF]" />
                     <span>Last Synced: {new Date(connection.lastSyncedAt || Date.now()).toLocaleTimeString()}</span>
                   </span>
                 </div>
@@ -472,7 +472,7 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
         {/* Global Instagram Section Master Switch */}
         <div className="pt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <span className="text-xs font-mono uppercase text-[#FF8400] font-bold block mb-0.5">
+            <span className="text-xs font-mono uppercase text-[#00B4D8] font-bold block mb-0.5">
               Website Master Control
             </span>
             <h4 className="font-heading font-bold text-sm sm:text-base text-white uppercase">
@@ -518,7 +518,7 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
           <div>
             <h3 className="font-heading font-black text-xl sm:text-2xl text-white uppercase tracking-tight flex items-center gap-3">
               <span>Instagram Reels</span>
-              <span className="text-xs font-mono font-normal px-2.5 py-0.5 rounded-full bg-[#FF6A00]/15 border border-[#FF6A00]/40 text-[#FF8400]">
+              <span className="text-xs font-mono font-normal px-2.5 py-0.5 rounded-full bg-[#00E5FF]/15 border border-[#00E5FF]/40 text-[#00B4D8]">
                 {visibleCount} Live on Website &bull; {reels.length} Total Synced
               </span>
             </h3>
@@ -632,7 +632,7 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
                             {reel.caption}
                           </p>
                           <div className="flex items-center gap-2 mt-2 text-[10px] font-mono text-[#777777]">
-                            <span className="text-[#FF8400]">@{reel.username}</span>
+                            <span className="text-[#00B4D8]">@{reel.username}</span>
                             <span>&bull;</span>
                             <span>ID: {reel.instagramMediaId.slice(0, 10)}...</span>
                           </div>
@@ -716,7 +716,7 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
       {/* ============================================================ */}
       {previewReel && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="relative w-full max-w-md bg-[#0e0e14] border border-white/20 rounded-2xl overflow-hidden shadow-2xl p-6 space-y-4">
+          <div className="relative w-full max-w-md bg-[#1F2833] border border-white/20 rounded-2xl overflow-hidden shadow-2xl p-6 space-y-4">
             <button
               onClick={() => setPreviewReel(null)}
               className="absolute top-4 right-4 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
@@ -745,7 +745,7 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
 
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs font-mono text-[#888888]">
-                <span className="text-[#FF8400]">@{previewReel.username}</span>
+                <span className="text-[#00B4D8]">@{previewReel.username}</span>
                 <span>{new Date(previewReel.publishedAt).toLocaleDateString()}</span>
               </div>
               <p className="text-xs text-[#CCCCCC] line-clamp-3 leading-relaxed">
@@ -786,7 +786,7 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
       {/* ============================================================ */}
       {isDisconnectModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="relative w-full max-w-md bg-[#121218] border border-rose-500/30 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-5 text-center">
+          <div className="relative w-full max-w-md bg-[#1F2833] border border-rose-500/30 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-5 text-center">
             <div className="w-14 h-14 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-400 flex items-center justify-center mx-auto">
               <AlertCircle className="w-7 h-7" />
             </div>
@@ -880,7 +880,7 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
               {connectMode === "token" && (
                 <div className="space-y-3">
                   <div>
-                    <label className="text-xs font-mono text-[#FF8400] font-bold block mb-1">
+                    <label className="text-xs font-mono text-[#00B4D8] font-bold block mb-1">
                       Instagram Graph API User Access Token *
                     </label>
                     <textarea
@@ -892,7 +892,7 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
                       className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-xs focus:outline-none focus:border-[#E1306C] font-mono resize-none"
                     />
                   </div>
-                  <div className="p-3 bg-[#FF6A00]/10 border border-[#FF6A00]/25 rounded-xl text-[11px] text-[#FFB37C] space-y-1">
+                  <div className="p-3 bg-[#00E5FF]/10 border border-[#00E5FF]/25 rounded-xl text-[11px] text-[#FFB37C] space-y-1">
                     <p className="font-bold">⚡ Live Instagram API Sync:</p>
                     <p className="text-[10px] leading-relaxed">
                       The server connects directly to <code>graph.instagram.com/me</code>, fetches your real handle, and imports your live Instagram reels into your showcase automatically.
@@ -905,7 +905,7 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
               {connectMode === "username" && (
                 <div className="space-y-3">
                   <div>
-                    <label className="text-xs font-mono text-[#FF8400] font-bold block mb-1">
+                    <label className="text-xs font-mono text-[#00B4D8] font-bold block mb-1">
                       Official Instagram Username *
                     </label>
                     <div className="relative">
@@ -947,7 +947,7 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
                 <button
                   type="submit"
                   disabled={isSubmittingConnect}
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#FF6A00] to-[#FF8400] text-black font-heading font-black text-xs tracking-wider uppercase transition-all shadow-md cursor-pointer disabled:opacity-50"
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black font-heading font-black text-xs tracking-wider uppercase transition-all shadow-md cursor-pointer disabled:opacity-50"
                 >
                   {isSubmittingConnect ? "Connecting..." : connectMode === "oauth" ? "Continue to Meta" : "Verify & Connect"}
                 </button>
@@ -965,7 +965,7 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
           <div className="relative w-full max-w-md bg-[#0e0e16] border border-white/15 rounded-2xl shadow-2xl overflow-hidden my-auto text-left">
             <div className="p-5 border-b border-white/10 flex items-center justify-between bg-[#12121c]">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-[#FF6A00]/15 text-[#FF6A00] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-[#00E5FF]/15 text-[#00E5FF] flex items-center justify-center">
                   <LinkIcon className="w-4 h-4" />
                 </div>
                 <h3 className="font-bold text-white text-sm">Add Real Instagram Reel Link</h3>
@@ -980,25 +980,25 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
 
             <form onSubmit={handleAddReelSubmit} className="p-5 space-y-4 text-xs">
               <div>
-                <label className="font-mono text-[#FF8400] font-bold block mb-1">Instagram Reel or Post URL *</label>
+                <label className="font-mono text-[#00B4D8] font-bold block mb-1">Instagram Reel or Post URL *</label>
                 <input
                   type="url"
                   required
                   value={reelUrlInput}
                   onChange={(e) => setReelUrlInput(e.target.value)}
                   placeholder="https://www.instagram.com/reel/Cxxxxxxxxx/"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-[#FF6A00] font-mono"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-[#00E5FF] font-mono"
                 />
               </div>
 
               <div>
-                <label className="font-mono text-[#FF8400] font-bold block mb-1">Caption / Description (Optional)</label>
+                <label className="font-mono text-[#00B4D8] font-bold block mb-1">Caption / Description (Optional)</label>
                 <textarea
                   rows={3}
                   value={reelCaptionInput}
                   onChange={(e) => setReelCaptionInput(e.target.value)}
                   placeholder="e.g. 55,000 Hands In The Air — Sunburn Festival Sunset Drop! 🔥"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-[#FF6A00] resize-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-[#00E5FF] resize-none"
                 />
               </div>
 
@@ -1013,7 +1013,7 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
                 <button
                   type="submit"
                   disabled={isSubmittingReel}
-                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#FF6A00] to-[#FF8400] text-black font-heading font-black text-xs uppercase tracking-wider transition-all cursor-pointer disabled:opacity-50"
+                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black font-heading font-black text-xs uppercase tracking-wider transition-all cursor-pointer disabled:opacity-50"
                 >
                   {isSubmittingReel ? "Adding..." : "Add to Showcase"}
                 </button>

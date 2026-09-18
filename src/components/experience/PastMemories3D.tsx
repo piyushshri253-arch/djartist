@@ -19,7 +19,7 @@ export function PastMemories3D() {
         {/* Backlit Amber Inset Rim */}
         <mesh position={[0, 0, 0.09]}>
           <boxGeometry args={[4.95, 3.15, 0.02]} />
-          <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+          <meshBasicMaterial color="#00E5FF" toneMapped={false} />
         </mesh>
         {/* Photograph Surface */}
         <mesh position={[0, 0, 0.11]}>
@@ -35,7 +35,7 @@ export function PastMemories3D() {
           <Text
             position={[0, 0.02, 0.06]}
             fontSize={0.16}
-            color="#FF8400"
+            color="#00B4D8"
             anchorX="center"
             anchorY="middle"
             letterSpacing={0.22}

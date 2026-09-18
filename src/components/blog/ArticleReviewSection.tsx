@@ -133,14 +133,14 @@ export function ArticleReviewSection({ articleSlug, articleTitle }: ArticleRevie
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-8">
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#FF8400] uppercase tracking-wider mb-2">
+          <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#00B4D8] uppercase tracking-wider mb-2">
             <MessageSquare className="w-4 h-4" />
             <span>COMMUNITY DISPATCH // READER REVIEWS</span>
           </div>
           <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
             ARTICLE RATINGS &amp; REVIEWS
           </h3>
-          <p className="text-xs sm:text-sm text-[#969696] mt-1">
+          <p className="text-xs sm:text-sm text-[#8A8D93] mt-1">
             Verified sound engineers, producers, and festival fans review this dispatch.
           </p>
         </div>
@@ -151,7 +151,7 @@ export function ArticleReviewSection({ articleSlug, articleTitle }: ArticleRevie
             setSubmitSuccess(false);
             setSubmitError(null);
           }}
-          className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#FF6A00] to-[#FF8400] hover:brightness-110 text-black font-extrabold text-xs uppercase tracking-wider shadow-spark flex items-center justify-center gap-2 transition-all self-start sm:self-auto"
+          className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] hover:brightness-110 text-black font-extrabold text-xs uppercase tracking-wider shadow-spark flex items-center justify-center gap-2 transition-all self-start sm:self-auto"
         >
           <Star className="w-4 h-4 fill-black" />
           <span>{isFormOpen ? "CLOSE REVIEW FORM" : "WRITE A REVIEW"}</span>
@@ -161,7 +161,7 @@ export function ArticleReviewSection({ articleSlug, articleTitle }: ArticleRevie
 
       {/* Review Submission Form Drawer */}
       {isFormOpen && (
-        <div className="mb-10 p-6 sm:p-8 rounded-2xl glass-card border border-[#FF6A00]/40 bg-[#0d0d14] relative shadow-[0_0_40px_rgba(255,106,0,0.15)] animate-in fade-in slide-in-from-top-4 duration-300">
+        <div className="mb-10 p-6 sm:p-8 rounded-2xl glass-card border border-[#00E5FF]/40 bg-[#0d0d14] relative shadow-[0_0_40px_rgba(0, 229, 255, 0.15)] animate-in fade-in slide-in-from-top-4 duration-300">
           {submitSuccess ? (
             <div className="text-center py-8 space-y-4">
               <div className="w-14 h-14 rounded-full bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center text-emerald-400 mx-auto">
@@ -188,11 +188,11 @@ export function ArticleReviewSection({ articleSlug, articleTitle }: ArticleRevie
               <div className="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-white/10">
                 <div>
                   <h4 className="text-lg font-bold text-white">Rate &amp; Review This Chronicle</h4>
-                  <span className="text-xs text-[#969696]">
+                  <span className="text-xs text-[#8A8D93]">
                     Article: <strong className="text-white">{articleTitle}</strong>
                   </span>
                 </div>
-                <span className="text-[10px] font-mono text-[#FF8400] bg-[#FF6A00]/10 border border-[#FF6A00]/30 px-2.5 py-1 rounded-full uppercase">
+                <span className="text-[10px] font-mono text-[#00B4D8] bg-[#00E5FF]/10 border border-[#00E5FF]/30 px-2.5 py-1 rounded-full uppercase">
                   🛡️ MODERATED BY MANAGEMENT
                 </span>
               </div>
@@ -222,13 +222,13 @@ export function ArticleReviewSection({ articleSlug, articleTitle }: ArticleRevie
                       <Star
                         className={`w-7 h-7 ${
                           (hoverRating || rating) >= star
-                            ? "fill-[#FF6A00] text-[#FF6A00] drop-shadow-[0_0_8px_rgba(255,106,0,0.6)]"
+                            ? "fill-[#00E5FF] text-[#00E5FF] drop-shadow-[0_0_8px_rgba(0, 229, 255, 0.6)]"
                             : "text-white/20 hover:text-white/40"
                         }`}
                       />
                     </button>
                   ))}
-                  <span className="text-xs font-mono text-[#FF8400] ml-3 hidden sm:inline-block">
+                  <span className="text-xs font-mono text-[#00B4D8] ml-3 hidden sm:inline-block">
                     {ratingDescriptions[hoverRating || rating]}
                   </span>
                 </div>
@@ -237,7 +237,7 @@ export function ArticleReviewSection({ articleSlug, articleTitle }: ArticleRevie
               {/* Name & Role Inputs */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-[11px] font-mono font-bold text-[#969696] uppercase mb-1.5">
+                  <label className="block text-[11px] font-mono font-bold text-[#8A8D93] uppercase mb-1.5">
                     YOUR FULL NAME *
                   </label>
                   <input
@@ -246,12 +246,12 @@ export function ArticleReviewSection({ articleSlug, articleTitle }: ArticleRevie
                     onChange={(e) => setName(e.target.value)}
                     placeholder="e.g. Alex Rivera"
                     required
-                    className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder-white/25 focus:border-[#FF6A00] focus:outline-none transition-colors"
+                    className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder-white/25 focus:border-[#00E5FF] focus:outline-none transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-mono font-bold text-[#969696] uppercase mb-1.5">
+                  <label className="block text-[11px] font-mono font-bold text-[#8A8D93] uppercase mb-1.5">
                     ROLE / PROFESSION
                   </label>
                   <input
@@ -259,12 +259,12 @@ export function ArticleReviewSection({ articleSlug, articleTitle }: ArticleRevie
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
                     placeholder="e.g. Audio Engineer / Fan"
-                    className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder-white/25 focus:border-[#FF6A00] focus:outline-none transition-colors"
+                    className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder-white/25 focus:border-[#00E5FF] focus:outline-none transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-mono font-bold text-[#969696] uppercase mb-1.5">
+                  <label className="block text-[11px] font-mono font-bold text-[#8A8D93] uppercase mb-1.5">
                     CITY / LOCATION
                   </label>
                   <input
@@ -272,14 +272,14 @@ export function ArticleReviewSection({ articleSlug, articleTitle }: ArticleRevie
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                     placeholder="e.g. Amsterdam, NL"
-                    className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder-white/25 focus:border-[#FF6A00] focus:outline-none transition-colors"
+                    className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder-white/25 focus:border-[#00E5FF] focus:outline-none transition-colors"
                   />
                 </div>
               </div>
 
               {/* Review Textarea */}
               <div>
-                <label className="block text-[11px] font-mono font-bold text-[#969696] uppercase mb-1.5">
+                <label className="block text-[11px] font-mono font-bold text-[#8A8D93] uppercase mb-1.5">
                   YOUR REVIEW &amp; FEEDBACK ON THIS DISPATCH *
                 </label>
                 <textarea
@@ -288,21 +288,21 @@ export function ArticleReviewSection({ articleSlug, articleTitle }: ArticleRevie
                   placeholder="Share your thoughts on the sound design, stage technology, or touring story mentioned in this chronicle..."
                   rows={4}
                   required
-                  className="w-full bg-black/60 border border-white/10 rounded-xl p-4 text-xs text-white placeholder-white/25 focus:border-[#FF6A00] focus:outline-none transition-colors resize-none leading-relaxed"
+                  className="w-full bg-black/60 border border-white/10 rounded-xl p-4 text-xs text-white placeholder-white/25 focus:border-[#00E5FF] focus:outline-none transition-colors resize-none leading-relaxed"
                 />
               </div>
 
               {/* Moderation Notice & Submit Button */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-3 border-t border-white/10">
-                <div className="flex items-center gap-2 text-[11px] text-[#969696]">
-                  <ShieldCheck className="w-4 h-4 text-[#FF8400] flex-shrink-0" />
+                <div className="flex items-center gap-2 text-[11px] text-[#8A8D93]">
+                  <ShieldCheck className="w-4 h-4 text-[#00B4D8] flex-shrink-0" />
                   <span>Submissions are sent to the Admin Dashboard for moderation before going live.</span>
                 </div>
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#FF6A00] hover:bg-[#FF8400] text-black font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-spark disabled:opacity-50 transition-all"
+                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#00E5FF] hover:bg-[#00B4D8] text-black font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-spark disabled:opacity-50 transition-all"
                 >
                   {isSubmitting ? (
                     <span>SUBMITTING...</span>
@@ -328,10 +328,10 @@ export function ArticleReviewSection({ articleSlug, articleTitle }: ArticleRevie
           </span>
           <div className="flex items-center justify-center gap-1 my-2">
             {[...Array(5)].map((_, i) => (
-              <Star key={i} className="w-4 h-4 fill-[#FF6A00] text-[#FF6A00]" />
+              <Star key={i} className="w-4 h-4 fill-[#00E5FF] text-[#00E5FF]" />
             ))}
           </div>
-          <span className="text-xs text-[#969696] font-mono block">
+          <span className="text-xs text-[#8A8D93] font-mono block">
             {reviews.length > 0
               ? `${stats.total} verified reader review${stats.total === 1 ? "" : "s"}`
               : "Official Chronicle Rating"}
@@ -344,11 +344,11 @@ export function ArticleReviewSection({ articleSlug, articleTitle }: ArticleRevie
             const count = stats.breakdown[stars] || 0;
             const pct = stats.total > 0 ? Math.round((count / stats.total) * 100) : stars === 5 ? 100 : 0;
             return (
-              <div key={stars} className="flex items-center gap-3 text-xs font-mono text-[#969696]">
+              <div key={stars} className="flex items-center gap-3 text-xs font-mono text-[#8A8D93]">
                 <span className="w-6 text-right font-bold text-white">{stars}★</span>
                 <div className="flex-1 h-2 bg-white/5 rounded-full overflow-hidden border border-white/10">
                   <div
-                    className="h-full bg-gradient-to-r from-[#FF6A00] to-[#FF8400] transition-all duration-500"
+                    className="h-full bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] transition-all duration-500"
                     style={{ width: `${pct}%` }}
                   />
                 </div>
@@ -361,19 +361,19 @@ export function ArticleReviewSection({ articleSlug, articleTitle }: ArticleRevie
 
       {/* Approved Reviews Grid */}
       {isLoading ? (
-        <div className="py-12 text-center text-xs font-mono text-[#969696]">
+        <div className="py-12 text-center text-xs font-mono text-[#8A8D93]">
           LOADING READER DISPATCHES...
         </div>
       ) : reviews.length === 0 ? (
         <div className="p-10 rounded-2xl bg-white/[0.02] border border-dashed border-white/15 text-center space-y-3">
-          <Sparkles className="w-8 h-8 text-[#FF8400] mx-auto opacity-70" />
+          <Sparkles className="w-8 h-8 text-[#00B4D8] mx-auto opacity-70" />
           <h4 className="text-base font-bold text-white uppercase">Be The First To Review</h4>
-          <p className="text-xs text-[#969696] max-w-sm mx-auto leading-relaxed">
+          <p className="text-xs text-[#8A8D93] max-w-sm mx-auto leading-relaxed">
             No reader reviews have been published yet for this chronicle. Read the article and share your thoughts!
           </p>
           <button
             onClick={() => setIsFormOpen(true)}
-            className="px-4 py-2 rounded-xl bg-white/5 hover:bg-[#FF6A00]/20 border border-white/15 hover:border-[#FF6A00]/50 text-xs font-bold text-[#FF8400] transition-all"
+            className="px-4 py-2 rounded-xl bg-white/5 hover:bg-[#00E5FF]/20 border border-white/15 hover:border-[#00E5FF]/50 text-xs font-bold text-[#00B4D8] transition-all"
           >
             Leave a Review
           </button>
@@ -383,18 +383,18 @@ export function ArticleReviewSection({ articleSlug, articleTitle }: ArticleRevie
           {reviews.map((rev) => (
             <div
               key={rev.id}
-              className="p-6 rounded-2xl glass-card border border-white/10 hover:border-[#FF6A00]/30 transition-all flex flex-col justify-between group"
+              className="p-6 rounded-2xl glass-card border border-white/10 hover:border-[#00E5FF]/30 transition-all flex flex-col justify-between group"
             >
               <div>
                 {/* Header: Stars + Badge */}
                 <div className="flex items-center justify-between gap-2 mb-3">
                   <div className="flex items-center gap-1">
                     {[...Array(rev.rating || 5)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 fill-[#FF6A00] text-[#FF6A00]" />
+                      <Star key={i} className="w-3.5 h-3.5 fill-[#00E5FF] text-[#00E5FF]" />
                     ))}
                   </div>
 
-                  <span className="text-[10px] font-mono tracking-wider px-2.5 py-0.5 rounded-full border text-[#FF8400] bg-[#FF6A00]/10 border-[#FF6A00]/30 font-bold uppercase">
+                  <span className="text-[10px] font-mono tracking-wider px-2.5 py-0.5 rounded-full border text-[#00B4D8] bg-[#00E5FF]/10 border-[#00E5FF]/30 font-bold uppercase">
                     {rev.badge || "ARTICLE READER"}
                   </span>
                 </div>
@@ -408,14 +408,14 @@ export function ArticleReviewSection({ articleSlug, articleTitle }: ArticleRevie
               {/* Author Strip */}
               <div className="pt-4 border-t border-white/5 flex items-center justify-between text-xs">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-[#151520] border border-[#FF6A00]/40 flex items-center justify-center font-mono font-bold text-xs text-[#FF8400]">
+                  <div className="w-8 h-8 rounded-full bg-[#151520] border border-[#00E5FF]/40 flex items-center justify-center font-mono font-bold text-xs text-[#00B4D8]">
                     {rev.initials || rev.name.slice(0, 2).toUpperCase()}
                   </div>
                   <div>
                     <span className="font-bold text-white block truncate max-w-[150px]">
                       {rev.name}
                     </span>
-                    <span className="text-[11px] text-[#969696] block truncate max-w-[150px]">
+                    <span className="text-[11px] text-[#8A8D93] block truncate max-w-[150px]">
                       {rev.role} {rev.organization ? `• ${rev.organization}` : ""}
                     </span>
                   </div>

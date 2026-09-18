@@ -30,7 +30,7 @@ export function VenueEnvironment() {
       <directionalLight
         position={[0, 28, -210]}
         intensity={1.4}
-        color="#FF8400"
+        color="#00B4D8"
       />
 
       {/* 2. Concrete Reflective Floor Plane spanning entire tour depth (+170 to -350) */}
@@ -42,7 +42,7 @@ export function VenueEnvironment() {
       >
         <planeGeometry args={[80, 520]} />
         <meshStandardMaterial
-          color="#08080b"
+          color="#0B0C10"
           roughness={0.24}
           metalness={0.75}
         />
@@ -70,11 +70,11 @@ export function VenueEnvironment() {
       {/* 4. Concrete Perimeter Walls */}
       <mesh position={[-32, 9, -90]} rotation={[0, Math.PI / 2, 0]}>
         <planeGeometry args={[520, 22]} />
-        <meshStandardMaterial color="#060608" roughness={0.9} metalness={0.15} />
+        <meshStandardMaterial color="#0B0C10" roughness={0.9} metalness={0.15} />
       </mesh>
       <mesh position={[32, 9, -90]} rotation={[0, -Math.PI / 2, 0]}>
         <planeGeometry args={[520, 22]} />
-        <meshStandardMaterial color="#060608" roughness={0.9} metalness={0.15} />
+        <meshStandardMaterial color="#0B0C10" roughness={0.9} metalness={0.15} />
       </mesh>
     </group>
   );

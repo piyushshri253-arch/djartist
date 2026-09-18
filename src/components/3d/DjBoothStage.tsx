@@ -62,20 +62,20 @@ export function DjBoothStage() {
       {/* 1. Elevated Diamond-Plate Stage Riser Platform */}
       <mesh position={[0, 0.45, 0]}>
         <boxGeometry args={[16, 0.9, 12]} />
-        <meshStandardMaterial color="#0b0b0e" roughness={0.35} metalness={0.75} />
+        <meshStandardMaterial color="#1F2833" roughness={0.35} metalness={0.75} />
       </mesh>
       {/* Amber Glowing Perimeter LED Step Trim */}
       <mesh position={[0, 0.9, 6.01]}>
         <boxGeometry args={[16.1, 0.05, 0.04]} />
-        <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+        <meshBasicMaterial color="#00E5FF" toneMapped={false} />
       </mesh>
       <mesh position={[-8.01, 0.9, 0]}>
         <boxGeometry args={[0.04, 0.05, 12.1]} />
-        <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+        <meshBasicMaterial color="#00E5FF" toneMapped={false} />
       </mesh>
       <mesh position={[8.01, 0.9, 0]}>
         <boxGeometry args={[0.04, 0.05, 12.1]} />
-        <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+        <meshBasicMaterial color="#00E5FF" toneMapped={false} />
       </mesh>
 
       {/* 2. DJ Command Console Desk (Heavy touring aluminum flight table) */}
@@ -120,7 +120,7 @@ export function DjBoothStage() {
           </mesh>
           <mesh position={[0, 0.06, -0.3]} rotation={[-0.25, 0, 0]}>
             <planeGeometry args={[0.42, 0.22]} />
-            <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+            <meshBasicMaterial color="#00E5FF" toneMapped={false} />
           </mesh>
         </group>
 
@@ -128,7 +128,7 @@ export function DjBoothStage() {
         <group position={[0, 1.08, 0]}>
           <mesh>
             <boxGeometry args={[0.85, 0.1, 0.95]} />
-            <meshStandardMaterial color="#121218" metalness={0.9} roughness={0.2} />
+            <meshStandardMaterial color="#1F2833" metalness={0.9} roughness={0.2} />
           </mesh>
           {/* Channel Faders plate */}
           <mesh position={[0, 0.06, 0.12]}>
@@ -138,7 +138,7 @@ export function DjBoothStage() {
           {/* Pulsing VU Meters */}
           <mesh position={[0, 0.065, -0.15]}>
             <planeGeometry args={[0.45, 0.08]} />
-            <meshBasicMaterial ref={vuMeterRef} color="#FF6A00" toneMapped={false} />
+            <meshBasicMaterial ref={vuMeterRef} color="#00E5FF" toneMapped={false} />
           </mesh>
         </group>
 
@@ -155,7 +155,7 @@ export function DjBoothStage() {
           </mesh>
           <mesh position={[0, 0.06, -0.3]} rotation={[-0.25, 0, 0]}>
             <planeGeometry args={[0.42, 0.22]} />
-            <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+            <meshBasicMaterial color="#00E5FF" toneMapped={false} />
           </mesh>
         </group>
 
@@ -207,7 +207,7 @@ export function DjBoothStage() {
             transparent={true}
             roughness={0.3}
             metalness={0.2}
-            emissive="#FF8400"
+            emissive="#00B4D8"
             emissiveIntensity={0.18}
           />
         </mesh>
@@ -219,8 +219,8 @@ export function DjBoothStage() {
       <mesh position={[0, 5.2, -3.5]}>
         <cylinderGeometry args={[12, 12, 7.5, 32, 1, true, -Math.PI / 4, Math.PI / 2]} />
         <meshStandardMaterial
-          color="#060608"
-          emissive="#FF6A00"
+          color="#0B0C10"
+          emissive="#00E5FF"
           emissiveIntensity={0.65}
           roughness={0.25}
           side={THREE.DoubleSide}
@@ -255,7 +255,7 @@ export function DjBoothStage() {
       <spotLight
         ref={beam2Ref}
         position={[6, 8, 2]}
-        color="#FF6A00"
+        color="#00E5FF"
         intensity={9.0}
         angle={0.4}
         penumbra={0.5}
@@ -266,7 +266,7 @@ export function DjBoothStage() {
         <mesh position={[0, 0, 8]} rotation={[Math.PI / 2, 0, 0]}>
           <cylinderGeometry args={[0.2, 3.4, 16, 24, 1, true]} />
           <meshBasicMaterial
-            color="#FF6A00"
+            color="#00E5FF"
             transparent={true}
             opacity={0.14}
             blending={THREE.AdditiveBlending}

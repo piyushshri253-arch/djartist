@@ -26,13 +26,13 @@ export default function MusicPage() {
     <main className="min-h-screen pt-32 pb-24 px-6 sm:px-10 max-w-[1400px] mx-auto">
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto mb-16">
-        <span className="text-xs font-bold tracking-[0.24em] text-[#FF8400] uppercase block mb-3">
+        <span className="text-xs font-bold tracking-[0.24em] text-[#00B4D8] uppercase block mb-3">
           OFFICIAL DISCOGRAPHY
         </span>
         <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight mb-4">
-          SONIC <span className="text-[#FF6A00]">SIGNATURES</span>
+          SONIC <span className="text-[#00E5FF]">SIGNATURES</span>
         </h1>
-        <p className="text-sm sm:text-base text-[#969696] leading-relaxed">
+        <p className="text-sm sm:text-base text-[#8A8D93] leading-relaxed">
           From crushing stadium anthems to ethereal melodic techno journeys. Stream the official catalog in high fidelity or download production stems for DJ sets.
         </p>
 
@@ -49,8 +49,8 @@ export default function MusicPage() {
               onClick={() => setFilter(tab.id)}
               className={`px-5 py-2 rounded-full text-xs font-bold tracking-[0.14em] uppercase transition-all ${
                 filter === tab.id
-                  ? "bg-[#FF6A00] text-black shadow-spark"
-                  : "bg-white/5 text-[#969696] hover:text-white border border-white/10"
+                  ? "bg-[#00E5FF] text-black shadow-spark"
+                  : "bg-white/5 text-[#8A8D93] hover:text-white border border-white/10"
               }`}
             >
               {tab.label}
@@ -71,23 +71,23 @@ export default function MusicPage() {
             onClick={() => playTrack(tracks[0])}
             className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white"
           >
-            <div className="w-16 h-16 rounded-full bg-[#FF6A00] text-black flex items-center justify-center shadow-spark">
+            <div className="w-16 h-16 rounded-full bg-[#00E5FF] text-black flex items-center justify-center shadow-spark">
               <Play className="w-8 h-8 fill-current translate-x-0.5" />
             </div>
           </button>
         </div>
 
         <div className="space-y-4 text-center md:text-left flex-1">
-          <span className="text-xs font-bold tracking-[0.2em] text-[#FF8400] uppercase block">
+          <span className="text-xs font-bold tracking-[0.2em] text-[#00B4D8] uppercase block">
             STUDIO ALBUM • AVAILABLE NOW
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-            SPARK THEORY <span className="text-[#FF6A00]">LP</span>
+            SPARK THEORY <span className="text-[#00E5FF]">LP</span>
           </h2>
-          <p className="text-sm text-[#969696] leading-relaxed max-w-xl">
+          <p className="text-sm text-[#8A8D93] leading-relaxed max-w-xl">
             Twelve tracks exploring the intersection of raw human emotion and mechanized groove. Mastered in 24-bit high-resolution audio with live guest vocalists.
           </p>
-          <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-xs font-mono text-[#969696] pt-2">
+          <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-xs font-mono text-[#8A8D93] pt-2">
             <span>12 Tracks</span>
             <span>•</span>
             <span>58:14 Total Time</span>
@@ -98,14 +98,14 @@ export default function MusicPage() {
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-4">
             <button
               onClick={() => playTrack(tracks[0])}
-              className="px-6 py-3 rounded-full bg-gradient-to-r from-[#FF6A00] to-[#FF8400] text-black font-bold text-xs tracking-wider uppercase hover:shadow-spark transition-all flex items-center gap-2"
+              className="px-6 py-3 rounded-full bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black font-bold text-xs tracking-wider uppercase hover:shadow-spark transition-all flex items-center gap-2"
             >
               <Play className="w-4 h-4 fill-current" />
               <span>Stream LP</span>
             </button>
             <button
               onClick={handleDownloadStems}
-              className="px-6 py-3 rounded-full border border-white/20 text-white font-bold text-xs tracking-wider uppercase hover:border-[#FF6A00] transition-colors flex items-center gap-2"
+              className="px-6 py-3 rounded-full border border-white/20 text-white font-bold text-xs tracking-wider uppercase hover:border-[#00E5FF] transition-colors flex items-center gap-2"
             >
               <Download className="w-4 h-4" />
               <span>DJ Stems Pack</span>
@@ -117,7 +117,7 @@ export default function MusicPage() {
       {/* Tracklist Table */}
       <div className="glass-card rounded-2xl overflow-hidden border border-white/10">
         <table className="w-full text-left text-xs">
-          <thead className="bg-white/5 border-b border-white/10 text-[#969696] font-mono">
+          <thead className="bg-white/5 border-b border-white/10 text-[#8A8D93] font-mono">
             <tr>
               <th className="p-4 w-16 text-center">PLAY</th>
               <th className="p-4">TITLE & ARTIST</th>
@@ -135,13 +135,13 @@ export default function MusicPage() {
                 <tr
                   key={track.id}
                   className={`hover:bg-white/5 transition-colors ${
-                    isCurrent ? "bg-[#FF6A00]/10" : ""
+                    isCurrent ? "bg-[#00E5FF]/10" : ""
                   }`}
                 >
                   <td className="p-4 text-center">
                     <button
                       onClick={() => playTrack(track)}
-                      className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#FF6A00] hover:text-black flex items-center justify-center transition-colors text-white mx-auto"
+                      className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#00E5FF] hover:text-black flex items-center justify-center transition-colors text-white mx-auto"
                     >
                       {isCurrent && isPlaying ? (
                         <Pause className="w-3.5 h-3.5 fill-current" />
@@ -152,18 +152,18 @@ export default function MusicPage() {
                   </td>
                   <td className="p-4">
                     <div className="font-bold text-white text-sm">{track.title}</div>
-                    <div className="text-[#969696] text-xs">DJ G SPARK</div>
+                    <div className="text-[#8A8D93] text-xs">DJ G SPARK</div>
                   </td>
-                  <td className="p-4 text-[#969696] hidden sm:table-cell">{track.album}</td>
-                  <td className="p-4 text-[#969696] hidden md:table-cell">{track.genre}</td>
-                  <td className="p-4 font-mono text-[#969696] hidden lg:table-cell">
+                  <td className="p-4 text-[#8A8D93] hidden sm:table-cell">{track.album}</td>
+                  <td className="p-4 text-[#8A8D93] hidden md:table-cell">{track.genre}</td>
+                  <td className="p-4 font-mono text-[#8A8D93] hidden lg:table-cell">
                     {track.bpm} BPM • {track.key}
                   </td>
-                  <td className="p-4 font-mono text-[#969696]">{track.duration}</td>
+                  <td className="p-4 font-mono text-[#8A8D93]">{track.duration}</td>
                   <td className="p-4 text-right">
                     <button
                       onClick={handleDownloadStems}
-                      className="px-3 py-1 rounded bg-white/5 hover:bg-white/10 text-[10px] tracking-wider font-bold text-[#FF8400] uppercase transition-colors"
+                      className="px-3 py-1 rounded bg-white/5 hover:bg-white/10 text-[10px] tracking-wider font-bold text-[#00B4D8] uppercase transition-colors"
                     >
                       Stems
                     </button>

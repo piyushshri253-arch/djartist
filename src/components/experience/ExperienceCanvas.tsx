@@ -29,8 +29,8 @@ export function ExperienceCanvas({ progress }: ExperienceCanvasProps) {
         }}
       >
         {/* Deep concert darkness with volumetric fog */}
-        <color attach="background" args={["#050505"]} />
-        <fog attach="fog" args={["#050505", 25, 220]} />
+        <color attach="background" args={["#0B0C10"]} />
+        <fog attach="fog" args={["#0B0C10", 25, 220]} />
 
         {/* Camera Trajectory Rig (Driven by scroll progress 0.0 -> 1.0) */}
         <CameraRig progress={progress} />

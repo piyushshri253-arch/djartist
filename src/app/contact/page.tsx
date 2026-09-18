@@ -63,13 +63,13 @@ export default function ContactPage() {
     <main className="min-h-screen pt-32 pb-24 px-6 sm:px-10 max-w-[1400px] mx-auto">
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto mb-16">
-        <span className="text-xs font-bold tracking-[0.24em] text-[#FF8400] uppercase block mb-3">
+        <span className="text-xs font-bold tracking-[0.24em] text-[#00B4D8] uppercase block mb-3">
           COMMUNICATIONS DIRECTORY
         </span>
         <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight mb-4">
-          CONNECT WITH <span className="text-[#FF6A00]">THE SPARK</span>
+          CONNECT WITH <span className="text-[#00E5FF]">THE SPARK</span>
         </h1>
-        <p className="text-sm sm:text-base text-[#969696] leading-relaxed">
+        <p className="text-sm sm:text-base text-[#8A8D93] leading-relaxed">
           For management inquiries, press accreditation, music licensing, and VIP fan club support, reach out directly to the corresponding team.
         </p>
       </div>
@@ -105,14 +105,14 @@ export default function ContactPage() {
           const Icon = c.icon;
           return (
             <div key={c.title} className="glass-card p-6 rounded-2xl border border-white/10 space-y-4">
-              <div className="w-10 h-10 rounded-xl bg-[#FF6A00]/10 border border-[#FF6A00]/30 flex items-center justify-center text-[#FF6A00]">
+              <div className="w-10 h-10 rounded-xl bg-[#00E5FF]/10 border border-[#00E5FF]/30 flex items-center justify-center text-[#00E5FF]">
                 <Icon className="w-5 h-5" />
               </div>
               <h3 className="text-base font-bold text-white">{c.title}</h3>
-              <p className="text-xs text-[#969696] leading-relaxed">{c.desc}</p>
+              <p className="text-xs text-[#8A8D93] leading-relaxed">{c.desc}</p>
               <a
                 href={`mailto:${c.email}`}
-                className="text-xs font-bold text-[#FF8400] hover:text-white transition-colors block pt-2"
+                className="text-xs font-bold text-[#00B4D8] hover:text-white transition-colors block pt-2"
               >
                 {c.email} &rarr;
               </a>
@@ -124,7 +124,7 @@ export default function ContactPage() {
       {/* Quick Dispatch Form */}
       <div className="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 max-w-2xl mx-auto">
         <div className="text-center mb-8">
-          <span className="text-xs font-bold tracking-[0.2em] text-[#FF8400] uppercase block mb-2">
+          <span className="text-xs font-bold tracking-[0.2em] text-[#00B4D8] uppercase block mb-2">
             DIRECT MESSAGE
           </span>
           <h2 className="text-2xl font-bold text-white">Send A Quick Dispatch</h2>
@@ -160,7 +160,7 @@ export default function ContactPage() {
                   setIsSent(false);
                   setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
                 }}
-                className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-[#FF6A00] to-[#FF8400] hover:brightness-110 text-black font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_25px_rgba(255,106,0,0.35)] cursor-pointer"
+                className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] hover:brightness-110 text-black font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_25px_rgba(0, 229, 255, 0.35)] cursor-pointer"
               >
                 Send Another Message
               </button>
@@ -187,7 +187,7 @@ export default function ContactPage() {
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="Your Name *"
-                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#FF6A00]"
+                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#00E5FF]"
               />
               <input
                 type="email"
@@ -195,7 +195,7 @@ export default function ContactPage() {
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 placeholder="Your Email *"
-                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#FF6A00]"
+                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#00E5FF]"
               />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -204,7 +204,7 @@ export default function ContactPage() {
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 placeholder="Phone / WhatsApp (Optional)"
-                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#FF6A00]"
+                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#00E5FF]"
               />
               <input
                 type="text"
@@ -212,7 +212,7 @@ export default function ContactPage() {
                 value={formData.subject}
                 onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                 placeholder="Subject (Press / Collab / Fan Inquiry) *"
-                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#FF6A00]"
+                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#00E5FF]"
               />
             </div>
             <textarea
@@ -221,12 +221,12 @@ export default function ContactPage() {
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
               placeholder="Your Message..."
-              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#FF6A00]"
+              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#00E5FF]"
             />
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#FF6A00] to-[#FF8400] text-black font-bold text-xs tracking-[0.14em] uppercase hover:shadow-spark transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black font-bold text-xs tracking-[0.14em] uppercase hover:shadow-spark transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
               <Send className="w-4 h-4" />
               <span>{isSubmitting ? "TRANSMITTING..." : "TRANSMIT DISPATCH & SEND TO WHATSAPP"}</span>

@@ -70,7 +70,7 @@ function FlightCase({
         <Text
           position={[0, -0.08, 0]}
           fontSize={0.09}
-          color="#FF6A00"
+          color="#00E5FF"
           anchorX="center"
           anchorY="middle"
           letterSpacing={0.18}
@@ -142,11 +142,11 @@ export function BackstageCorridor() {
           {/* Wall cable bundles */}
           <mesh position={[-6.3, 3.2, z]} rotation={[0, 0, Math.PI / 2]}>
             <torusGeometry args={[0.55, 0.12, 12, 24]} />
-            <meshStandardMaterial color="#060608" roughness={0.9} />
+            <meshStandardMaterial color="#0B0C10" roughness={0.9} />
           </mesh>
           <mesh position={[6.3, 3.2, z]} rotation={[0, 0, Math.PI / 2]}>
             <torusGeometry args={[0.55, 0.12, 12, 24]} />
-            <meshStandardMaterial color="#060608" roughness={0.9} />
+            <meshStandardMaterial color="#0B0C10" roughness={0.9} />
           </mesh>
 
           {/* Floor cable runs along baseboards */}
@@ -255,7 +255,7 @@ export function BackstageCorridor() {
         {/* Arch cutout */}
         <mesh position={[0, 3.2, 0]}>
           <boxGeometry args={[7.5, 6.4, 0.7]} />
-          <meshStandardMaterial color="#050505" />
+          <meshStandardMaterial color="#0B0C10" />
         </mesh>
       </group>
     </group>

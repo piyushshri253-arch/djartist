@@ -22,7 +22,7 @@ interface CanvasContainerProps {
 
 export function CanvasContainer({ progress }: CanvasContainerProps) {
   return (
-    <div className="fixed inset-0 w-full h-full pointer-events-auto z-0 bg-[#050505]">
+    <div className="fixed inset-0 w-full h-full pointer-events-auto z-0 bg-[#0B0C10]">
       <Canvas
         shadows
         dpr={[1, 1.5]}
@@ -35,8 +35,8 @@ export function CanvasContainer({ progress }: CanvasContainerProps) {
           toneMappingExposure: 1.15,
         }}
       >
-        <color attach="background" args={["#050505"]} />
-        <fog attach="fog" args={["#050505", 35, 260]} />
+        <color attach="background" args={["#0B0C10"]} />
+        <fog attach="fog" args={["#0B0C10", 35, 260]} />
 
         <Suspense fallback={null}>
           {/* Scroll-Driven Camera Controller */}

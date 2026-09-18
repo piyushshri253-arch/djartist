@@ -59,7 +59,7 @@ export function FloatingMusicWorld() {
         {/* Vinyl Center Label */}
         <mesh position={[0, 0.015, 0]}>
           <cylinderGeometry args={[0.45, 0.45, 0.02, 32]} />
-          <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+          <meshBasicMaterial color="#00E5FF" toneMapped={false} />
         </mesh>
       </group>
 
@@ -68,7 +68,7 @@ export function FloatingMusicWorld() {
         <Text
           position={[0, 1.1, 0]}
           fontSize={0.22}
-          color="#969696"
+          color="#8A8D93"
           anchorX="left"
           letterSpacing={0.16}
         >
@@ -79,7 +79,7 @@ export function FloatingMusicWorld() {
           position={[0, 0.65, 0]}
           fontSize={0.52}
           font="https://fonts.gstatic.com/s/spacegrotesk/v16/V8mDoQDjQSkFtoMM3T6r8E7mPb54C_k3HqUtEw.woff"
-          color="#F4F1EA"
+          color="#F5F6FA"
           anchorX="left"
           letterSpacing={0.06}
         >
@@ -89,7 +89,7 @@ export function FloatingMusicWorld() {
         <Text
           position={[0, 0.2, 0]}
           fontSize={0.24}
-          color="#FF8400"
+          color="#00B4D8"
           anchorX="left"
           letterSpacing={0.12}
         >
@@ -106,7 +106,7 @@ export function FloatingMusicWorld() {
         >
           <mesh>
             <circleGeometry args={[0.45, 32]} />
-            <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+            <meshBasicMaterial color="#00E5FF" toneMapped={false} />
           </mesh>
           <Text position={[0, 0, 0.02]} fontSize={0.26} color="#FFFFFF">
             {isPlaying ? "❚❚" : "▶"}
@@ -118,7 +118,7 @@ export function FloatingMusicWorld() {
           {Array.from({ length: 16 }).map((_, i) => (
             <mesh key={i} position={[i * 0.16, 0, 0]}>
               <boxGeometry args={[0.08, 0.7, 0.05]} />
-              <meshBasicMaterial color={i % 2 === 0 ? "#FF8400" : "#FFA020"} toneMapped={false} />
+              <meshBasicMaterial color={i % 2 === 0 ? "#00B4D8" : "#FFA020"} toneMapped={false} />
             </mesh>
           ))}
         </group>

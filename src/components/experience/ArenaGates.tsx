@@ -194,7 +194,7 @@ export function ArenaGates({ progress }: ArenaGatesProps) {
         <Text
           position={[0, 3.25, 0.65]}
           fontSize={0.45}
-          color="#FF6A00"
+          color="#00E5FF"
           anchorX="center"
           anchorY="middle"
           letterSpacing={0.25}
@@ -224,7 +224,7 @@ export function ArenaGates({ progress }: ArenaGatesProps) {
         {/* Left Gate Amber Glowing Border Trim */}
         <mesh position={[3.2, 2.8, 0.13]}>
           <boxGeometry args={[6.0, 5.2, 0.02]} />
-          <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+          <meshBasicMaterial color="#00E5FF" toneMapped={false} />
         </mesh>
         {/* Left Gate Steel Grille Slats */}
         {[-2, -1, 0, 1, 2].map((xOffset) => (
@@ -236,7 +236,7 @@ export function ArenaGates({ progress }: ArenaGatesProps) {
         {/* Left Gate Handle */}
         <mesh position={[5.8, 2.8, 0.22]}>
           <boxGeometry args={[0.08, 0.8, 0.18]} />
-          <meshStandardMaterial color="#FF8400" metalness={0.9} />
+          <meshStandardMaterial color="#00B4D8" metalness={0.9} />
         </mesh>
       </group>
 
@@ -249,7 +249,7 @@ export function ArenaGates({ progress }: ArenaGatesProps) {
         {/* Right Gate Amber Glowing Border Trim */}
         <mesh position={[-3.2, 2.8, 0.13]}>
           <boxGeometry args={[6.0, 5.2, 0.02]} />
-          <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+          <meshBasicMaterial color="#00E5FF" toneMapped={false} />
         </mesh>
         {/* Right Gate Steel Grille Slats */}
         {[-2, -1, 0, 1, 2].map((xOffset) => (
@@ -261,7 +261,7 @@ export function ArenaGates({ progress }: ArenaGatesProps) {
         {/* Right Gate Handle */}
         <mesh position={[-5.8, 2.8, 0.22]}>
           <boxGeometry args={[0.08, 0.8, 0.18]} />
-          <meshStandardMaterial color="#FF8400" metalness={0.9} />
+          <meshStandardMaterial color="#00B4D8" metalness={0.9} />
         </mesh>
       </group>
 
@@ -298,7 +298,7 @@ export function ArenaGates({ progress }: ArenaGatesProps) {
         <group ref={leftThighRef} position={[-0.15, -0.05, 0]}>
           <mesh position={[0, -0.22, 0]}>
             <boxGeometry args={[0.16, 0.44, 0.18]} />
-            <meshStandardMaterial color="#111116" roughness={0.7} />
+            <meshStandardMaterial color="#1F2833" roughness={0.7} />
           </mesh>
 
           <group ref={leftKneeRef} position={[0, -0.44, 0]}>
@@ -331,7 +331,7 @@ export function ArenaGates({ progress }: ArenaGatesProps) {
         <group ref={rightThighRef} position={[0.15, -0.05, 0]}>
           <mesh position={[0, -0.22, 0]}>
             <boxGeometry args={[0.16, 0.44, 0.18]} />
-            <meshStandardMaterial color="#111116" roughness={0.7} />
+            <meshStandardMaterial color="#1F2833" roughness={0.7} />
           </mesh>
 
           <group ref={rightKneeRef} position={[0, -0.44, 0]}>
@@ -461,7 +461,7 @@ export function ArenaGates({ progress }: ArenaGatesProps) {
             {/* Black Trimmed Beard around jaw */}
             <mesh position={[0, 0.08, 0.08]}>
               <boxGeometry args={[0.26, 0.14, 0.22]} />
-              <meshStandardMaterial color="#111116" roughness={0.9} />
+              <meshStandardMaterial color="#1F2833" roughness={0.9} />
             </mesh>
 
             {/* White DJ Headphones around neck */}
@@ -476,7 +476,7 @@ export function ArenaGates({ progress }: ArenaGatesProps) {
               </mesh>
               <mesh position={[-0.18, 0.02, 0.08]} rotation={[0, 0.4, 0]}>
                 <torusGeometry args={[0.045, 0.008, 8, 16]} />
-                <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+                <meshBasicMaterial color="#00E5FF" toneMapped={false} />
               </mesh>
               <mesh position={[0.18, 0.02, 0.05]} rotation={[0, -0.4, 0]}>
                 <cylinderGeometry args={[0.06, 0.06, 0.05, 16]} />
@@ -484,7 +484,7 @@ export function ArenaGates({ progress }: ArenaGatesProps) {
               </mesh>
               <mesh position={[0.18, 0.02, 0.08]} rotation={[0, -0.4, 0]}>
                 <torusGeometry args={[0.045, 0.008, 8, 16]} />
-                <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+                <meshBasicMaterial color="#00E5FF" toneMapped={false} />
               </mesh>
             </group>
           </group>

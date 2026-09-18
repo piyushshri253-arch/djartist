@@ -105,14 +105,14 @@ export default function ReviewModal({ isOpen, onClose, onSubmitted }: ReviewModa
       />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-xl bg-[#0d0d14] border border-[#FF6A00]/40 rounded-3xl shadow-[0_20px_80px_rgba(255,106,0,0.25)] overflow-hidden z-10 my-auto text-white">
+      <div className="relative w-full max-w-xl bg-[#0d0d14] border border-[#00E5FF]/40 rounded-3xl shadow-[0_20px_80px_rgba(0, 229, 255, 0.25)] overflow-hidden z-10 my-auto text-white">
         {/* Glow Header Accent */}
-        <div className="h-1.5 w-full bg-gradient-to-r from-[#FF6A00] via-[#FFA030] to-[#FF8400]" />
+        <div className="h-1.5 w-full bg-gradient-to-r from-[#00E5FF] via-[#FFA030] to-[#00B4D8]" />
 
         {/* Close Button */}
         <button
           onClick={handleResetAndClose}
-          className="absolute top-5 right-5 w-9 h-9 rounded-full bg-white/5 border border-white/10 hover:border-[#FF6A00] hover:text-[#FF6A00] flex items-center justify-center transition-colors text-white/70"
+          className="absolute top-5 right-5 w-9 h-9 rounded-full bg-white/5 border border-white/10 hover:border-[#00E5FF] hover:text-[#00E5FF] flex items-center justify-center transition-colors text-white/70"
           aria-label="Close"
         >
           <X className="w-5 h-5" />
@@ -125,7 +125,7 @@ export default function ReviewModal({ isOpen, onClose, onSubmitted }: ReviewModa
               <CheckCircle2 className="w-10 h-10" />
             </div>
 
-            <span className="px-3.5 py-1 rounded-full bg-[#FF6A00]/15 border border-[#FF6A00]/30 text-[#FF8400] text-xs font-mono uppercase tracking-[0.2em] mb-3">
+            <span className="px-3.5 py-1 rounded-full bg-[#00E5FF]/15 border border-[#00E5FF]/30 text-[#00B4D8] text-xs font-mono uppercase tracking-[0.2em] mb-3">
               REVIEW RECEIVED
             </span>
 
@@ -138,7 +138,7 @@ export default function ReviewModal({ isOpen, onClose, onSubmitted }: ReviewModa
             </p>
 
             <div className="p-4 rounded-xl bg-black/40 border border-white/10 w-full mb-6 text-left flex items-start gap-3">
-              <ShieldCheck className="w-5 h-5 text-[#FF6A00] shrink-0 mt-0.5" />
+              <ShieldCheck className="w-5 h-5 text-[#00E5FF] shrink-0 mt-0.5" />
               <div className="text-xs text-[#999999]">
                 <strong className="text-white block mb-0.5">Verified Artist Moderation Queue</strong>
                 Reviews are moderated to prevent automated spam and ensure authentic crowd feedback. You will see it live shortly!
@@ -147,7 +147,7 @@ export default function ReviewModal({ isOpen, onClose, onSubmitted }: ReviewModa
 
             <button
               onClick={handleResetAndClose}
-              className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-[#FF6A00] to-[#FF8400] text-black font-heading font-bold text-xs tracking-[0.2em] uppercase hover:brightness-110 transition-all shadow-[0_0_25px_rgba(255,106,0,0.4)]"
+              className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black font-heading font-bold text-xs tracking-[0.2em] uppercase hover:brightness-110 transition-all shadow-[0_0_25px_rgba(0, 229, 255, 0.4)]"
             >
               BACK TO WEBSITE
             </button>
@@ -156,7 +156,7 @@ export default function ReviewModal({ isOpen, onClose, onSubmitted }: ReviewModa
           /* Submission Form */
           <form onSubmit={handleSubmit} className="p-6 sm:p-8">
             <div className="mb-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF6A00]/10 border border-[#FF6A00]/30 text-[11px] font-mono tracking-[0.2em] text-[#FF8400] uppercase mb-2">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/30 text-[11px] font-mono tracking-[0.2em] text-[#00B4D8] uppercase mb-2">
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>COMMUNITY & INDUSTRY ACCLAIM</span>
               </div>
@@ -194,14 +194,14 @@ export default function ReviewModal({ isOpen, onClose, onSubmitted }: ReviewModa
                       <Star
                         className={`w-7 h-7 sm:w-8 sm:h-8 transition-colors ${
                           isFilled
-                            ? "fill-[#FF6A00] text-[#FF6A00] drop-shadow-[0_0_12px_rgba(255,106,0,0.6)]"
+                            ? "fill-[#00E5FF] text-[#00E5FF] drop-shadow-[0_0_12px_rgba(0, 229, 255, 0.6)]"
                             : "text-white/20 hover:text-white/40"
                         }`}
                       />
                     </button>
                   );
                 })}
-                <span className="ml-3 text-xs font-mono text-[#FF8400] font-semibold">
+                <span className="ml-3 text-xs font-mono text-[#00B4D8] font-semibold">
                   {RATING_LABELS[hoverRating || rating]}
                 </span>
               </div>
@@ -219,7 +219,7 @@ export default function ReviewModal({ isOpen, onClose, onSubmitted }: ReviewModa
                   placeholder="e.g. Aryan Kapoor"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#141420] border border-white/15 focus:border-[#FF6A00] text-white text-sm placeholder-white/30 focus:outline-none transition-colors"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[#141420] border border-white/15 focus:border-[#00E5FF] text-white text-sm placeholder-white/30 focus:outline-none transition-colors"
                 />
               </div>
 
@@ -230,7 +230,7 @@ export default function ReviewModal({ isOpen, onClose, onSubmitted }: ReviewModa
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#141420] border border-white/15 focus:border-[#FF6A00] text-white text-sm focus:outline-none transition-colors"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[#141420] border border-white/15 focus:border-[#00E5FF] text-white text-sm focus:outline-none transition-colors"
                 >
                   <option value="Festival Attendee">Festival Attendee / Concert Goer</option>
                   <option value="Club VIP Guest">Club VIP Guest</option>
@@ -253,7 +253,7 @@ export default function ReviewModal({ isOpen, onClose, onSubmitted }: ReviewModa
                   placeholder="e.g. Stage Lighting Engineer"
                   value={customRole}
                   onChange={(e) => setCustomRole(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#141420] border border-white/15 focus:border-[#FF6A00] text-white text-sm placeholder-white/30 focus:outline-none transition-colors"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[#141420] border border-white/15 focus:border-[#00E5FF] text-white text-sm placeholder-white/30 focus:outline-none transition-colors"
                 />
               </div>
             )}
@@ -267,7 +267,7 @@ export default function ReviewModal({ isOpen, onClose, onSubmitted }: ReviewModa
                 <select
                   value={event}
                   onChange={(e) => setEvent(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#141420] border border-white/15 focus:border-[#FF6A00] text-white text-sm focus:outline-none transition-colors"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[#141420] border border-white/15 focus:border-[#00E5FF] text-white text-sm focus:outline-none transition-colors"
                 >
                   <option value="Sunburn Goa Mainstage">Sunburn Goa Mainstage</option>
                   <option value="Coca-Cola Arena Dubai">Coca-Cola Arena Dubai</option>
@@ -287,7 +287,7 @@ export default function ReviewModal({ isOpen, onClose, onSubmitted }: ReviewModa
                   placeholder="e.g. New Delhi / Percept"
                   value={organization}
                   onChange={(e) => setOrganization(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#141420] border border-white/15 focus:border-[#FF6A00] text-white text-sm placeholder-white/30 focus:outline-none transition-colors"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[#141420] border border-white/15 focus:border-[#00E5FF] text-white text-sm placeholder-white/30 focus:outline-none transition-colors"
                 />
               </div>
             </div>
@@ -302,7 +302,7 @@ export default function ReviewModal({ isOpen, onClose, onSubmitted }: ReviewModa
                   placeholder="e.g. Bangalore Club Velocity"
                   value={customEvent}
                   onChange={(e) => setCustomEvent(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#141420] border border-white/15 focus:border-[#FF6A00] text-white text-sm placeholder-white/30 focus:outline-none transition-colors"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[#141420] border border-white/15 focus:border-[#00E5FF] text-white text-sm placeholder-white/30 focus:outline-none transition-colors"
                 />
               </div>
             )}
@@ -324,13 +324,13 @@ export default function ReviewModal({ isOpen, onClose, onSubmitted }: ReviewModa
                 placeholder="Describe the energy, the crowd, sound, lighting, or your live concert experience..."
                 value={quote}
                 onChange={(e) => setQuote(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-[#141420] border border-white/15 focus:border-[#FF6A00] text-white text-sm placeholder-white/30 focus:outline-none transition-colors resize-none leading-relaxed"
+                className="w-full px-4 py-3 rounded-xl bg-[#141420] border border-white/15 focus:border-[#00E5FF] text-white text-sm placeholder-white/30 focus:outline-none transition-colors resize-none leading-relaxed"
               />
             </div>
 
             {/* Security Moderation Notice */}
-            <div className="p-3.5 rounded-xl bg-[#FF6A00]/5 border border-[#FF6A00]/20 flex items-start gap-2.5 mb-6 text-xs text-[#9999AA]">
-              <ShieldCheck className="w-4 h-4 text-[#FF8400] shrink-0 mt-0.5" />
+            <div className="p-3.5 rounded-xl bg-[#00E5FF]/5 border border-[#00E5FF]/20 flex items-start gap-2.5 mb-6 text-xs text-[#9999AA]">
+              <ShieldCheck className="w-4 h-4 text-[#00B4D8] shrink-0 mt-0.5" />
               <span>
                 To ensure quality and prevent spam, all submitted reviews go to the admin moderation queue before appearing live on the website.
               </span>
@@ -348,7 +348,7 @@ export default function ReviewModal({ isOpen, onClose, onSubmitted }: ReviewModa
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-7 py-3 rounded-xl bg-[#FF6A00] hover:bg-white text-black font-heading font-black text-xs tracking-[0.2em] uppercase transition-all shadow-[0_0_20px_rgba(255,106,0,0.4)] disabled:opacity-60 flex items-center gap-2"
+                className="px-7 py-3 rounded-xl bg-[#00E5FF] hover:bg-white text-black font-heading font-black text-xs tracking-[0.2em] uppercase transition-all shadow-[0_0_20px_rgba(0, 229, 255, 0.4)] disabled:opacity-60 flex items-center gap-2"
               >
                 {isSubmitting ? (
                   <>

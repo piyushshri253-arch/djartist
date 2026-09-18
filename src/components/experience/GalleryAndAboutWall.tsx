@@ -32,7 +32,7 @@ export function GalleryAndAboutWall() {
           {/* Backlit Glowing Inset Border */}
           <mesh position={[0, 0, 0.08]}>
             <boxGeometry args={[4.55, 2.95, 0.01]} />
-            <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+            <meshBasicMaterial color="#00E5FF" toneMapped={false} />
           </mesh>
           {/* Photograph Texture */}
           <mesh position={[0, 0, 0.09]}>
@@ -48,7 +48,7 @@ export function GalleryAndAboutWall() {
             <Text
               position={[0, 0.02, 0.03]}
               fontSize={0.14}
-              color="#FF8400"
+              color="#00B4D8"
               anchorX="center"
               anchorY="middle"
               letterSpacing={0.22}
@@ -175,7 +175,7 @@ export function GalleryAndAboutWall() {
           </mesh>
           <mesh position={[0, 0, 0.055]}>
             <boxGeometry args={[5.05, 3.05, 0.01]} />
-            <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+            <meshBasicMaterial color="#00E5FF" toneMapped={false} />
           </mesh>
 
           {/* Left Side: Photo of DJ G Spark */}
@@ -189,7 +189,7 @@ export function GalleryAndAboutWall() {
             <Text
               position={[0, 1.05, 0]}
               fontSize={0.13}
-              color="#FF6A00"
+              color="#00E5FF"
               anchorX="left"
               letterSpacing={0.2}
               material-toneMapped={false}
@@ -229,7 +229,7 @@ export function GalleryAndAboutWall() {
               Renowned for transcendent melodic builds and earth-shaking basslines that command the world&apos;s largest festival mainstages.
             </Text>
           </group>
-          <pointLight color="#FF8400" intensity={2.5} distance={6} position={[0, 1.8, 1.2]} />
+          <pointLight color="#00B4D8" intensity={2.5} distance={6} position={[0, 1.8, 1.2]} />
         </group>
 
         {/* Exhibit 2: Stadium Arena Photo & Track Record (Z: 7) */}
@@ -240,7 +240,7 @@ export function GalleryAndAboutWall() {
           </mesh>
           <mesh position={[0, 0, 0.055]}>
             <boxGeometry args={[5.05, 3.05, 0.01]} />
-            <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+            <meshBasicMaterial color="#00E5FF" toneMapped={false} />
           </mesh>
 
           {/* Left Side: Stadium Crowd Photo */}
@@ -254,7 +254,7 @@ export function GalleryAndAboutWall() {
             <Text
               position={[0, 1.05, 0]}
               fontSize={0.13}
-              color="#FF6A00"
+              color="#00E5FF"
               anchorX="left"
               letterSpacing={0.2}
               material-toneMapped={false}
@@ -294,7 +294,7 @@ export function GalleryAndAboutWall() {
               From sun-drenched beach festivals in Goa to cavernous 40,000-seat arenas in Dubai and Mumbai, creating unforgettable sensory spectacles.
             </Text>
           </group>
-          <pointLight color="#FF8400" intensity={2.5} distance={6} position={[0, 1.8, 1.2]} />
+          <pointLight color="#00B4D8" intensity={2.5} distance={6} position={[0, 1.8, 1.2]} />
         </group>
 
         {/* Exhibit 3: DJ Mixing Photo & Live Performance Craft (Z: -4) */}
@@ -305,7 +305,7 @@ export function GalleryAndAboutWall() {
           </mesh>
           <mesh position={[0, 0, 0.055]}>
             <boxGeometry args={[5.05, 3.05, 0.01]} />
-            <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+            <meshBasicMaterial color="#00E5FF" toneMapped={false} />
           </mesh>
 
           {/* Left Side: DJ on Decks Photo */}
@@ -319,7 +319,7 @@ export function GalleryAndAboutWall() {
             <Text
               position={[0, 1.05, 0]}
               fontSize={0.13}
-              color="#FF6A00"
+              color="#00E5FF"
               anchorX="left"
               letterSpacing={0.2}
               material-toneMapped={false}
@@ -359,7 +359,7 @@ export function GalleryAndAboutWall() {
               Every set is 100% live hardware mixing, live re-sampling, and custom SMPTE timecode laser synchronization engineered for peak intensity.
             </Text>
           </group>
-          <pointLight color="#FF8400" intensity={2.5} distance={6} position={[0, 1.8, 1.2]} />
+          <pointLight color="#00B4D8" intensity={2.5} distance={6} position={[0, 1.8, 1.2]} />
         </group>
 
         {/* Exhibit 4: World Tour Stage & Sonic Philosophy (Z: -15) */}
@@ -370,7 +370,7 @@ export function GalleryAndAboutWall() {
           </mesh>
           <mesh position={[0, 0, 0.055]}>
             <boxGeometry args={[5.05, 3.05, 0.01]} />
-            <meshBasicMaterial color="#FF6A00" toneMapped={false} />
+            <meshBasicMaterial color="#00E5FF" toneMapped={false} />
           </mesh>
 
           {/* Left Side: World Tour Stage Visual */}
@@ -384,7 +384,7 @@ export function GalleryAndAboutWall() {
             <Text
               position={[0, 1.05, 0]}
               fontSize={0.13}
-              color="#FF6A00"
+              color="#00E5FF"
               anchorX="left"
               letterSpacing={0.2}
               material-toneMapped={false}
@@ -424,7 +424,7 @@ export function GalleryAndAboutWall() {
               &quot;Music is not just heard — it is felt. When the drop hits, forty thousand strangers breathe as one unified frequency.&quot;
             </Text>
           </group>
-          <pointLight color="#FF8400" intensity={2.5} distance={6} position={[0, 1.8, 1.2]} />
+          <pointLight color="#00B4D8" intensity={2.5} distance={6} position={[0, 1.8, 1.2]} />
         </group>
       </group>
     </group>

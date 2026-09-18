@@ -81,13 +81,13 @@ export default function BookingPage() {
     <main className="min-h-screen pt-32 pb-24 px-6 sm:px-10 max-w-[1400px] mx-auto">
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto mb-16">
-        <span className="text-xs font-bold tracking-[0.24em] text-[#FF8400] uppercase block mb-3">
+        <span className="text-xs font-bold tracking-[0.24em] text-[#00B4D8] uppercase block mb-3">
           GLOBAL TOUR BOOKING
         </span>
         <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight mb-4">
-          REPRESENTATION & <span className="text-[#FF6A00]">BOOKINGS</span>
+          REPRESENTATION & <span className="text-[#00E5FF]">BOOKINGS</span>
         </h1>
-        <p className="text-sm sm:text-base text-[#969696] leading-relaxed">
+        <p className="text-sm sm:text-base text-[#8A8D93] leading-relaxed">
           DJ G SPARK is currently reviewing exclusive headline offers for the 2026/2027 World Tour. Please submit your detailed promoter proposal below.
         </p>
       </div>
@@ -131,7 +131,7 @@ export default function BookingPage() {
                       message: "",
                     });
                   }}
-                  className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-[#FF6A00] to-[#FF8400] hover:brightness-110 text-black font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_25px_rgba(255,106,0,0.35)] cursor-pointer"
+                  className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] hover:brightness-110 text-black font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_25px_rgba(0, 229, 255, 0.35)] cursor-pointer"
                 >
                   Submit Another Proposal
                 </button>
@@ -154,7 +154,7 @@ export default function BookingPage() {
               <div className="border-b border-white/10 pb-4 mb-6 flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-bold text-white">Promoter & Event Proposal</h3>
-                  <p className="text-xs text-[#969696]">Please fill out all confirmed venue and budget specifications.</p>
+                  <p className="text-xs text-[#8A8D93]">Please fill out all confirmed venue and budget specifications.</p>
                 </div>
                 <div className="hidden sm:flex items-center gap-1.5 text-[10px] font-mono text-[#25D366] bg-[#25D366]/10 px-2.5 py-1 rounded-full border border-[#25D366]/30">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#25D366] animate-pulse" />
@@ -165,7 +165,7 @@ export default function BookingPage() {
               {/* Row 1: Name & Email */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label className="text-xs font-semibold uppercase tracking-wider text-[#F4F1EA] block mb-2">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-[#F5F6FA] block mb-2">
                     Contact / Agency Name *
                   </label>
                   <input
@@ -174,11 +174,11 @@ export default function BookingPage() {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="e.g. Live Nation / Insomniac"
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#FF6A00] transition-colors"
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#00E5FF] transition-colors"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold uppercase tracking-wider text-[#F4F1EA] block mb-2">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-[#F5F6FA] block mb-2">
                     Official Email *
                   </label>
                   <input
@@ -187,7 +187,7 @@ export default function BookingPage() {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="promoter@agency.com"
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#FF6A00] transition-colors"
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#00E5FF] transition-colors"
                   />
                 </div>
               </div>
@@ -195,7 +195,7 @@ export default function BookingPage() {
               {/* Row 2: Phone & Location */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label className="text-xs font-semibold uppercase tracking-wider text-[#F4F1EA] block mb-2">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-[#F5F6FA] block mb-2">
                     Direct Phone / WhatsApp *
                   </label>
                   <input
@@ -208,7 +208,7 @@ export default function BookingPage() {
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold uppercase tracking-wider text-[#F4F1EA] block mb-2">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-[#F5F6FA] block mb-2">
                     Venue City & Country *
                   </label>
                   <input
@@ -217,7 +217,7 @@ export default function BookingPage() {
                     value={formData.location}
                     onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                     placeholder="e.g. Dubai, United Arab Emirates"
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#FF6A00] transition-colors"
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#00E5FF] transition-colors"
                   />
                 </div>
               </div>
@@ -225,13 +225,13 @@ export default function BookingPage() {
               {/* Row 3: Event Type & Date */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label className="text-xs font-semibold uppercase tracking-wider text-[#F4F1EA] block mb-2">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-[#F5F6FA] block mb-2">
                     Event Type *
                   </label>
                   <select
                     value={formData.eventType}
                     onChange={(e) => setFormData({ ...formData, eventType: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-[#121216] border border-white/10 text-white text-sm focus:outline-none focus:border-[#FF6A00] transition-colors"
+                    className="w-full px-4 py-3 rounded-xl bg-[#121216] border border-white/10 text-white text-sm focus:outline-none focus:border-[#00E5FF] transition-colors"
                   >
                     <option>Stadium / Arena Headline</option>
                     <option>Major Music Festival Mainstage</option>
@@ -240,7 +240,7 @@ export default function BookingPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-semibold uppercase tracking-wider text-[#F4F1EA] block mb-2">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-[#F5F6FA] block mb-2">
                     Target Event Date *
                   </label>
                   <input
@@ -248,7 +248,7 @@ export default function BookingPage() {
                     required
                     value={formData.eventDate}
                     onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#FF6A00] transition-colors"
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#00E5FF] transition-colors"
                   />
                 </div>
               </div>
@@ -256,13 +256,13 @@ export default function BookingPage() {
               {/* Row 4: Capacity & Budget */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label className="text-xs font-semibold uppercase tracking-wider text-[#F4F1EA] block mb-2">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-[#F5F6FA] block mb-2">
                     Anticipated Attendance *
                   </label>
                   <select
                     value={formData.guestCount}
                     onChange={(e) => setFormData({ ...formData, guestCount: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-[#121216] border border-white/10 text-white text-sm focus:outline-none focus:border-[#FF6A00] transition-colors"
+                    className="w-full px-4 py-3 rounded-xl bg-[#121216] border border-white/10 text-white text-sm focus:outline-none focus:border-[#00E5FF] transition-colors"
                   >
                     <option>Under 5,000</option>
                     <option>5,000 - 15,000</option>
@@ -271,13 +271,13 @@ export default function BookingPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-semibold uppercase tracking-wider text-[#F4F1EA] block mb-2">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-[#F5F6FA] block mb-2">
                     Proposed Artist Fee Range (USD) *
                   </label>
                   <select
                     value={formData.budget}
                     onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-[#121216] border border-white/10 text-white text-sm focus:outline-none focus:border-[#FF6A00] transition-colors"
+                    className="w-full px-4 py-3 rounded-xl bg-[#121216] border border-white/10 text-white text-sm focus:outline-none focus:border-[#00E5FF] transition-colors"
                   >
                     <option>$35,000 - $75,000 (Club / Regional)</option>
                     <option>$75,000 - $150,000 (Standard Arena)</option>
@@ -289,7 +289,7 @@ export default function BookingPage() {
 
               {/* Message */}
               <div>
-                <label className="text-xs font-semibold uppercase tracking-wider text-[#F4F1EA] block mb-2">
+                <label className="text-xs font-semibold uppercase tracking-wider text-[#F5F6FA] block mb-2">
                   Event Theme & Additional Notes
                 </label>
                 <textarea
@@ -297,7 +297,7 @@ export default function BookingPage() {
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   placeholder="Provide co-headliners, ticketing timeline, venue holds, or special production requests..."
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#FF6A00] transition-colors"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#00E5FF] transition-colors"
                 />
               </div>
 
@@ -306,13 +306,13 @@ export default function BookingPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-[#FF6A00] to-[#FF8400] text-black font-bold text-xs tracking-[0.14em] uppercase hover:shadow-spark transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black font-bold text-xs tracking-[0.14em] uppercase hover:shadow-spark transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   <Send className="w-4 h-4" />
                   <span>{isSubmitting ? "TRANSMITTING..." : "SUBMIT BOOKING PROPOSAL"}</span>
                 </button>
 
-                <div className="flex items-center gap-2 text-xs text-[#969696]">
+                <div className="flex items-center gap-2 text-xs text-[#8A8D93]">
                   <ShieldCheck className="w-4 h-4 text-[#25D366]" />
                   <span>Direct lead to WhatsApp: {CLIENT_WHATSAPP_DISPLAY}</span>
                 </div>
@@ -346,21 +346,21 @@ export default function BookingPage() {
               </p>
             </div>
 
-            <div className="space-y-4 text-xs text-[#969696]">
+            <div className="space-y-4 text-xs text-[#8A8D93]">
               <div>
                 <strong className="text-white block">North & South America:</strong>
                 <p>Marcus Vance • Redline Beverly Hills</p>
-                <p className="text-[#FF8400]">usa-booking@djgspark.com</p>
+                <p className="text-[#00B4D8]">usa-booking@djgspark.com</p>
               </div>
               <div>
                 <strong className="text-white block">Europe & United Kingdom:</strong>
                 <p>Elena Rostova • Armada Live Amsterdam</p>
-                <p className="text-[#FF8400]">europe-booking@djgspark.com</p>
+                <p className="text-[#00B4D8]">europe-booking@djgspark.com</p>
               </div>
               <div>
                 <strong className="text-white block">Asia-Pacific & Middle East:</strong>
                 <p>Kabir Singhania • Spark Syndicate Mumbai</p>
-                <p className="text-[#FF8400]">asia-booking@djgspark.com</p>
+                <p className="text-[#00B4D8]">asia-booking@djgspark.com</p>
               </div>
             </div>
           </div>
@@ -369,7 +369,7 @@ export default function BookingPage() {
             <h4 className="text-sm font-bold text-white uppercase tracking-wider">
               Promoter Guidelines
             </h4>
-            <ul className="text-xs text-[#969696] space-y-2">
+            <ul className="text-xs text-[#8A8D93] space-y-2">
               <li>• Offers must have confirmed venue holds.</li>
               <li>• 100km radius clause applies for 45 days prior.</li>
               <li>• 50% deposit required upon contract signature.</li>
