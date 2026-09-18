@@ -664,7 +664,7 @@ export default function HomePage() {
       {/* ============================================================ */}
       {/* 2. UPCOMING EVENTS SECTION (#events)                          */}
       {/* ============================================================ */}
-      <section id="events" className="relative py-24 sm:py-32 border-t border-white/[0.08] bg-[#07070a]">
+      <section id="events" className="relative py-24 sm:py-32 border-t border-white/[0.08] bg-[#0B0C10]">
         <div className="max-w-[1400px] mx-auto px-6 sm:px-10">
           {/* Section Header */}
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12 sm:mb-16">
@@ -674,13 +674,13 @@ export default function HomePage() {
                 <span>WORLD TOUR 2026 // LIVE CONCERT DATES</span>
               </div>
               <h2 className="font-heading font-black text-3xl sm:text-5xl tracking-[-0.02em] uppercase text-white">
-                LATEST <span className="text-[#00E5FF]">EVENTS</span>
+                UPCOMING <span className="text-[#00E5FF]">EVENTS</span>
               </h2>
             </div>
 
             <Link
               href="/events"
-              className="inline-flex items-center gap-2 text-xs font-heading font-bold tracking-[0.2em] uppercase text-[#929292] hover:text-[#00E5FF] transition-colors group"
+              className="inline-flex items-center gap-2 text-xs font-heading font-bold tracking-[0.2em] uppercase text-[#8A8D93] hover:text-[#00E5FF] transition-colors group"
             >
               <span>VIEW ALL TOUR DATES</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
