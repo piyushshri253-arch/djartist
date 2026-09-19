@@ -442,25 +442,34 @@ export function InstagramIntegrationModule({
               </div>
 
               {/* Account Switcher Helper (Crucial for switching to another account) */}
-              <div className="p-4 rounded-xl bg-[#0B0C10]/80 border border-white/10 text-left space-y-2">
+              <div className="p-4 rounded-xl bg-[#0B0C10]/80 border border-white/10 text-left space-y-3">
                 <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-400">
                   <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                  <span>WANT TO LOG INTO A DIFFERENT INSTAGRAM ACCOUNT?</span>
+                  <span>WANT TO CONNECT A DIFFERENT INSTAGRAM ACCOUNT? (2 QUICK STEPS)</span>
                 </div>
-                <p className="text-xs text-[#8A8D93] leading-relaxed font-sans">
-                  If your browser is currently logged into an old Instagram account, Meta might automatically authorize it. To log into a different Instagram account, click below to log out of Instagram first so Meta prompts you for the new username and password:
-                </p>
-                <div className="pt-1">
-                  <a
-                    href="https://www.instagram.com/accounts/logout/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/15 text-[#00E5FF] hover:underline text-xs font-mono transition-colors"
-                  >
-                    <LogOut className="w-3.5 h-3.5" />
-                    <span>Log Out of Instagram on Browser (instagram.com)</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
+                <div className="space-y-2 text-xs text-[#8A8D93] font-sans">
+                  <p className="flex items-start gap-2">
+                    <span className="font-mono text-[#00E5FF] font-bold">Step 1:</span>
+                    <span>
+                      Make sure your browser is logged into the new Instagram account you want to connect. (If an old account is logged in, you can{" "}
+                      <a
+                        href="https://www.instagram.com/accounts/logout/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#00E5FF] hover:underline inline-flex items-center gap-1 font-mono font-bold"
+                      >
+                        log out here
+                        <ExternalLink className="w-3 h-3" />
+                      </a>{" "}
+                      and log into the new one).
+                    </span>
+                  </p>
+                  <p className="flex items-start gap-2">
+                    <span className="font-mono text-[#00E5FF] font-bold">Step 2:</span>
+                    <span className="text-white">
+                      Click the big gradient button above (<strong>&quot;Log In with Official Instagram&quot;</strong>) and tap <strong>&quot;Allow&quot;</strong>. <em>(Just logging in on instagram.com does not give access — you must click the button above to authorize the website!)</em>
+                    </span>
+                  </p>
                 </div>
               </div>
 
