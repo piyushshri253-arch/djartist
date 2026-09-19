@@ -44,14 +44,14 @@ export async function POST(request: Request) {
   }
 
   // Official Meta Instagram Login OAuth 2.0 Authorization Endpoint
-  // Uses instagram_business_basic (official standard for Instagram Professional accounts)
-  const authUrl = `https://api.instagram.com/oauth/authorize?client_id=${encodeURIComponent(
+  // enable_fb_login=0 and force_reauth=true force the direct Instagram username/password login screen
+  const authUrl = `https://www.instagram.com/oauth/authorize?enable_fb_login=0&force_reauth=true&force_authentication=1&client_id=${encodeURIComponent(
     clientId
   )}&redirect_uri=${encodeURIComponent(
     redirectUri
   )}&scope=instagram_business_basic&response_type=code&state=${encodeURIComponent(
     state
-  )}&force_authentication=1&force_reauth=true`;
+  )}`;
 
   return NextResponse.json({
     success: true,
