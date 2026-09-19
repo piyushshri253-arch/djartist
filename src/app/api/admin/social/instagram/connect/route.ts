@@ -51,7 +51,7 @@ export async function POST(request: Request) {
     redirectUri
   )}&scope=instagram_business_basic&response_type=code&state=${encodeURIComponent(
     state
-  )}&force_authentication=1`;
+  )}&force_authentication=1&force_reauth=true`;
 
   return NextResponse.json({
     success: true,
