@@ -150,16 +150,23 @@ export function getMetaConfig(requestUrl?: string): {
   redirectUri: string;
   isConfigured: boolean;
 } {
-  const clientId = process.env.INSTAGRAM_CLIENT_ID || process.env.META_APP_ID || "";
-  const clientSecret = process.env.INSTAGRAM_CLIENT_SECRET || process.env.META_APP_SECRET || "";
+  const clientId =
+    process.env.INSTAGRAM_CLIENT_ID ||
+    process.env.META_APP_ID ||
+    "29124056117196864";
 
-  let redirectUri = process.env.INSTAGRAM_REDIRECT_URI || "";
+  const clientSecret =
+    process.env.INSTAGRAM_CLIENT_SECRET ||
+    process.env.META_APP_SECRET ||
+    "68cd244f9cbc4cf416158149b3e6f3d6";
+
+  let redirectUri =
+    process.env.INSTAGRAM_REDIRECT_URI ||
+    "https://djart.vercel.app/api/admin/social/instagram/callback";
+
   if (!redirectUri && requestUrl) {
     const urlObj = new URL(requestUrl);
     redirectUri = `${urlObj.protocol}//${urlObj.host}/api/admin/social/instagram/callback`;
-  } else if (!redirectUri) {
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://djart.vercel.app";
-    redirectUri = `${appUrl}/api/admin/social/instagram/callback`;
   }
 
   return {
