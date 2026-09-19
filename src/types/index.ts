@@ -235,6 +235,7 @@ export interface InstagramDatabase {
   connection: InstagramConnection;
   settings: SocialMediaSettings;
   reels: InstagramReel[];
+  selectedReelIds?: string[];
 }
 
 // ============================================================

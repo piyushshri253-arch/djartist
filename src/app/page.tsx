@@ -1364,13 +1364,43 @@ export default function HomePage() {
                 </a>
               </div>
             </>
+          ) : instagramData?.status === "connected" ? (
+            <div className="text-center py-16 px-6 glass-card rounded-2xl border border-white/10 max-w-xl mx-auto">
+              <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] mx-auto mb-5 shadow-[0_0_25px_rgba(225,48,108,0.4)]">
+                <img
+                  src={instagramData.profilePicture || "/images/dj_hero.jpg"}
+                  alt={instagramData.handle}
+                  className="w-full h-full object-cover rounded-full"
+                />
+              </div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono text-[10px] uppercase mb-3">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Account Connected &bull; {instagramData.handle}</span>
+              </div>
+              <h3 className="font-heading font-black text-2xl text-white uppercase mb-3">
+                Curating Live 4K Reels
+              </h3>
+              <p className="text-xs text-[#8A8D93] leading-relaxed mb-6">
+                Featured festival reels from {instagramData.handle} are being selected in the Admin Panel. Visit the official profile on Instagram to stream live sets and stories.
+              </p>
+              <a
+                href={instagramData.profileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] text-white font-heading font-bold text-xs uppercase tracking-wider hover:opacity-95 transition-opacity shadow-[0_0_25px_rgba(225,48,108,0.4)]"
+              >
+                <InstagramIcon className="w-4 h-4" />
+                <span>Follow {instagramData.handle} on Instagram</span>
+                <ArrowRight className="w-4 h-4" />
+              </a>
+            </div>
           ) : (
             <div className="text-center py-16 px-6 glass-card rounded-2xl border border-white/10 max-w-xl mx-auto">
               <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#f09433]/20 via-[#dc2743]/20 to-[#bc1888]/20 border border-[#E1306C]/30 flex items-center justify-center mx-auto mb-5 text-[#E1306C]">
                 <InstagramIcon className="w-7 h-7" />
               </div>
               <h3 className="font-heading font-black text-2xl text-white uppercase mb-3">
-                Instagram Account Not Connected
+                Instagram Feed
               </h3>
               <p className="text-xs text-[#8A8D93] leading-relaxed mb-6">
                 Official live feeds and festival reels will appear here once the verified account is linked from the Admin Panel.

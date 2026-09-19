@@ -18,16 +18,24 @@ export async function POST() {
   const db = await readInstagramDb();
   const now = new Date().toISOString();
 
-  // Wiping tokens and sensitive auth data
+  // 1. Wiping tokens and sensitive auth data
   delete db.connection.accessTokenEncrypted;
   delete db.connection.tokenIv;
   delete db.connection.tokenAuthTag;
   delete db.connection.tokenExpiresAt;
 
+  // 2. Clear account identity & purge reels so they never mix with next connected account
   db.connection.status = "disconnected";
+  db.connection.username = "";
+  db.connection.instagramUserId = "";
+  db.connection.profilePicture = "";
   db.connection.updatedAt = now;
 
-  // Auto-disable public section when disconnected
+  // 3. Clear reels and selection
+  db.reels = [];
+  db.selectedReelIds = [];
+
+  // 4. Auto-disable public section when disconnected
   db.settings.instagramEnabled = false;
   db.settings.updatedAt = now;
 

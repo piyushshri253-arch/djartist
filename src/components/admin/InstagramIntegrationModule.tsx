@@ -11,19 +11,17 @@ import {
   AlertCircle,
   Clock,
   Play,
-  Share2,
-  Lock,
-  Sliders,
-  Sparkles,
   AlertTriangle,
-  Plus,
   Trash2,
   Copy,
-  Info,
   Key,
-  ShieldCheck,
+  HelpCircle,
+  Save,
+  Film,
+  CheckSquare,
+  Square,
+  Sparkles,
   ArrowRight,
-  HelpCircle
 } from "lucide-react";
 import { InstagramIcon } from "@/components/ui/SocialIcons";
 import { InstagramConnection, InstagramReel, SocialMediaSettings } from "@/types";
@@ -32,14 +30,16 @@ interface InstagramIntegrationModuleProps {
   onNotification?: (type: "success" | "error", text: string) => void;
 }
 
-export function InstagramIntegrationModule({ onNotification }: InstagramIntegrationModuleProps) {
+export function InstagramIntegrationModule({
+  onNotification,
+}: InstagramIntegrationModuleProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [isConnecting, setIsConnecting] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [isSavingSelection, setIsSavingSelection] = useState(false);
   const [isDisconnectModalOpen, setIsDisconnectModalOpen] = useState(false);
   const [isSetupGuideModalOpen, setIsSetupGuideModalOpen] = useState(false);
   const [isTokenConnectModalOpen, setIsTokenConnectModalOpen] = useState(false);
-  const [isAddReelModalOpen, setIsAddReelModalOpen] = useState(false);
   const [previewReel, setPreviewReel] = useState<InstagramReel | null>(null);
 
   // Meta configuration from server
@@ -55,11 +55,6 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
   const [inputToken, setInputToken] = useState("");
   const [isSubmittingToken, setIsSubmittingToken] = useState(false);
 
-  // Manual Reel Form
-  const [reelUrlInput, setReelUrlInput] = useState("");
-  const [reelCaptionInput, setReelCaptionInput] = useState("");
-  const [isSubmittingReel, setIsSubmittingReel] = useState(false);
-
   // Data states
   const [connection, setConnection] = useState<InstagramConnection | null>(null);
   const [settings, setSettings] = useState<SocialMediaSettings>({
@@ -70,12 +65,13 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
   });
   const [reels, setReels] = useState<InstagramReel[]>([]);
 
+  // Selection states (Strictly max 4 reels)
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [savedSelectedIds, setSavedSelectedIds] = useState<string[]>([]);
+
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterVisibility, setFilterVisibility] = useState<"all" | "visible" | "hidden">("all");
-  const [togglingReelId, setTogglingReelId] = useState<string | null>(null);
-  const [deletingReelId, setDeletingReelId] = useState<string | null>(null);
-  const [isTogglingMaster, setIsTogglingMaster] = useState(false);
+  const [filterVisibility, setFilterVisibility] = useState<"all" | "selected" | "available">("all");
   const [copiedRedirect, setCopiedRedirect] = useState(false);
 
   // Toast Helper
@@ -95,7 +91,14 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
       const data = await res.json();
       if (data.connection) setConnection(data.connection);
       if (data.settings) setSettings(data.settings);
-      if (Array.isArray(data.reels)) setReels(data.reels);
+      if (Array.isArray(data.reels)) {
+        setReels(data.reels);
+        const activeIds = data.reels
+          .filter((r: InstagramReel) => r.isVisible)
+          .map((r: InstagramReel) => r.id);
+        setSelectedIds(activeIds);
+        setSavedSelectedIds(activeIds);
+      }
       if (data.metaConfig) setMetaConfig(data.metaConfig);
     } catch (err: any) {
       console.error(err);
@@ -115,16 +118,24 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
       const errorMsg = params.get("error");
       if (successMsg) {
         notify("success", successMsg);
-        window.history.replaceState({}, document.title, window.location.pathname + "?tab=instagram");
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname + "?tab=instagram"
+        );
       }
       if (errorMsg) {
         notify("error", errorMsg);
-        window.history.replaceState({}, document.title, window.location.pathname + "?tab=instagram");
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname + "?tab=instagram"
+        );
       }
     }
   }, []);
 
-  // 1. Trigger Official Meta / Instagram OAuth Flow
+  // 1. Trigger Official Meta / Instagram OAuth Flow (with force_authentication=1)
   const handleConnectInstagram = async () => {
     setIsConnecting(true);
     try {
@@ -136,12 +147,14 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
       if (!res.ok || !data.authUrl) {
         if (data.code === "META_CREDENTIALS_MISSING") {
           setIsSetupGuideModalOpen(true);
-          throw new Error(data.error || "Meta App credentials are not configured in environment variables.");
+          throw new Error(
+            data.error || "Meta App credentials are not configured in environment variables."
+          );
         }
         throw new Error(data.error || "Failed to initialize Instagram authorization");
       }
 
-      // Open official Meta / Instagram OAuth consent screen
+      // Redirect to official Meta OAuth login screen
       window.location.href = data.authUrl;
     } catch (err: any) {
       setIsConnecting(false);
@@ -149,7 +162,7 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
     }
   };
 
-  // 2. Connect via Long-Lived Access Token (For direct Meta Token usage)
+  // 2. Connect via Long-Lived Access Token (For direct token usage)
   const handleTokenConnectSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputToken.trim()) return;
@@ -176,7 +189,7 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
     }
   };
 
-  // 3. Disconnect Instagram Account
+  // 3. Disconnect Instagram Account (Revokes credentials & clears selections)
   const handleDisconnectConfirm = async () => {
     setIsDisconnectModalOpen(false);
     try {
@@ -188,14 +201,19 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
         throw new Error(data.error || "Failed to disconnect Instagram");
       }
 
-      notify("success", "Instagram account disconnected. Encrypted tokens removed.");
+      notify(
+        "success",
+        "Instagram account disconnected. Previous reels and selections cleared. You can now connect another Instagram account."
+      );
+      setSelectedIds([]);
+      setSavedSelectedIds([]);
       await fetchModuleData();
     } catch (err: any) {
       notify("error", err.message || "Disconnect failed");
     }
   };
 
-  // 4. Manual Sync Instagram
+  // 4. Sync Instagram Reels from Meta API (Keeps existing 4 selected reels untouched)
   const handleSyncInstagram = async () => {
     setIsSyncing(true);
     try {
@@ -206,16 +224,25 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
 
       if (!res.ok) {
         if (data.code === "TOKEN_EXPIRED") {
-          notify("error", "Instagram session has expired or was revoked. Please click 'Connect Instagram' to reconnect.");
+          notify(
+            "error",
+            "Instagram session has expired or was revoked. Please click 'Connect Instagram' to reconnect."
+          );
           await fetchModuleData();
           return;
         }
         if (data.code === "RATE_LIMIT_EXCEEDED") {
-          notify("error", "Meta API rate limit reached. Please wait a few minutes before syncing again.");
+          notify(
+            "error",
+            "Meta API rate limit reached. Please wait a few minutes before syncing again."
+          );
           return;
         }
         if (data.code === "PERMISSIONS_ERROR") {
-          notify("error", "Missing Instagram permissions (instagram_business_basic). Please ensure your account is a Professional account.");
+          notify(
+            "error",
+            "Missing Instagram permissions (instagram_business_basic). Please ensure your account is a Professional account."
+          );
           return;
         }
         throw new Error(data.error || "Failed to sync Instagram reels");
@@ -230,74 +257,58 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
     }
   };
 
-  // 5. Master Section Visibility Toggle
-  const handleToggleMasterSection = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const nextEnabled = e.target.checked;
-    setIsTogglingMaster(true);
-    try {
-      const res = await fetch("/api/admin/social/instagram/settings", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ instagramEnabled: nextEnabled }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to update Instagram section visibility");
+  // 5. Toggle Reel Selection (Strict Max 4 Enforced)
+  const handleToggleReelSelection = (reelId: string) => {
+    if (selectedIds.includes(reelId)) {
+      setSelectedIds(selectedIds.filter((id) => id !== reelId));
+    } else {
+      if (selectedIds.length >= 4) {
+        notify(
+          "error",
+          "Maximum 4 reels can be selected for website display. Please deselect an existing reel first."
+        );
+        return;
       }
-
-      setSettings(data.settings);
-      notify("success", `Instagram section is now ${nextEnabled ? "ENABLED" : "HIDDEN"} on the website.`);
-    } catch (err: any) {
-      notify("error", err.message || "Failed to toggle section visibility");
-    } finally {
-      setIsTogglingMaster(false);
+      setSelectedIds([...selectedIds, reelId]);
     }
   };
 
-  // 6. Individual Reel Visibility Toggle (Show on Website / Hide from Website)
-  const handleToggleReelVisibility = async (reel: InstagramReel) => {
-    const nextVisible = !reel.isVisible;
-    setTogglingReelId(reel.id);
+  // 6. Remove Reel from Selected Website Showcase
+  const handleRemoveFromSelected = (reelId: string) => {
+    setSelectedIds(selectedIds.filter((id) => id !== reelId));
+  };
+
+  // 7. Save Selected Reels to Backend & Database
+  const handleSaveSelectedReels = async () => {
+    if (selectedIds.length > 4) {
+      notify("error", "Maximum 4 reels can be selected.");
+      return;
+    }
+
+    setIsSavingSelection(true);
     try {
-      const res = await fetch(`/api/admin/social/instagram/reels/${reel.id}`, {
-        method: "PATCH",
+      const res = await fetch("/api/admin/social/instagram/reels/selection", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isVisible: nextVisible }),
+        body: JSON.stringify({ selectedReelIds: selectedIds }),
       });
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Failed to update reel visibility");
+        throw new Error(data.error || "Failed to save selected reels");
       }
 
-      setReels((prev) =>
-        prev.map((r) => (r.id === reel.id ? { ...r, isVisible: nextVisible } : r))
+      setSavedSelectedIds(selectedIds);
+      if (Array.isArray(data.reels)) {
+        setReels(data.reels);
+      }
+      notify(
+        "success",
+        data.message || `Saved! ${selectedIds.length} of 4 reels are now active on your website.`
       );
-      notify("success", `Reel set to ${nextVisible ? "SHOW ON WEBSITE" : "HIDDEN FROM WEBSITE"}.`);
     } catch (err: any) {
-      notify("error", err.message || "Failed to toggle reel");
+      notify("error", err.message || "Failed to save selected reels");
     } finally {
-      setTogglingReelId(null);
-    }
-  };
-
-  // 7. Remove Reel from Website Showcase
-  const handleDeleteReel = async (id: string) => {
-    if (!window.confirm("Remove this reel from your website showcase? (This will NEVER delete the reel from Instagram).")) return;
-
-    setDeletingReelId(id);
-    try {
-      const res = await fetch(`/api/admin/social/instagram/reels/${id}`, {
-        method: "DELETE",
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to delete reel");
-
-      setReels((prev) => prev.filter((r) => r.id !== id && r.instagramMediaId !== id));
-      notify("success", "Reel removed from website showcase.");
-    } catch (err: any) {
-      notify("error", err.message || "Failed to delete reel");
-    } finally {
-      setDeletingReelId(null);
+      setIsSavingSelection(false);
     }
   };
 
@@ -310,22 +321,36 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
     }
   };
 
-  // Filtered Reels List
+  // Computed Values
+  const isConnected = connection?.status === "connected";
+  const hasUnsavedChanges =
+    selectedIds.length !== savedSelectedIds.length ||
+    selectedIds.some((id) => !savedSelectedIds.includes(id)) ||
+    savedSelectedIds.some((id) => !selectedIds.includes(id));
+
+  // Filtered Reels
   const filteredReels = reels.filter((r) => {
     const matchesSearch =
       r.caption.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      r.username.toLowerCase().includes(searchQuery.toLowerCase());
+      r.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      r.instagramMediaId.includes(searchQuery);
+
+    const isSelected = selectedIds.includes(r.id) || selectedIds.includes(r.instagramMediaId);
+
     const matchesVisibility =
       filterVisibility === "all"
         ? true
-        : filterVisibility === "visible"
-        ? r.isVisible === true
-        : r.isVisible === false;
+        : filterVisibility === "selected"
+        ? isSelected
+        : !isSelected;
+
     return matchesSearch && matchesVisibility;
   });
 
-  const visibleCount = reels.filter((r) => r.isVisible).length;
-  const isConnected = connection?.status === "connected";
+  // Selected Reel Objects for Section 1
+  const selectedReelsList = reels.filter(
+    (r) => selectedIds.includes(r.id) || selectedIds.includes(r.instagramMediaId)
+  );
 
   if (isLoading) {
     return (
@@ -360,13 +385,13 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
       </div>
 
       {/* ============================================================ */}
-      {/* 1. INSTAGRAM CONNECT CARD                                     */}
+      {/* 1. INSTAGRAM CONNECT & ACCOUNT SWITCHING CARD                 */}
       {/* ============================================================ */}
       <div className="relative bg-[#1F2833] border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl overflow-hidden">
         {/* Subtle Instagram Gradient Glow */}
         <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl from-[#E1306C]/10 via-[#F77737]/5 to-transparent rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pb-6 border-b border-white/10">
+        <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
           {/* Identity & Status */}
           <div className="flex items-center gap-5">
             {/* Instagram Profile Picture or Logo */}
@@ -374,7 +399,7 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
               <div className="relative w-16 h-16 rounded-2xl overflow-hidden p-0.5 bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] flex-shrink-0 shadow-[0_0_25px_rgba(225,48,108,0.35)]">
                 <img
                   src={connection.profilePicture}
-                  alt={connection.username}
+                  alt={connection.username || "Instagram Account"}
                   className="w-full h-full object-cover rounded-[14px] bg-black"
                 />
               </div>
@@ -387,24 +412,26 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
             <div>
               <div className="flex flex-wrap items-center gap-3">
                 <h3 className="font-heading font-black text-xl sm:text-2xl text-white uppercase tracking-tight">
-                  Instagram Account
+                  {isConnected && connection?.username
+                    ? `@${connection.username}`
+                    : "Instagram Integration"}
                 </h3>
 
                 {/* Connection Status Badge */}
                 {isConnected ? (
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold tracking-wider uppercase shadow-sm">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <span>🟢 CONNECTED</span>
+                    <span>CONNECTED</span>
                   </span>
                 ) : connection?.status === "expired" ? (
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-400 text-xs font-mono font-bold tracking-wider uppercase">
                     <AlertTriangle className="w-3.5 h-3.5" />
-                    <span>🟡 EXPIRED (PLEASE RECONNECT)</span>
+                    <span>EXPIRED &bull; RECONNECT</span>
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/15 border border-red-500/30 text-red-400 text-xs font-mono font-bold tracking-wider uppercase">
-                    <span className="w-2 h-2 rounded-full bg-red-400" />
-                    <span>🔴 NOT CONNECTED</span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[#8A8D93] text-xs font-mono font-bold tracking-wider uppercase">
+                    <span className="w-2 h-2 rounded-full bg-white/40" />
+                    <span>DISCONNECTED</span>
                   </span>
                 )}
               </div>
@@ -412,13 +439,13 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
               {/* Connected Account Details */}
               {isConnected && connection ? (
                 <div className="flex flex-wrap items-center gap-3 text-xs text-[#8A8D93] mt-2 font-mono">
-                  <span className="text-white font-bold text-sm">@{connection.username}</span>
+                  <span className="text-[#00E5FF] font-semibold">Professional Account</span>
                   <span>&bull;</span>
                   <a
                     href={`https://instagram.com/${connection.username}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#00E5FF] hover:underline flex items-center gap-1"
+                    className="text-white hover:text-[#00E5FF] hover:underline flex items-center gap-1 transition-colors"
                   >
                     <span>View Profile</span>
                     <ExternalLink className="w-3 h-3" />
@@ -426,18 +453,23 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
                   <span>&bull;</span>
                   <span className="flex items-center gap-1 text-[#F5F6FA]/80">
                     <Clock className="w-3 h-3 text-[#00E5FF]" />
-                    <span>Connected: {new Date(connection.connectedAt || connection.createdAt).toLocaleDateString()}</span>
+                    <span>
+                      Connected:{" "}
+                      {new Date(connection.connectedAt || connection.createdAt).toLocaleDateString()}
+                    </span>
                   </span>
                   <span>&bull;</span>
                   <span className="text-emerald-400 font-bold">
-                    {connection.tokenDaysRemaining !== null && connection.tokenDaysRemaining !== undefined
+                    {connection.tokenDaysRemaining !== null &&
+                    connection.tokenDaysRemaining !== undefined
                       ? `${connection.tokenDaysRemaining} days token remaining`
                       : "60-Day Meta Token Active"}
                   </span>
                 </div>
               ) : (
-                <p className="text-xs text-[#8A8D93] mt-1 font-sans">
-                  Connect your real Meta/Instagram Professional account using official OAuth 2.0 to securely sync Reels and display them on your website.
+                <p className="text-xs text-[#8A8D93] mt-1 font-sans max-w-xl">
+                  Connect your Instagram Professional account using official Meta OAuth to import real
+                  Reels. You can switch accounts at any time by disconnecting.
                 </p>
               )}
             </div>
@@ -452,10 +484,10 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
                   type="button"
                   onClick={handleSyncInstagram}
                   disabled={isSyncing}
-                  className="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-mono font-bold tracking-wider uppercase transition-all flex items-center gap-2 shadow-sm disabled:opacity-50 cursor-pointer"
-                  title="Fetch latest real reels from Instagram"
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-white text-xs font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md disabled:opacity-50"
+                  title="Fetch latest reels from Meta API while keeping your current 4 selected reels untouched"
                 >
-                  <RefreshCw className={`w-3.5 h-3.5 text-[#00E5FF] ${isSyncing ? "animate-spin" : ""}`} />
+                  <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? "animate-spin text-[#00E5FF]" : ""}`} />
                   <span>{isSyncing ? "Syncing..." : "Sync Instagram"}</span>
                 </button>
 
@@ -463,95 +495,225 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
                 <button
                   type="button"
                   onClick={() => setIsDisconnectModalOpen(true)}
-                  className="px-4 py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-400 text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer"
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 hover:border-rose-500/50 text-rose-400 text-xs font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md"
+                  title="Disconnect account, purge stored tokens & selections, and connect another account"
                 >
-                  Disconnect Instagram
+                  <X className="w-3.5 h-3.5" />
+                  <span>Disconnect Instagram</span>
                 </button>
               </>
             ) : (
-              <div className="flex flex-wrap items-center gap-3">
-                {/* 1. Official Connect Instagram Button */}
+              <>
+                {/* Connect Official Meta OAuth */}
                 <button
                   type="button"
                   onClick={handleConnectInstagram}
                   disabled={isConnecting}
-                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#f09433] via-[#dc2743] to-[#bc1888] text-white font-heading font-black text-xs tracking-wider uppercase hover:opacity-95 hover:scale-[1.02] transition-all shadow-[0_0_25px_rgba(225,48,108,0.4)] flex items-center gap-2.5 cursor-pointer disabled:opacity-50"
+                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] hover:opacity-95 text-white font-heading font-black text-xs tracking-wider uppercase flex items-center justify-center gap-2 transition-all shadow-[0_0_25px_rgba(225,48,108,0.4)] cursor-pointer disabled:opacity-50"
                 >
-                  <InstagramIcon className="w-4 h-4" />
-                  <span>{isConnecting ? "Opening Meta..." : "Connect Instagram"}</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <InstagramIcon className="w-4 h-4 text-white" />
+                  <span>{isConnecting ? "Redirecting..." : "Connect Instagram"}</span>
                 </button>
 
-                {/* 2. Manual Token Connect Option (For developer testing / System user tokens) */}
+                {/* Connect via Token (Manual Fallback) */}
                 <button
                   type="button"
                   onClick={() => setIsTokenConnectModalOpen(true)}
-                  className="px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 hover:text-white text-xs font-mono tracking-wider uppercase transition-all flex items-center gap-1.5 cursor-pointer"
-                  title="Connect via Meta Graph API Token"
+                  className="w-full sm:w-auto px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-[#8A8D93] hover:text-white text-xs font-mono uppercase flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  title="Connect using a direct Meta Graph API User Access Token"
                 >
                   <Key className="w-3.5 h-3.5 text-[#00E5FF]" />
-                  <span>Meta Token</span>
+                  <span>Connect via Token</span>
                 </button>
-              </div>
+              </>
             )}
           </div>
-        </div>
-
-        {/* Global Instagram Section Master Switch */}
-        <div className="pt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <span className="text-xs font-mono uppercase text-[#00E5FF] font-bold block mb-0.5">
-              Website Master Control
-            </span>
-            <h4 className="font-heading font-bold text-sm sm:text-base text-white uppercase">
-              Instagram Section Visibility on Website
-            </h4>
-            <p className="text-xs text-[#8A8D93] font-sans">
-              Master switch controlling whether the &quot;Follow Us on Instagram&quot; section appears on your public homepage.
-            </p>
-          </div>
-
-          <label className={`relative inline-flex items-center gap-3 cursor-pointer px-5 py-3 rounded-xl border transition-all ${
-            settings.instagramEnabled && isConnected
-              ? "bg-[#0B0C10] border-emerald-500/40 shadow-[0_0_20px_rgba(34,197,94,0.2)]"
-              : "bg-[#0B0C10] border-white/10"
-          }`}>
-            <input
-              type="checkbox"
-              checked={settings.instagramEnabled && isConnected}
-              disabled={!isConnected || isTogglingMaster}
-              onChange={handleToggleMasterSection}
-              className="sr-only peer"
-            />
-            <div className="w-11 h-6 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[15px] after:left-[23px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#22c55e]"></div>
-            <div className="select-none text-left">
-              <span className={`text-xs font-mono font-bold tracking-wider uppercase block ${
-                settings.instagramEnabled && isConnected ? "text-[#22c55e]" : "text-[#8A8D93]"
-              }`}>
-                {settings.instagramEnabled && isConnected ? "🟢 SHOW ON WEBSITE" : "⚪ HIDE FROM WEBSITE"}
-              </span>
-              <span className="text-[10px] text-[#8A8D93] font-mono">
-                {!isConnected ? "Requires connected account" : settings.instagramEnabled ? "Visible to public visitors" : "Hidden from public website"}
-              </span>
-            </div>
-          </label>
         </div>
       </div>
 
       {/* ============================================================ */}
-      {/* 2. INSTAGRAM REELS MANAGEMENT SECTION                         */}
+      {/* 2. REEL SELECTION BAR & MAXIMUM 4 COUNTER                     */}
       {/* ============================================================ */}
-      <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-[#1F2833] border border-white/10 rounded-2xl p-5 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        {/* Counter Badge & Status */}
+        <div className="flex items-center gap-4">
+          <div
+            className={`px-4 py-2 rounded-xl border font-mono text-xs font-black tracking-wider uppercase flex items-center gap-2 shadow-inner ${
+              selectedIds.length === 4
+                ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-400 shadow-[0_0_20px_rgba(34,197,94,0.25)]"
+                : selectedIds.length > 0
+                ? "bg-[#00E5FF]/10 border-[#00E5FF]/30 text-[#00E5FF]"
+                : "bg-white/5 border-white/10 text-[#8A8D93]"
+            }`}
+          >
+            {selectedIds.length === 4 ? (
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            ) : (
+              <Film className="w-4 h-4 text-[#00E5FF]" />
+            )}
+            <span>
+              {selectedIds.length} / 4 Reels Selected
+            </span>
+          </div>
+
+          <div className="text-xs text-[#8A8D93]">
+            {selectedIds.length === 4 ? (
+              <span className="text-emerald-400 font-bold">
+                Maximum 4 reels selected for website display.
+              </span>
+            ) : selectedIds.length === 0 ? (
+              <span>0 reels selected. Choose up to 4 reels below.</span>
+            ) : (
+              <span>
+                {4 - selectedIds.length} slot{4 - selectedIds.length > 1 ? "s" : ""} available for website display.
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Save Selected Reels Button */}
+        <div className="flex items-center gap-3 w-full md:w-auto">
+          {hasUnsavedChanges && (
+            <span className="text-[11px] font-mono text-amber-400 flex items-center gap-1 animate-pulse">
+              <AlertTriangle className="w-3.5 h-3.5" />
+              <span>Unsaved changes</span>
+            </span>
+          )}
+
+          <button
+            type="button"
+            onClick={handleSaveSelectedReels}
+            disabled={isSavingSelection || (!hasUnsavedChanges && !isConnected)}
+            className={`w-full md:w-auto px-6 py-2.5 rounded-xl font-heading font-black text-xs tracking-wider uppercase flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg disabled:opacity-50 ${
+              hasUnsavedChanges
+                ? "bg-[#00E5FF] hover:bg-[#00B4D8] text-black shadow-[0_0_25px_rgba(0,229,255,0.4)]"
+                : "bg-white/10 hover:bg-white/15 text-white border border-white/15"
+            }`}
+          >
+            {isSavingSelection ? (
+              <RefreshCw className="w-4 h-4 animate-spin text-black" />
+            ) : (
+              <Save className="w-4 h-4" />
+            )}
+            <span>{isSavingSelection ? "Saving..." : "Save Selected Reels"}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* ============================================================ */}
+      {/* 3. SECTION A: SELECTED FOR WEBSITE (MAX 4)                   */}
+      {/* ============================================================ */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-heading font-black text-xl sm:text-2xl text-white uppercase tracking-tight flex items-center gap-3">
-              <span>Instagram Reels</span>
-              <span className="text-xs font-mono font-normal px-2.5 py-0.5 rounded-full bg-[#00E5FF]/15 border border-[#00E5FF]/40 text-[#00E5FF]">
-                {visibleCount} Live on Website &bull; {reels.length} Total Synced
+            <h3 className="font-heading font-black text-lg text-white uppercase tracking-tight flex items-center gap-2">
+              <span>Selected for Website</span>
+              <span className="px-2.5 py-0.5 rounded-full bg-[#00E5FF]/15 text-[#00E5FF] font-mono text-xs font-bold border border-[#00E5FF]/30">
+                {selectedIds.length} / 4
               </span>
             </h3>
             <p className="text-xs text-[#8A8D93]">
-              Manage which real Instagram Reels are displayed on your website. Toggle &quot;Show on Website&quot; or &quot;Hide from Website&quot; on any reel below.
+              Only these reels are showcased live on your public website. You can replace any reel by unselecting it.
+            </p>
+          </div>
+        </div>
+
+        {selectedReelsList.length === 0 ? (
+          <div className="bg-[#1F2833]/60 border border-dashed border-white/15 rounded-2xl p-8 text-center space-y-2">
+            <Film className="w-8 h-8 text-[#8A8D93] mx-auto opacity-60" />
+            <h4 className="font-heading font-bold text-white text-sm uppercase">
+              No Reels Selected for Website
+            </h4>
+            <p className="text-xs text-[#8A8D93] max-w-md mx-auto">
+              Choose up to 4 reels from the library below using the checkboxes, then click{" "}
+              <strong className="text-white">&quot;Save Selected Reels&quot;</strong> to feature them on your website.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {selectedReelsList.map((reel) => (
+              <div
+                key={reel.id}
+                className="group relative bg-[#1F2833] border border-emerald-500/30 hover:border-emerald-500/60 rounded-2xl overflow-hidden shadow-lg transition-all flex flex-col"
+              >
+                {/* Vertical Thumbnail with Play Preview */}
+                <div className="relative aspect-[9/16] w-full bg-black overflow-hidden">
+                  <img
+                    src={reel.thumbnailUrl || "/images/dj_hero.jpg"}
+                    alt={reel.caption}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/40 flex items-center justify-center">
+                    <button
+                      type="button"
+                      onClick={() => setPreviewReel(reel)}
+                      className="w-12 h-12 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center border border-white/20 transition-transform hover:scale-110 cursor-pointer"
+                      title="Preview Reel"
+                    >
+                      <Play className="w-5 h-5 fill-white text-white ml-0.5" />
+                    </button>
+                  </div>
+
+                  {/* Top Status Pill */}
+                  <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between gap-1 z-10">
+                    <span className="px-2 py-0.5 rounded bg-emerald-500/90 text-black font-mono text-[9px] font-black uppercase tracking-wider flex items-center gap-1 shadow-sm">
+                      <Check className="w-2.5 h-2.5 stroke-[3]" />
+                      <span>ON WEBSITE</span>
+                    </span>
+
+                    <a
+                      href={reel.permalink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1.5 rounded-full bg-black/70 hover:bg-black text-white hover:text-[#00E5FF] transition-colors"
+                      title="Open on Instagram"
+                    >
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+                </div>
+
+                {/* Card Content & Remove Action */}
+                <div className="p-3.5 flex flex-col justify-between flex-grow space-y-3 bg-[#1F2833]">
+                  <div>
+                    <p className="text-xs text-white line-clamp-2 leading-relaxed font-sans">
+                      {reel.caption}
+                    </p>
+                    <div className="flex items-center justify-between text-[10px] font-mono text-[#8A8D93] mt-2">
+                      <span className="text-[#00E5FF]">@{reel.username}</span>
+                      <span>{new Date(reel.publishedAt).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveFromSelected(reel.id)}
+                    className="w-full py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-400 text-xs font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                    <span>Remove from Website</span>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* ============================================================ */}
+      {/* 4. SECTION B: ALL INSTAGRAM REELS LIBRARY                     */}
+      {/* ============================================================ */}
+      <div className="space-y-4 pt-4 border-t border-white/10">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div>
+            <h3 className="font-heading font-black text-lg text-white uppercase tracking-tight flex items-center gap-2">
+              <span>All Instagram Reels</span>
+              <span className="px-2.5 py-0.5 rounded-full bg-white/10 text-white font-mono text-xs font-bold">
+                {reels.length} Total
+              </span>
+            </h3>
+            <p className="text-xs text-[#8A8D93]">
+              All reels fetched from your connected Instagram account. Select up to 4 reels to showcase on your website.
             </p>
           </div>
 
@@ -560,7 +722,7 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
             <div className="relative w-full sm:w-64">
               <input
                 type="text"
-                placeholder="Search captions..."
+                placeholder="Search captions or ID..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-[#0B0C10] border border-white/10 rounded-xl px-4 py-2 pl-9 text-xs text-white placeholder:text-[#8A8D93] focus:outline-none focus:border-[#00E5FF]"
@@ -572,35 +734,41 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
               <button
                 type="button"
                 onClick={() => setFilterVisibility("all")}
-                className={`px-3 py-1.5 rounded-lg uppercase tracking-wider transition-colors ${
-                  filterVisibility === "all" ? "bg-white/15 text-white font-bold" : "text-[#8A8D93] hover:text-white"
+                className={`px-3 py-1.5 rounded-lg uppercase tracking-wider transition-colors cursor-pointer ${
+                  filterVisibility === "all"
+                    ? "bg-white/15 text-white font-bold"
+                    : "text-[#8A8D93] hover:text-white"
                 }`}
               >
                 All ({reels.length})
               </button>
               <button
                 type="button"
-                onClick={() => setFilterVisibility("visible")}
-                className={`px-3 py-1.5 rounded-lg uppercase tracking-wider transition-colors ${
-                  filterVisibility === "visible" ? "bg-emerald-500/20 text-emerald-400 font-bold" : "text-[#8A8D93] hover:text-white"
+                onClick={() => setFilterVisibility("selected")}
+                className={`px-3 py-1.5 rounded-lg uppercase tracking-wider transition-colors cursor-pointer ${
+                  filterVisibility === "selected"
+                    ? "bg-emerald-500/20 text-emerald-400 font-bold"
+                    : "text-[#8A8D93] hover:text-white"
                 }`}
               >
-                Visible ({visibleCount})
+                Selected ({selectedIds.length})
               </button>
               <button
                 type="button"
-                onClick={() => setFilterVisibility("hidden")}
-                className={`px-3 py-1.5 rounded-lg uppercase tracking-wider transition-colors ${
-                  filterVisibility === "hidden" ? "bg-red-500/20 text-red-400 font-bold" : "text-[#8A8D93] hover:text-white"
+                onClick={() => setFilterVisibility("available")}
+                className={`px-3 py-1.5 rounded-lg uppercase tracking-wider transition-colors cursor-pointer ${
+                  filterVisibility === "available"
+                    ? "bg-white/15 text-white font-bold"
+                    : "text-[#8A8D93] hover:text-white"
                 }`}
               >
-                Hidden ({reels.length - visibleCount})
+                Available ({Math.max(0, reels.length - selectedIds.length)})
               </button>
             </div>
           </div>
         </div>
 
-        {/* Reels Table / Grid View */}
+        {/* Reels Table */}
         {filteredReels.length === 0 ? (
           <div className="bg-[#1F2833] border border-white/10 rounded-2xl p-12 text-center">
             <InstagramIcon className="w-10 h-10 text-[#8A8D93] mx-auto mb-3" />
@@ -609,7 +777,7 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
               {searchQuery
                 ? "No reels matched your search filter."
                 : isConnected
-                ? "Click 'Sync Instagram' above to import your reels from Meta."
+                ? "Click 'Sync Instagram' above to import reels from Meta."
                 : "Connect your Instagram account to sync your reels automatically."}
             </p>
           </div>
@@ -619,26 +787,60 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
               <table className="w-full text-left text-xs font-sans">
                 <thead className="bg-[#0B0C10] text-[#8A8D93] font-mono uppercase tracking-wider border-b border-white/10">
                   <tr>
-                    <th className="p-4 w-28">Reel</th>
+                    <th className="p-4 w-16 text-center">Select</th>
+                    <th className="p-4 w-28">Preview</th>
                     <th className="p-4">Caption / Content</th>
                     <th className="p-4 w-32">Published</th>
                     <th className="p-4 w-36">Instagram URL</th>
-                    <th className="p-4 w-28">Status</th>
-                    <th className="p-4 w-52 text-right">Website Visibility</th>
+                    <th className="p-4 w-40 text-right">Website Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/[0.06]">
                   {filteredReels.map((reel) => {
-                    const isToggling = togglingReelId === reel.id;
+                    const isSelected =
+                      selectedIds.includes(reel.id) ||
+                      selectedIds.includes(reel.instagramMediaId);
+                    const isLimitReached = !isSelected && selectedIds.length >= 4;
 
                     return (
                       <tr
                         key={reel.id}
                         className={`hover:bg-white/[0.02] transition-colors ${
-                          reel.isVisible ? "bg-white/[0.01]" : "opacity-60"
+                          isSelected ? "bg-emerald-500/[0.03]" : ""
                         }`}
                       >
-                        {/* 1. Thumbnail + Preview Trigger */}
+                        {/* 1. Selection Checkbox */}
+                        <td className="p-4 text-center">
+                          <button
+                            type="button"
+                            disabled={isLimitReached}
+                            onClick={() => handleToggleReelSelection(reel.id)}
+                            className={`w-7 h-7 rounded-lg flex items-center justify-center mx-auto transition-all cursor-pointer ${
+                              isSelected
+                                ? "bg-emerald-500 text-black shadow-[0_0_12px_rgba(34,197,94,0.4)]"
+                                : isLimitReached
+                                ? "bg-white/5 text-white/20 border border-white/10 cursor-not-allowed"
+                                : "bg-[#0B0C10] text-[#8A8D93] hover:text-white border border-white/20 hover:border-[#00E5FF]"
+                            }`}
+                            title={
+                              isSelected
+                                ? "Click to deselect from website"
+                                : isLimitReached
+                                ? "Maximum 4 reels selected. Deselect another reel first."
+                                : "Click to select for website showcase"
+                            }
+                          >
+                            {isSelected ? (
+                              <Check className="w-4 h-4 stroke-[3]" />
+                            ) : isLimitReached ? (
+                              <X className="w-3.5 h-3.5 opacity-40" />
+                            ) : (
+                              <Square className="w-3.5 h-3.5 opacity-50" />
+                            )}
+                          </button>
+                        </td>
+
+                        {/* 2. Thumbnail + Preview Trigger */}
                         <td className="p-4">
                           <div
                             onClick={() => setPreviewReel(reel)}
@@ -653,13 +855,13 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
                             <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 flex items-center justify-center transition-colors">
                               <Play className="w-5 h-5 text-white fill-white drop-shadow-md group-hover:scale-125 transition-transform" />
                             </div>
-                            <span className="absolute bottom-1 right-1 px-1 py-0.5 rounded bg-black/80 font-mono text-[8px] text-[#22c55e] font-bold">
-                              {reel.viewsDisplay || "REEL"}
+                            <span className="absolute bottom-1 right-1 px-1 py-0.5 rounded bg-black/80 font-mono text-[8px] text-[#00E5FF] font-bold">
+                              REEL
                             </span>
                           </div>
                         </td>
 
-                        {/* 2. Caption / Content */}
+                        {/* 3. Caption / Content */}
                         <td className="p-4 max-w-md">
                           <p className="font-sans text-xs text-white line-clamp-2 leading-relaxed">
                             {reel.caption}
@@ -671,7 +873,7 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
                           </div>
                         </td>
 
-                        {/* 3. Published Date */}
+                        {/* 4. Published Date */}
                         <td className="p-4 font-mono text-xs text-[#8A8D93] whitespace-nowrap">
                           {new Date(reel.publishedAt).toLocaleDateString("en-US", {
                             day: "numeric",
@@ -680,7 +882,7 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
                           })}
                         </td>
 
-                        {/* 4. Instagram URL */}
+                        {/* 5. Instagram URL */}
                         <td className="p-4 whitespace-nowrap">
                           <a
                             href={reel.permalink}
@@ -693,51 +895,18 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
                           </a>
                         </td>
 
-                        {/* 5. Status */}
-                        <td className="p-4 whitespace-nowrap">
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono text-[10px] uppercase">
-                            <CheckCircle2 className="w-3 h-3" />
-                            <span>SYNCED</span>
-                          </span>
-                        </td>
-
-                        {/* 6. Website Visibility Toggle Button */}
+                        {/* 6. Website Status */}
                         <td className="p-4 text-right whitespace-nowrap">
-                          <div className="flex items-center justify-end gap-2">
-                            <button
-                              type="button"
-                              disabled={isToggling}
-                              onClick={() => handleToggleReelVisibility(reel)}
-                              className={`px-3.5 py-2 rounded-xl text-xs font-mono font-bold uppercase tracking-wider transition-all inline-flex items-center gap-2 cursor-pointer ${
-                                reel.isVisible
-                                  ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 hover:bg-emerald-500/30 shadow-[0_0_15px_rgba(34,197,94,0.2)]"
-                                  : "bg-white/5 text-[#8A8D93] border border-white/10 hover:border-white/25 hover:text-white"
-                              }`}
-                              title={
-                                reel.isVisible
-                                  ? "Visible on website. Click to hide (does NOT delete from Instagram)."
-                                  : "Hidden from website. Click to show on website."
-                              }
-                            >
-                              {isToggling ? (
-                                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                              ) : reel.isVisible ? (
-                                <Check className="w-3.5 h-3.5 text-emerald-400" />
-                              ) : (
-                                <X className="w-3.5 h-3.5" />
-                              )}
-                              <span>{reel.isVisible ? "Show on Website" : "Hide from Website"}</span>
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() => handleDeleteReel(reel.id)}
-                              className="p-2 rounded-xl text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/30 transition-colors cursor-pointer"
-                              title="Remove reel from website showcase only"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
+                          {isSelected ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-mono text-[10px] font-bold uppercase shadow-sm">
+                              <CheckCircle2 className="w-3 h-3" />
+                              <span>ON WEBSITE</span>
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[#8A8D93] font-mono text-[10px] uppercase">
+                              <span>AVAILABLE</span>
+                            </span>
+                          )}
                         </td>
                       </tr>
                     );
@@ -750,7 +919,7 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
       </div>
 
       {/* ============================================================ */}
-      {/* 3. REEL PREVIEW MODAL                                         */}
+      {/* 5. REEL PREVIEW MODAL                                         */}
       {/* ============================================================ */}
       {previewReel && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
@@ -792,18 +961,31 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
             </div>
 
             <div className="pt-2 flex items-center justify-between border-t border-white/10">
-              <button
-                type="button"
-                onClick={() => handleToggleReelVisibility(previewReel)}
-                className={`px-4 py-2 rounded-xl text-xs font-mono font-bold uppercase flex items-center gap-2 cursor-pointer ${
-                  previewReel.isVisible
-                    ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
-                    : "bg-white/10 text-white border border-white/15"
-                }`}
-              >
-                <Check className="w-3.5 h-3.5" />
-                <span>{previewReel.isVisible ? "Show on Website" : "Hide from Website"}</span>
-              </button>
+              {/* Toggle selection from preview modal */}
+              {selectedIds.includes(previewReel.id) ? (
+                <button
+                  type="button"
+                  onClick={() => handleRemoveFromSelected(previewReel.id)}
+                  className="px-4 py-2 rounded-xl text-xs font-mono font-bold uppercase flex items-center gap-2 bg-rose-500/15 text-rose-400 border border-rose-500/30 cursor-pointer"
+                >
+                  <X className="w-3.5 h-3.5" />
+                  <span>Remove from Website</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  disabled={selectedIds.length >= 4}
+                  onClick={() => handleToggleReelSelection(previewReel.id)}
+                  className={`px-4 py-2 rounded-xl text-xs font-mono font-bold uppercase flex items-center gap-2 cursor-pointer ${
+                    selectedIds.length >= 4
+                      ? "bg-white/5 text-white/40 cursor-not-allowed"
+                      : "bg-[#00E5FF] text-black font-black"
+                  }`}
+                >
+                  <Check className="w-3.5 h-3.5" />
+                  <span>{selectedIds.length >= 4 ? "Max 4 Selected" : "Select for Website"}</span>
+                </button>
+              )}
 
               <a
                 href={previewReel.permalink}
@@ -820,7 +1002,7 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
       )}
 
       {/* ============================================================ */}
-      {/* 4. DISCONNECT CONFIRMATION MODAL                              */}
+      {/* 6. DISCONNECT CONFIRMATION MODAL                              */}
       {/* ============================================================ */}
       {isDisconnectModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
@@ -834,7 +1016,8 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
                 Disconnect Instagram Account?
               </h3>
               <p className="text-xs text-[#8A8D93] mt-2 leading-relaxed">
-                This will revoke and delete encrypted access tokens from the server and hide the Instagram section from the public website until reconnected.
+                Disconnecting will revoke server access tokens and clear current reel selections.
+                You can immediately connect another Instagram account without mixing any data.
               </p>
             </div>
 
@@ -851,7 +1034,7 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
                 onClick={handleDisconnectConfirm}
                 className="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-mono font-bold uppercase shadow-lg transition-colors cursor-pointer"
               >
-                Yes, Disconnect Now
+                Yes, Disconnect
               </button>
             </div>
           </div>
@@ -859,7 +1042,7 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
       )}
 
       {/* ============================================================ */}
-      {/* 5. META DEVELOPER SETUP GUIDE MODAL                           */}
+      {/* 7. META DEVELOPER SETUP GUIDE MODAL                           */}
       {/* ============================================================ */}
       {isSetupGuideModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
@@ -964,7 +1147,7 @@ export function InstagramIntegrationModule({ onNotification }: InstagramIntegrat
       )}
 
       {/* ============================================================ */}
-      {/* 6. META GRAPH API TOKEN CONNECT MODAL                         */}
+      {/* 8. META GRAPH API TOKEN CONNECT MODAL                         */}
       {/* ============================================================ */}
       {isTokenConnectModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">

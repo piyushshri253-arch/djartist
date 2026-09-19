@@ -85,7 +85,7 @@ export async function POST(request: Request) {
             publishedAt: item.timestamp || now,
             viewsDisplay: "Reel",
             likesCount: item.like_count || 0,
-            isVisible: true,
+            isVisible: false, // Start with 0 selected reels for new account
             createdAt: now,
             updatedAt: now,
           });
@@ -118,15 +118,16 @@ export async function POST(request: Request) {
 
     db.settings.instagramEnabled = true;
     db.settings.updatedAt = now;
-    if (realReels.length > 0) {
-      db.reels = realReels;
-    }
+
+    // Completely replace reels with the new account's reels (never mix accounts)
+    db.reels = realReels;
+    db.selectedReelIds = [];
 
     await writeInstagramDb(db);
 
     return NextResponse.json({
       success: true,
-      message: `Real Instagram account @${username} connected successfully with ${realReels.length} reel(s)!`,
+      message: `Real Instagram account @${username} connected successfully with ${realReels.length} reel(s)! Select up to 4 reels to feature on your website.`,
       connection: {
         id: db.connection.id,
         instagramUserId: db.connection.instagramUserId,

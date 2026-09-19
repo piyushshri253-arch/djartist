@@ -16,9 +16,10 @@ export async function GET() {
     });
   }
 
-  // Filter ONLY reels where isVisible === true
+  // Filter ONLY reels where isVisible === true, capped strictly at maximum 4
   const visibleReels = db.reels
     .filter((reel) => reel.isVisible === true)
+    .slice(0, 4)
     .map((reel) => ({
       id: reel.id,
       instagramMediaId: reel.instagramMediaId,

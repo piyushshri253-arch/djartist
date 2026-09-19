@@ -42,6 +42,22 @@ export async function PATCH(
       );
     }
 
+    if (isVisible) {
+      const currentVisibleCount = db.reels.filter(
+        (r) => r.isVisible && r.id !== id && r.instagramMediaId !== id
+      ).length;
+      if (currentVisibleCount >= 4) {
+        return NextResponse.json(
+          {
+            error:
+              "Maximum 4 reels can be selected for website display. Please deselect an existing reel first.",
+            code: "MAX_SELECTION_REACHED",
+          },
+          { status: 400 }
+        );
+      }
+    }
+
     db.reels[reelIndex].isVisible = isVisible;
     db.reels[reelIndex].updatedAt = new Date().toISOString();
 

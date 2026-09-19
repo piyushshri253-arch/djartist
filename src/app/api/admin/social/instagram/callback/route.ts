@@ -171,7 +171,7 @@ export async function GET(request: Request) {
             publishedAt: item.timestamp || now,
             viewsDisplay: "Reel",
             likesCount: item.like_count || 0,
-            isVisible: true,
+            isVisible: false, // Start with 0 selected reels for new account
             createdAt: now,
             updatedAt: now,
           });
@@ -205,23 +205,18 @@ export async function GET(request: Request) {
     db.settings.instagramEnabled = true;
     db.settings.updatedAt = now;
 
-    if (initialReels.length > 0) {
-      // Merge initial reels with any existing items, avoiding duplicates
-      const existingIds = new Set(db.reels.map((r) => r.instagramMediaId));
-      for (const r of initialReels) {
-        if (!existingIds.has(r.instagramMediaId)) {
-          db.reels.push(r);
-          existingIds.add(r.instagramMediaId);
-        }
-      }
-    }
+    // Account Switching Isolation:
+    // Completely replace reels with the new account's reels (never mix accounts)
+    // and initialize with 0 selected reels.
+    db.reels = initialReels;
+    db.selectedReelIds = [];
 
     await writeInstagramDb(db);
 
     return NextResponse.redirect(
       new URL(
         `/admin?tab=instagram&success=${encodeURIComponent(
-          `Real Instagram account @${username} connected successfully with ${initialReels.length} reel(s)!`
+          `Real Instagram account @${username} connected successfully with ${initialReels.length} reel(s)! Select up to 4 reels to feature on your website.`
         )}`,
         request.url
       )

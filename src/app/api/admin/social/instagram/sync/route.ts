@@ -222,7 +222,7 @@ export async function POST(request: Request) {
         publishedAt: item.timestamp || now,
         viewsDisplay: "Reel",
         likesCount: item.like_count || 0,
-        isVisible: true, // Default to visible for newly synced reels
+        isVisible: false, // Default to unselected to preserve client's current selected 4 reels
         createdAt: now,
         updatedAt: now,
       });
