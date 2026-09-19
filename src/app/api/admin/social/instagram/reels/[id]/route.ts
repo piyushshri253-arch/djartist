@@ -12,7 +12,10 @@ export async function PATCH(
   }
 
   if (!hasPermission(admin, "social_media.instagram.manage")) {
-    return NextResponse.json({ error: "Permission denied: Requires social_media.instagram.manage" }, { status: 403 });
+    return NextResponse.json(
+      { error: "Permission denied: Requires social_media.instagram.manage" },
+      { status: 403 }
+    );
   }
 
   try {
@@ -21,30 +24,41 @@ export async function PATCH(
     const { isVisible } = body;
 
     if (typeof isVisible !== "boolean") {
-      return NextResponse.json({ error: "Field 'isVisible' must be a boolean" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Field 'isVisible' must be a boolean" },
+        { status: 400 }
+      );
     }
 
-    const db = readInstagramDb();
+    const db = await readInstagramDb();
     const reelIndex = db.reels.findIndex(
       (r) => r.id === id || r.instagramMediaId === id
     );
 
     if (reelIndex === -1) {
-      return NextResponse.json({ error: `Reel with id '${id}' not found` }, { status: 404 });
+      return NextResponse.json(
+        { error: `Reel with id '${id}' not found` },
+        { status: 404 }
+      );
     }
 
     db.reels[reelIndex].isVisible = isVisible;
     db.reels[reelIndex].updatedAt = new Date().toISOString();
 
-    writeInstagramDb(db);
+    await writeInstagramDb(db);
 
     return NextResponse.json({
       success: true,
       reel: db.reels[reelIndex],
-      message: `Reel visibility set to ${isVisible ? "SHOW ON WEBSITE" : "HIDDEN FROM WEBSITE"}.`
+      message: `Reel visibility set to ${
+        isVisible ? "SHOW ON WEBSITE" : "HIDDEN FROM WEBSITE"
+      }. (Note: Reel remains untouched on Instagram).`,
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || "Failed to update reel visibility" }, { status: 500 });
+    return NextResponse.json(
+      { error: err.message || "Failed to update reel visibility" },
+      { status: 500 }
+    );
   }
 }
 
@@ -58,27 +72,35 @@ export async function DELETE(
   }
 
   if (!hasPermission(admin, "social_media.instagram.manage")) {
-    return NextResponse.json({ error: "Permission denied: Requires social_media.instagram.manage" }, { status: 403 });
+    return NextResponse.json(
+      { error: "Permission denied: Requires social_media.instagram.manage" },
+      { status: 403 }
+    );
   }
 
   try {
     const { id } = await params;
-    const db = readInstagramDb();
+    const db = await readInstagramDb();
     const beforeCount = db.reels.length;
     db.reels = db.reels.filter((r) => r.id !== id && r.instagramMediaId !== id);
 
     if (db.reels.length === beforeCount) {
-      return NextResponse.json({ error: `Reel with id '${id}' not found` }, { status: 404 });
+      return NextResponse.json(
+        { error: `Reel with id '${id}' not found` },
+        { status: 404 }
+      );
     }
 
-    writeInstagramDb(db);
+    await writeInstagramDb(db);
 
     return NextResponse.json({
       success: true,
-      message: "Instagram reel removed from showcase."
+      message: "Instagram reel removed from website showcase.",
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || "Failed to remove reel" }, { status: 500 });
+    return NextResponse.json(
+      { error: err.message || "Failed to remove reel" },
+      { status: 500 }
+    );
   }
 }
-

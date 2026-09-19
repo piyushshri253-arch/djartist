@@ -1,4 +1,4 @@
-﻿import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getAuthenticatedAdmin, hasPermission } from "@/lib/auth";
 import { readInstagramDb, writeInstagramDb } from "@/lib/instagram-crypto";
 import { InstagramReel } from "@/types";
@@ -21,12 +21,15 @@ export async function POST(request: Request) {
 
     if (!url || typeof url !== "string" || !url.includes("instagram.com")) {
       return NextResponse.json(
-        { error: "Please provide a valid Instagram Reel or Post link (e.g. https://www.instagram.com/reel/...)" },
+        {
+          error:
+            "Please provide a valid Instagram Reel or Post link (e.g. https://www.instagram.com/reel/...)",
+        },
         { status: 400 }
       );
     }
 
-    const db = readInstagramDb();
+    const db = await readInstagramDb();
     const now = new Date().toISOString();
 
     // Extract shortcode from url e.g. /reel/C123abc/ or /p/C123abc/
@@ -34,7 +37,9 @@ export async function POST(request: Request) {
     const shortcode = match ? match[1] : `manual-${Date.now()}`;
 
     // Prevent duplicates
-    const existing = db.reels.find((r) => r.permalink.includes(shortcode) || r.instagramMediaId === shortcode);
+    const existing = db.reels.find(
+      (r) => r.permalink.includes(shortcode) || r.instagramMediaId === shortcode
+    );
     if (existing) {
       return NextResponse.json(
         { error: "This reel has already been added to your showcase." },
@@ -48,7 +53,9 @@ export async function POST(request: Request) {
 
     try {
       const oembedRes = await fetch(
-        `https://api.instagram.com/oembed?url=${encodeURIComponent(url)}&omitscript=true`
+        `https://api.instagram.com/oembed?url=${encodeURIComponent(
+          url
+        )}&omitscript=true`
       );
       if (oembedRes.ok) {
         const oembedData = await oembedRes.json();
@@ -77,7 +84,7 @@ export async function POST(request: Request) {
 
     db.reels.unshift(newReel);
     db.connection.lastSyncedAt = now;
-    writeInstagramDb(db);
+    await writeInstagramDb(db);
 
     return NextResponse.json({
       success: true,

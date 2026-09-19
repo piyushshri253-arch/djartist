@@ -89,6 +89,8 @@ export function verifyOAuthState(stateParam: string | null, cookieValue: string 
   }
 }
 
+import { readJsonFile, writeJsonFile } from "./serverData";
+
 /**
  * Default Instagram database seed
  */
@@ -115,32 +117,56 @@ export function getDefaultInstagramDb(): InstagramDatabase {
 }
 
 /**
- * Reads Instagram Database from file or initializes if missing
+ * Reads Instagram Database from MongoDB Atlas (with local file fallback)
  */
-export function readInstagramDb(): InstagramDatabase {
+export async function readInstagramDb(): Promise<InstagramDatabase> {
   try {
-    if (!fs.existsSync(DATA_FILE_PATH)) {
-      const defaultDb = getDefaultInstagramDb();
-      writeInstagramDb(defaultDb);
-      return defaultDb;
+    const data = await readJsonFile<InstagramDatabase>("instagram.json");
+    if (data && data.connection && data.settings && Array.isArray(data.reels)) {
+      return data;
     }
-    const raw = fs.readFileSync(DATA_FILE_PATH, "utf-8");
-    return JSON.parse(raw) as InstagramDatabase;
+    const defaultDb = getDefaultInstagramDb();
+    await writeJsonFile<InstagramDatabase>("instagram.json", defaultDb);
+    return defaultDb;
   } catch (error) {
-    console.error("Error reading instagram.json, returning default:", error);
+    console.error("Error reading instagram database, returning default:", error);
     return getDefaultInstagramDb();
   }
 }
 
 /**
- * Writes Instagram Database to file atomically
+ * Writes Instagram Database to MongoDB Atlas and local disk
  */
-export function writeInstagramDb(data: InstagramDatabase): void {
-  const dir = path.dirname(DATA_FILE_PATH);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-  const tempPath = `${DATA_FILE_PATH}.tmp.${Date.now()}`;
-  fs.writeFileSync(tempPath, JSON.stringify(data, null, 2), "utf-8");
-  fs.renameSync(tempPath, DATA_FILE_PATH);
+export async function writeInstagramDb(data: InstagramDatabase): Promise<void> {
+  await writeJsonFile<InstagramDatabase>("instagram.json", data);
 }
+
+/**
+ * Resolves Meta App credentials and canonical redirect URI
+ */
+export function getMetaConfig(requestUrl?: string): {
+  clientId: string;
+  clientSecret: string;
+  redirectUri: string;
+  isConfigured: boolean;
+} {
+  const clientId = process.env.INSTAGRAM_CLIENT_ID || process.env.META_APP_ID || "";
+  const clientSecret = process.env.INSTAGRAM_CLIENT_SECRET || process.env.META_APP_SECRET || "";
+
+  let redirectUri = process.env.INSTAGRAM_REDIRECT_URI || "";
+  if (!redirectUri && requestUrl) {
+    const urlObj = new URL(requestUrl);
+    redirectUri = `${urlObj.protocol}//${urlObj.host}/api/admin/social/instagram/callback`;
+  } else if (!redirectUri) {
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://djart.vercel.app";
+    redirectUri = `${appUrl}/api/admin/social/instagram/callback`;
+  }
+
+  return {
+    clientId: clientId.trim(),
+    clientSecret: clientSecret.trim(),
+    redirectUri: redirectUri.trim(),
+    isConfigured: Boolean(clientId.trim() && clientSecret.trim()),
+  };
+}
+

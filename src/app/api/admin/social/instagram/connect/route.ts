@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getAuthenticatedAdmin, hasPermission } from "@/lib/auth";
-import { generateOAuthState } from "@/lib/instagram-crypto";
+import { generateOAuthState, getMetaConfig } from "@/lib/instagram-crypto";
 
 export async function POST(request: Request) {
   const admin = await getAuthenticatedAdmin();
@@ -10,7 +10,10 @@ export async function POST(request: Request) {
   }
 
   if (!hasPermission(admin, "social_media.instagram.manage")) {
-    return NextResponse.json({ error: "Permission denied: Requires social_media.instagram.manage" }, { status: 403 });
+    return NextResponse.json(
+      { error: "Permission denied: Requires social_media.instagram.manage" },
+      { status: 403 }
+    );
   }
 
   const { state, signedCookie } = generateOAuthState();
@@ -24,28 +27,36 @@ export async function POST(request: Request) {
     maxAge: 15 * 60, // 15 minutes
   });
 
-  const clientId = process.env.INSTAGRAM_CLIENT_ID;
-  const origin = request.headers.get("origin") || request.headers.get("referer") || "http://localhost:3002";
-  const urlObj = new URL(origin);
-  const appUrl = `${urlObj.protocol}//${urlObj.host}`;
-  const redirectUri = `${appUrl}/api/admin/social/instagram/callback`;
+  const { clientId, clientSecret, redirectUri, isConfigured } = getMetaConfig(request.url);
 
-  let authUrl: string;
-
-  if (clientId && clientId !== "demo") {
-    // Official Meta / Instagram Graph API OAuth 2.0 Authorization URL
-    authUrl = `https://api.instagram.com/oauth/authorize?client_id=${encodeURIComponent(
-      clientId
-    )}&redirect_uri=${encodeURIComponent(
-      redirectUri
-    )}&scope=user_profile,user_media&response_type=code&state=${encodeURIComponent(state)}`;
-  } else {
-    // Sandbox / Development OAuth Consent Simulation
-    authUrl = `/api/admin/social/instagram/sandbox-consent?state=${encodeURIComponent(state)}`;
+  if (!isConfigured) {
+    return NextResponse.json(
+      {
+        error: "Meta / Instagram App credentials are not configured in environment variables.",
+        code: "META_CREDENTIALS_MISSING",
+        details:
+          "Please add INSTAGRAM_CLIENT_ID (or META_APP_ID) and INSTAGRAM_CLIENT_SECRET (or META_APP_SECRET) to your .env.local or Vercel Environment Variables.",
+        requiredRedirectUri: redirectUri,
+        requiredScope: "instagram_business_basic",
+      },
+      { status: 400 }
+    );
   }
 
+  // Official Meta Instagram Login OAuth 2.0 Authorization Endpoint
+  // Uses instagram_business_basic (official standard for Instagram Professional accounts)
+  const authUrl = `https://api.instagram.com/oauth/authorize?client_id=${encodeURIComponent(
+    clientId
+  )}&redirect_uri=${encodeURIComponent(
+    redirectUri
+  )}&scope=instagram_business_basic&response_type=code&state=${encodeURIComponent(
+    state
+  )}&force_authentication=1`;
+
   return NextResponse.json({
+    success: true,
     authUrl,
-    mode: clientId ? "production" : "sandbox",
+    redirectUri,
   });
 }
+

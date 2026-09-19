@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { readInstagramDb } from "@/lib/instagram-crypto";
 
 export async function GET() {
-  const db = readInstagramDb();
+  const db = await readInstagramDb();
 
   // If global section is disabled or account is not connected, return disabled state
   if (!db.settings.instagramEnabled || db.connection.status !== "connected") {

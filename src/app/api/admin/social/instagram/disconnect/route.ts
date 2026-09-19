@@ -9,10 +9,13 @@ export async function POST() {
   }
 
   if (!hasPermission(admin, "social_media.instagram.manage")) {
-    return NextResponse.json({ error: "Permission denied: Requires social_media.instagram.manage" }, { status: 403 });
+    return NextResponse.json(
+      { error: "Permission denied: Requires social_media.instagram.manage" },
+      { status: 403 }
+    );
   }
 
-  const db = readInstagramDb();
+  const db = await readInstagramDb();
   const now = new Date().toISOString();
 
   // Wiping tokens and sensitive auth data
@@ -28,11 +31,11 @@ export async function POST() {
   db.settings.instagramEnabled = false;
   db.settings.updatedAt = now;
 
-  writeInstagramDb(db);
+  await writeInstagramDb(db);
 
   return NextResponse.json({
     success: true,
-    message: "Instagram account disconnected successfully. Tokens have been revoked and removed.",
+    message: "Instagram account disconnected successfully. Tokens have been revoked and deleted.",
     status: "disconnected",
   });
 }

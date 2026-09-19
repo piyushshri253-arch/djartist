@@ -199,6 +199,7 @@ export interface InstagramConnection {
   tokenIv?: string;
   tokenAuthTag?: string;
   tokenExpiresAt?: number;
+  tokenDaysRemaining?: number | null;
   connectedAt?: string;
   lastSyncedAt?: string;
   status: "connected" | "disconnected" | "expired";

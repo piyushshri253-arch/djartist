@@ -9,7 +9,10 @@ export async function PATCH(request: Request) {
   }
 
   if (!hasPermission(admin, "social_media.instagram.manage")) {
-    return NextResponse.json({ error: "Permission denied: Requires social_media.instagram.manage" }, { status: 403 });
+    return NextResponse.json(
+      { error: "Permission denied: Requires social_media.instagram.manage" },
+      { status: 403 }
+    );
   }
 
   try {
@@ -17,28 +20,40 @@ export async function PATCH(request: Request) {
     const { instagramEnabled } = body;
 
     if (typeof instagramEnabled !== "boolean") {
-      return NextResponse.json({ error: "Field 'instagramEnabled' must be a boolean" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Field 'instagramEnabled' must be a boolean" },
+        { status: 400 }
+      );
     }
 
-    const db = readInstagramDb();
+    const db = await readInstagramDb();
 
     if (instagramEnabled && db.connection.status !== "connected") {
-      return NextResponse.json({
-        error: "Cannot enable Instagram section on website while Instagram account is not connected. Please connect Instagram first."
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          error:
+            "Cannot enable Instagram section on website while Instagram account is not connected. Please connect Instagram first.",
+        },
+        { status: 400 }
+      );
     }
 
     db.settings.instagramEnabled = instagramEnabled;
     db.settings.updatedAt = new Date().toISOString();
 
-    writeInstagramDb(db);
+    await writeInstagramDb(db);
 
     return NextResponse.json({
       success: true,
       settings: db.settings,
-      message: `Instagram section is now ${instagramEnabled ? "ENABLED" : "HIDDEN"} on the website.`
+      message: `Instagram section is now ${
+        instagramEnabled ? "ENABLED" : "HIDDEN"
+      } on the website.`,
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || "Failed to update settings" }, { status: 500 });
+    return NextResponse.json(
+      { error: err.message || "Failed to update settings" },
+      { status: 500 }
+    );
   }
 }
