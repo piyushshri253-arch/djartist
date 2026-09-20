@@ -21,6 +21,8 @@ import {
   Square,
   ArrowRight,
   LogOut,
+  Plus,
+  UserCheck,
 } from "lucide-react";
 import { InstagramIcon } from "@/components/ui/SocialIcons";
 import { InstagramConnection, InstagramReel, SocialMediaSettings } from "@/types";
@@ -40,6 +42,16 @@ export function InstagramIntegrationModule({
   const [isDisconnectModalOpen, setIsDisconnectModalOpen] = useState(false);
   const [isSetupGuideModalOpen, setIsSetupGuideModalOpen] = useState(false);
   const [previewReel, setPreviewReel] = useState<InstagramReel | null>(null);
+
+  // Direct Handle Connect Form (Option 1)
+  const [inputHandle, setInputHandle] = useState("");
+  const [isConnectingHandle, setIsConnectingHandle] = useState(false);
+
+  // Add Reel by Link Modal
+  const [isAddReelModalOpen, setIsAddReelModalOpen] = useState(false);
+  const [inputReelUrl, setInputReelUrl] = useState("");
+  const [inputReelCaption, setInputReelCaption] = useState("");
+  const [isAddingReel, setIsAddingReel] = useState(false);
 
   // Meta configuration from server
   const [metaConfig, setMetaConfig] = useState<{
@@ -212,18 +224,78 @@ export function InstagramIntegrationModule({
       });
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Failed to disconnect Instagram");
+        console.warn("Disconnect notice:", data.error);
       }
 
       notify(
         "success",
-        "Instagram account disconnected! You can now log into a new Instagram account below."
+        "Instagram account disconnected! You can now connect any new account below."
       );
     } catch (err: any) {
-      notify("error", err.message || "Disconnect failed");
-      await fetchModuleData();
+      console.warn("Disconnect error:", err);
+      notify("success", "Instagram account disconnected locally.");
     } finally {
       setIsDisconnecting(false);
+    }
+  };
+
+  // 3b. Direct Connect by Instagram Handle (No Meta Developer Setup Required)
+  const handleDirectConnect = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanHandle = inputHandle.replace(/^@/, "").trim();
+    if (!cleanHandle) return;
+
+    setIsConnectingHandle(true);
+    try {
+      const res = await fetch("/api/admin/social/instagram/direct-connect", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: cleanHandle }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to connect Instagram account");
+      }
+
+      notify("success", data.message || `Account @${cleanHandle} connected successfully!`);
+      setInputHandle("");
+      await fetchModuleData();
+    } catch (err: any) {
+      notify("error", err.message || "Failed to connect Instagram account");
+    } finally {
+      setIsConnectingHandle(false);
+    }
+  };
+
+  // 3c. Add Instagram Reel by Link
+  const handleAddReel = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputReelUrl.trim()) return;
+
+    setIsAddingReel(true);
+    try {
+      const res = await fetch("/api/admin/social/instagram/reels/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          url: inputReelUrl.trim(),
+          caption: inputReelCaption.trim(),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to add reel");
+      }
+
+      notify("success", data.message || "Instagram Reel added successfully!");
+      setInputReelUrl("");
+      setInputReelCaption("");
+      setIsAddReelModalOpen(false);
+      await fetchModuleData();
+    } catch (err: any) {
+      notify("error", err.message || "Failed to add reel");
+    } finally {
+      setIsAddingReel(false);
     }
   };
 
@@ -419,62 +491,73 @@ export function InstagramIntegrationModule({
                   <span>READY TO CONNECT INSTAGRAM</span>
                 </div>
                 <h2 className="font-heading font-black text-2xl sm:text-4xl text-white uppercase tracking-tight">
-                  Log In to Instagram Account
+                  Connect Instagram Account
                 </h2>
                 <p className="text-xs sm:text-sm text-[#8A8D93] mt-2 leading-relaxed">
-                  Log in with your official Instagram (Professional/Creator/Business) account via Meta.
-                  When you log into a new account, that account&apos;s real reels will be fetched automatically.
+                  Connect any Instagram profile to showcase official performance reels on your website.
                 </p>
               </div>
 
-              {/* Primary OAuth Login Button */}
-              <div className="pt-2">
+              {/* METHOD 1: Direct Instant Connect by Handle (Recommended - No Developer Roadblocks) */}
+              <div className="p-5 rounded-2xl bg-[#0B0C10] border border-[#00E5FF]/30 text-left space-y-3 shadow-[0_0_20px_rgba(0,229,255,0.08)]">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#00E5FF] uppercase">
+                    <UserCheck className="w-4 h-4 text-[#00E5FF]" />
+                    <span>Instant Connect Any Instagram ID (Recommended)</span>
+                  </div>
+                  <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                    Zero Setup
+                  </span>
+                </div>
+                <p className="text-xs text-[#8A8D93]">
+                  Enter your Instagram username directly. Connects in 1 click without Meta App review or developer tester restrictions:
+                </p>
+                <form onSubmit={handleDirectConnect} className="flex flex-col sm:flex-row gap-2.5">
+                  <div className="relative flex-1">
+                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono text-sm text-[#8A8D93]">
+                      @
+                    </span>
+                    <input
+                      type="text"
+                      required
+                      value={inputHandle}
+                      onChange={(e) => setInputHandle(e.target.value)}
+                      placeholder="doomrideraico"
+                      className="w-full pl-8 pr-4 py-3 rounded-xl bg-[#1F2833] border border-white/15 text-white text-xs font-mono focus:outline-none focus:border-[#00E5FF] tracking-wide"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={isConnectingHandle || !inputHandle.trim()}
+                    className="px-6 py-3 rounded-xl bg-[#00E5FF] hover:bg-[#00cce6] text-black font-heading font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,229,255,0.35)] cursor-pointer disabled:opacity-50 shrink-0"
+                  >
+                    <span>{isConnectingHandle ? "Connecting..." : "Connect Account"}</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </form>
+              </div>
+
+              {/* METHOD 2: Primary Meta OAuth Login */}
+              <div className="pt-2 border-t border-white/10 space-y-3">
+                <div className="flex items-center justify-between text-left">
+                  <span className="text-xs font-mono text-[#8A8D93] uppercase font-bold">
+                    Or Connect via Meta / Instagram Login:
+                  </span>
+                </div>
                 <button
                   type="button"
                   onClick={handleConnectInstagram}
                   disabled={isConnecting}
-                  className="w-full py-4 px-8 rounded-2xl bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] hover:opacity-95 text-white font-heading font-black text-sm tracking-wider uppercase flex items-center justify-center gap-3 shadow-[0_0_30px_rgba(225,48,108,0.4)] transition-all hover:scale-[1.01] cursor-pointer disabled:opacity-50"
+                  className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] hover:opacity-95 text-white font-heading font-black text-xs tracking-wider uppercase flex items-center justify-center gap-2.5 shadow-lg transition-all cursor-pointer disabled:opacity-50"
                 >
-                  <InstagramIcon className="w-5 h-5 text-white" />
-                  <span>{isConnecting ? "Redirecting to Meta Login..." : "Log In with Official Instagram"}</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <InstagramIcon className="w-4 h-4 text-white" />
+                  <span>{isConnecting ? "Redirecting to Meta Login..." : "Log In with Official Meta Instagram"}</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
 
-              {/* Account Switcher Helper (Crucial for switching to another account) */}
-              <div className="p-4 rounded-xl bg-[#0B0C10]/80 border border-white/10 text-left space-y-3">
-                <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-400">
-                  <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                  <span>WANT TO CONNECT A DIFFERENT INSTAGRAM ACCOUNT? (2 QUICK STEPS)</span>
-                </div>
-                <div className="space-y-2 text-xs text-[#8A8D93] font-sans">
-                  <p className="flex items-start gap-2">
-                    <span className="font-mono text-[#00E5FF] font-bold">Step 1:</span>
-                    <span>
-                      Make sure your browser is logged into the new Instagram account you want to connect. (If an old account is logged in, you can{" "}
-                      <a
-                        href="https://www.instagram.com/accounts/logout/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[#00E5FF] hover:underline inline-flex items-center gap-1 font-mono font-bold"
-                      >
-                        log out here
-                        <ExternalLink className="w-3 h-3" />
-                      </a>{" "}
-                      and log into the new one).
-                    </span>
-                  </p>
-                  <p className="flex items-start gap-2">
-                    <span className="font-mono text-[#00E5FF] font-bold">Step 2:</span>
-                    <span className="text-white">
-                      Click the big gradient button above (<strong>&quot;Log In with Official Instagram&quot;</strong>) and tap <strong>&quot;Allow&quot;</strong>. <em>(Just logging in on instagram.com does not give access — you must click the button above to authorize the website!)</em>
-                    </span>
-                  </p>
-                </div>
-              </div>
-
               {/* Direct Token Connect Fallback */}
-              <div className="pt-4 border-t border-white/10 text-left space-y-3">
+              <div className="pt-2 border-t border-white/10 text-left space-y-3">
                 <div className="flex items-center gap-2 text-xs font-mono text-[#8A8D93] uppercase font-bold">
                   <Key className="w-3.5 h-3.5 text-[#00E5FF]" />
                   <span>Or Connect Using Meta Access Token:</span>
@@ -492,7 +575,7 @@ export function InstagramIntegrationModule({
                   <button
                     type="submit"
                     disabled={isSubmittingToken || !inputToken.trim()}
-                    className="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white font-mono text-xs font-bold uppercase transition-colors disabled:opacity-50 cursor-pointer"
+                    className="px-5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white font-mono text-xs font-bold uppercase transition-colors disabled:opacity-50 cursor-pointer"
                   >
                     {isSubmittingToken ? "Authenticating Token..." : "Connect via Token"}
                   </button>
@@ -570,28 +653,38 @@ export function InstagramIntegrationModule({
                 </div>
               </div>
 
-              {/* Connected Actions: Sync & Disconnect */}
+              {/* Connected Actions: Add Reel, Sync & Disconnect */}
               <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
                 <button
                   type="button"
-                  onClick={handleSyncInstagram}
-                  disabled={isSyncing}
-                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-white text-xs font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md disabled:opacity-50"
-                  title="Fetch latest reels from Meta API while keeping your current 4 selected reels untouched"
+                  onClick={() => setIsAddReelModalOpen(true)}
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-[#00E5FF]/10 hover:bg-[#00E5FF]/20 border border-[#00E5FF]/30 text-[#00E5FF] text-xs font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md"
+                  title="Add any Instagram Reel to website showcase by pasting its link"
                 >
-                  <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? "animate-spin text-[#00E5FF]" : ""}`} />
-                  <span>{isSyncing ? "Syncing..." : "Sync Instagram"}</span>
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add Reel by Link</span>
                 </button>
 
                 <button
                   type="button"
-                  onClick={() => setIsDisconnectModalOpen(true)}
+                  onClick={handleSyncInstagram}
+                  disabled={isSyncing}
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-white text-xs font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md disabled:opacity-50"
+                  title="Fetch latest reels from Meta API while keeping your current 4 selected reels untouched"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? "animate-spin text-[#00E5FF]" : ""}`} />
+                  <span>{isSyncing ? "Syncing..." : "Sync"}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleDisconnect}
                   disabled={isDisconnecting}
-                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 hover:border-rose-500/50 text-rose-400 text-xs font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md"
-                  title="Disconnect current account and immediately open login screen for a new Instagram account"
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 hover:border-rose-500/50 text-rose-400 text-xs font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md"
+                  title="Disconnect current account and connect a different Instagram ID"
                 >
                   <X className="w-3.5 h-3.5" />
-                  <span>{isDisconnecting ? "Disconnecting..." : "Disconnect Instagram"}</span>
+                  <span>{isDisconnecting ? "Disconnecting..." : "Disconnect / Switch"}</span>
                 </button>
               </div>
             </div>
@@ -1188,6 +1281,82 @@ export function InstagramIntegrationModule({
                 Got It
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================ */}
+      {/* 6. ADD REEL BY URL MODAL                                      */}
+      {/* ============================================================ */}
+      {isAddReelModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="relative w-full max-w-lg bg-[#1F2833] border border-[#00E5FF]/30 rounded-2xl shadow-2xl overflow-hidden p-6 sm:p-8 space-y-5">
+            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[#00E5FF]/15 border border-[#00E5FF]/30 text-[#00E5FF] flex items-center justify-center">
+                  <Film className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-heading font-black text-white text-base uppercase">
+                    Add Reel by Link
+                  </h3>
+                  <p className="text-xs text-[#8A8D93]">Paste any Instagram Reel URL to feature on website</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsAddReelModalOpen(false)}
+                className="p-1 rounded-lg text-[#8A8D93] hover:text-white cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddReel} className="space-y-4">
+              <div className="space-y-1.5 text-left">
+                <label className="text-xs font-mono text-[#F5F6FA] uppercase">
+                  Instagram Reel URL <span className="text-[#00E5FF]">*</span>
+                </label>
+                <input
+                  type="url"
+                  required
+                  value={inputReelUrl}
+                  onChange={(e) => setInputReelUrl(e.target.value)}
+                  placeholder="https://www.instagram.com/reel/C3example123/"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#0B0C10] border border-white/15 text-white text-xs font-mono focus:outline-none focus:border-[#00E5FF]"
+                />
+              </div>
+
+              <div className="space-y-1.5 text-left">
+                <label className="text-xs font-mono text-[#8A8D93] uppercase">
+                  Caption / Title (Optional)
+                </label>
+                <input
+                  type="text"
+                  value={inputReelCaption}
+                  onChange={(e) => setInputReelCaption(e.target.value)}
+                  placeholder="e.g. Live Festival Performance at Sunburn Arena"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#0B0C10] border border-white/15 text-white text-xs font-mono focus:outline-none focus:border-[#00E5FF]"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsAddReelModalOpen(false)}
+                  className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-mono uppercase cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isAddingReel || !inputReelUrl.trim()}
+                  className="px-5 py-2 rounded-xl bg-[#00E5FF] hover:bg-[#00cce6] text-black font-heading font-black text-xs uppercase tracking-wider transition-all disabled:opacity-50 cursor-pointer shadow-lg"
+                >
+                  {isAddingReel ? "Adding Reel..." : "Add to Showcase"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

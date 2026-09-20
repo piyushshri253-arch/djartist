@@ -1,25 +1,22 @@
 {
   "connection": {
     "id": "ig-conn-1789794518634",
-    "instagramUserId": "29002550216017885",
-    "username": "piyushshri253",
-    "profilePicture": "/images/dj_hero.jpg",
-    "accessTokenEncrypted": "44e577f8fc91d801a04dda513d8bb799a7c716b02da81dabb6bf34a746fdca5442ca30a9bf92566f017cf6d34ed3cb4ad88abd74e04489c9f66e92e52125b56539142d68629a142633afdb6eb773506eb225c94bfd41a1849162e2344d4829f02e05ae04c9bbd4cabdc8ce4d50eaeb18fbea65d1457115ccea5cfcc94e42986502c664aea4227b5c4fa4922a4b25ebeedd2a9d33a7644140474a021316e9",
-    "tokenIv": "3ccf0d0f69d9f3e405373349",
-    "tokenAuthTag": "70ee0f272c46bb7634eaf23ee2754e19",
-    "tokenExpiresAt": 1794978204633,
-    "status": "connected",
+    "instagramUserId": "",
+    "username": "",
+    "profilePicture": "",
+    "status": "disconnected",
     "connectedAt": "2026-09-19T05:08:38.633Z",
     "lastSyncedAt": "2026-09-19T05:08:38.633Z",
     "createdAt": "2026-09-19T05:08:38.633Z",
-    "updatedAt": "2026-09-19T05:08:38.633Z"
+    "updatedAt": "2026-09-20T05:00:26.124Z"
   },
   "settings": {
     "id": "social-settings-1",
-    "instagramEnabled": true,
+    "instagramEnabled": false,
     "autoSyncIntervalHours": 6,
     "createdAt": "2026-09-19T05:08:38.633Z",
-    "updatedAt": "2026-09-19T05:08:38.633Z"
+    "updatedAt": "2026-09-20T05:00:26.124Z"
   },
-  "reels": []
+  "reels": [],
+  "selectedReelIds": []
 }
