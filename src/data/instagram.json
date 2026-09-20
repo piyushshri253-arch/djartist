@@ -1,21 +1,21 @@
 {
   "connection": {
-    "id": "ig-conn-1789794518634",
+    "id": "ig-conn-1789880750421",
     "instagramUserId": "",
     "username": "",
     "profilePicture": "",
     "status": "disconnected",
-    "connectedAt": "2026-09-19T05:08:38.633Z",
-    "lastSyncedAt": "2026-09-19T05:08:38.633Z",
+    "connectedAt": "2026-09-20T05:05:50.417Z",
+    "lastSyncedAt": "2026-09-20T05:05:50.417Z",
     "createdAt": "2026-09-19T05:08:38.633Z",
-    "updatedAt": "2026-09-20T05:00:26.124Z"
+    "updatedAt": "2026-09-20T05:06:21.331Z"
   },
   "settings": {
     "id": "social-settings-1",
     "instagramEnabled": false,
     "autoSyncIntervalHours": 6,
     "createdAt": "2026-09-19T05:08:38.633Z",
-    "updatedAt": "2026-09-20T05:00:26.124Z"
+    "updatedAt": "2026-09-20T05:06:21.331Z"
   },
   "reels": [],
   "selectedReelIds": []
