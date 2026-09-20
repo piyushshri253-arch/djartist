@@ -109,10 +109,44 @@ export function getDefaultInstagramDb(): InstagramDatabase {
       id: "social-settings-1",
       instagramEnabled: false,
       autoSyncIntervalHours: 6,
+      maxDisplayCount: 4,
+      showSelectedOnly: true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     },
     reels: [],
+    selectedReelIds: [],
+    sources: [],
+    activeAccountId: "",
+  };
+}
+
+/**
+ * Sanitizes an Instagram connection before sending it to the frontend.
+ * Strictly guarantees that no tokens, IVs, or auth tags are ever exposed.
+ */
+export function sanitizeConnection(conn: InstagramConnection): Partial<InstagramConnection> & {
+  tokenDaysRemaining: number | null;
+} {
+  let tokenDaysRemaining: number | null = null;
+  if (conn.tokenExpiresAt) {
+    const msRemaining = conn.tokenExpiresAt - Date.now();
+    tokenDaysRemaining = Math.max(0, Math.ceil(msRemaining / (1000 * 60 * 60 * 24)));
+  }
+
+  return {
+    id: conn.id,
+    instagramUserId: conn.instagramUserId,
+    username: conn.username,
+    profilePicture: conn.profilePicture || "/images/dj_hero.jpg",
+    accountType: conn.accountType,
+    status: conn.status,
+    connectedAt: conn.connectedAt,
+    lastSyncedAt: conn.lastSyncedAt,
+    tokenExpiresAt: conn.tokenExpiresAt,
+    tokenDaysRemaining,
+    createdAt: conn.createdAt,
+    updatedAt: conn.updatedAt,
   };
 }
 

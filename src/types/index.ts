@@ -188,13 +188,14 @@ export interface InstagramSettings {
 }
 
 // ============================================================
-// Official Meta / Instagram Module Models
+// Official Meta / Instagram Module Models (Smash Balloon Standard)
 // ============================================================
 export interface InstagramConnection {
   id: string;
   instagramUserId: string;
   username: string;
   profilePicture: string;
+  accountType?: string;
   accessTokenEncrypted?: string;
   tokenIv?: string;
   tokenAuthTag?: string;
@@ -207,17 +208,31 @@ export interface InstagramConnection {
   updatedAt: string;
 }
 
+export interface InstagramAccountSource {
+  id: string;
+  instagramUserId: string;
+  username: string;
+  profilePicture: string;
+  accountType?: string;
+  status: "connected" | "disconnected" | "expired";
+  connectedAt: string;
+  lastSyncedAt: string;
+  tokenExpiresAt?: number;
+}
+
 export interface InstagramReel {
   id: string;
   instagramMediaId: string;
   username: string;
   caption: string;
   thumbnailUrl: string;
+  mediaUrl?: string;
   permalink: string;
   mediaType: "VIDEO" | "REEL" | "IMAGE";
   publishedAt: string;
   viewsDisplay?: string;
   likesCount?: number;
+  commentsCount?: number;
   isVisible: boolean;
   createdAt: string;
   updatedAt: string;
@@ -227,6 +242,8 @@ export interface SocialMediaSettings {
   id: string;
   instagramEnabled: boolean;
   autoSyncIntervalHours?: number;
+  maxDisplayCount?: number;
+  showSelectedOnly?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -236,6 +253,8 @@ export interface InstagramDatabase {
   settings: SocialMediaSettings;
   reels: InstagramReel[];
   selectedReelIds?: string[];
+  sources?: InstagramAccountSource[];
+  activeAccountId?: string;
 }
 
 // ============================================================

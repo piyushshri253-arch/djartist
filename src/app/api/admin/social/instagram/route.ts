@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAuthenticatedAdmin, hasPermission } from "@/lib/auth";
-import { readInstagramDb, getMetaConfig } from "@/lib/instagram-crypto";
+import { readInstagramDb, getMetaConfig, sanitizeConnection } from "@/lib/instagram-crypto";
 
 export async function GET(request: Request) {
   const admin = await getAuthenticatedAdmin();
@@ -18,33 +18,16 @@ export async function GET(request: Request) {
   const db = await readInstagramDb();
   const { isConfigured, redirectUri } = getMetaConfig(request.url);
 
-  let tokenDaysRemaining: number | null = null;
-  if (db.connection.tokenExpiresAt) {
-    const msRemaining = db.connection.tokenExpiresAt - Date.now();
-    tokenDaysRemaining = Math.max(0, Math.ceil(msRemaining / (1000 * 60 * 60 * 24)));
-  }
-
-  // Strictly sanitize sensitive credentials before sending to admin UI
-  // NEVER send accessToken, accessTokenEncrypted, tokenIv, or tokenAuthTag to client
-  const sanitizedConnection = {
-    id: db.connection.id,
-    instagramUserId: db.connection.instagramUserId,
-    username: db.connection.username,
-    profilePicture: db.connection.profilePicture || "/images/dj_hero.jpg",
-    status: db.connection.status,
-    connectedAt: db.connection.connectedAt,
-    lastSyncedAt: db.connection.lastSyncedAt,
-    tokenExpiresAt: db.connection.tokenExpiresAt,
-    tokenDaysRemaining,
-    createdAt: db.connection.createdAt,
-    updatedAt: db.connection.updatedAt,
-  };
+  const sanitizedConnection = sanitizeConnection(db.connection);
 
   return NextResponse.json(
     {
       connection: sanitizedConnection,
       settings: db.settings,
-      reels: db.reels,
+      reels: db.reels || [],
+      selectedReelIds: db.selectedReelIds || [],
+      sources: db.sources || [],
+      activeAccountId: db.activeAccountId || db.connection.id,
       metaConfig: {
         isConfigured,
         redirectUri,

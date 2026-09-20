@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAuthenticatedAdmin, hasPermission } from "@/lib/auth";
-import { readInstagramDb, writeInstagramDb } from "@/lib/instagram-crypto";
+import { readInstagramDb, writeInstagramDb, decryptToken } from "@/lib/instagram-crypto";
 
 export async function POST() {
   const admin = await getAuthenticatedAdmin();
@@ -18,7 +18,32 @@ export async function POST() {
   const db = await readInstagramDb();
   const now = new Date().toISOString();
 
-  // 1. Wiping tokens and sensitive auth data
+  // 1. Attempt token revocation with Meta if token is present
+  if (
+    db.connection.accessTokenEncrypted &&
+    db.connection.tokenIv &&
+    db.connection.tokenAuthTag
+  ) {
+    try {
+      const plainToken = decryptToken(
+        db.connection.accessTokenEncrypted,
+        db.connection.tokenIv,
+        db.connection.tokenAuthTag
+      );
+      if (plainToken) {
+        await fetch(
+          `https://graph.facebook.com/v21.0/me/permissions?access_token=${encodeURIComponent(
+            plainToken
+          )}`,
+          { method: "DELETE" }
+        ).catch(() => {});
+      }
+    } catch {
+      // Ignore network errors on revocation
+    }
+  }
+
+  // Wiping tokens and sensitive auth data
   delete db.connection.accessTokenEncrypted;
   delete db.connection.tokenIv;
   delete db.connection.tokenAuthTag;

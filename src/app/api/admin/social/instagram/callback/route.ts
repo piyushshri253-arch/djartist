@@ -181,61 +181,7 @@ export async function GET(request: Request) {
       console.warn("Could not fetch initial media:", mediaErr.message);
     }
 
-    // If no media items were returned from the API, seed 4 curated festival reels for this account
-    if (initialReels.length === 0) {
-      const curatedCards = [
-        {
-          id: `ig-reel-${username}-1`,
-          shortcode: `reel-1-${username}`,
-          caption: `🔥 Mainstage Festival Drop // Live Crowd Energy with @${username}`,
-          thumb: "/images/past_event_crowd.jpg",
-          views: "1.2M",
-          likes: 48200,
-        },
-        {
-          id: `ig-reel-${username}-2`,
-          shortcode: `reel-2-${username}`,
-          caption: `⚡ Unreleased Festival Anthem // 360 Lasers & Heavy Bass @${username}`,
-          thumb: "/images/gallery_stage_lasers.jpg",
-          views: "890K",
-          likes: 36500,
-        },
-        {
-          id: `ig-reel-${username}-3`,
-          shortcode: `reel-3-${username}`,
-          caption: `🎧 4-Deck Mashup Routine // Soundcheck & Stage POV @${username}`,
-          thumb: "/images/gallery_dj_decks_pov.jpg",
-          views: "640K",
-          likes: 29100,
-        },
-        {
-          id: `ig-reel-${username}-4`,
-          shortcode: `reel-4-${username}`,
-          caption: `✨ Stadium Tour Aftermovie // Headline Set Highlights @${username}`,
-          thumb: "/images/world_tour_stage.jpg",
-          views: "2.1M",
-          likes: 94300,
-        },
-      ];
 
-      curatedCards.forEach((c) => {
-        initialReels.push({
-          id: c.id,
-          instagramMediaId: c.shortcode,
-          username,
-          caption: c.caption,
-          thumbnailUrl: c.thumb,
-          permalink: `https://www.instagram.com/${username}/`,
-          mediaType: "REEL",
-          publishedAt: now,
-          viewsDisplay: c.views,
-          likesCount: c.likes,
-          isVisible: true,
-          createdAt: now,
-          updatedAt: now,
-        });
-      });
-    }
 
     // 7. Securely encrypt the long-lived token at rest with AES-256-GCM
     const { encrypted, iv, tag } = encryptToken(accessToken);
@@ -265,6 +211,28 @@ export async function GET(request: Request) {
     // Completely replace reels with the new account's reels and auto-select up to 4
     db.reels = initialReels;
     db.selectedReelIds = initialReels.filter((r) => r.isVisible).map((r) => r.id);
+
+    // Multi-Account Extensibility (Smash Balloon Architecture)
+    db.sources = db.sources || [];
+    const sourceIndex = db.sources.findIndex(
+      (s) => s.instagramUserId === instagramUserId || s.username === username
+    );
+    const sourceObj = {
+      id: db.connection.id,
+      instagramUserId,
+      username,
+      profilePicture,
+      status: "connected" as const,
+      connectedAt: now,
+      lastSyncedAt: now,
+      tokenExpiresAt,
+    };
+    if (sourceIndex >= 0) {
+      db.sources[sourceIndex] = sourceObj;
+    } else {
+      db.sources.push(sourceObj);
+    }
+    db.activeAccountId = db.connection.id;
 
     await writeInstagramDb(db);
 

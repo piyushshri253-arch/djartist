@@ -12,17 +12,18 @@ import {
   Clock,
   Play,
   AlertTriangle,
-  Trash2,
   Copy,
-  Key,
   HelpCircle,
   Save,
   Film,
   Square,
   ArrowRight,
-  LogOut,
   Plus,
-  UserCheck,
+  LayoutGrid,
+  List,
+  ShieldCheck,
+  Layers,
+  Heart,
 } from "lucide-react";
 import { InstagramIcon } from "@/components/ui/SocialIcons";
 import { InstagramConnection, InstagramReel, SocialMediaSettings } from "@/types";
@@ -39,13 +40,10 @@ export function InstagramIntegrationModule({
   const [isDisconnecting, setIsDisconnecting] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [isSavingSelection, setIsSavingSelection] = useState(false);
+  const [isTogglingWebsite, setIsTogglingWebsite] = useState(false);
   const [isDisconnectModalOpen, setIsDisconnectModalOpen] = useState(false);
   const [isSetupGuideModalOpen, setIsSetupGuideModalOpen] = useState(false);
   const [previewReel, setPreviewReel] = useState<InstagramReel | null>(null);
-
-  // Direct Handle Connect Form (Option 1)
-  const [inputHandle, setInputHandle] = useState("");
-  const [isConnectingHandle, setIsConnectingHandle] = useState(false);
 
   // Add Reel by Link Modal
   const [isAddReelModalOpen, setIsAddReelModalOpen] = useState(false);
@@ -62,10 +60,6 @@ export function InstagramIntegrationModule({
     redirectUri: "",
   });
 
-  // Direct Token Connect Form
-  const [inputToken, setInputToken] = useState("");
-  const [isSubmittingToken, setIsSubmittingToken] = useState(false);
-
   // Data states
   const [connection, setConnection] = useState<InstagramConnection | null>(null);
   const [settings, setSettings] = useState<SocialMediaSettings>({
@@ -80,7 +74,8 @@ export function InstagramIntegrationModule({
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [savedSelectedIds, setSavedSelectedIds] = useState<string[]>([]);
 
-  // Search & Filter state
+  // View & Filter states
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [searchQuery, setSearchQuery] = useState("");
   const [filterVisibility, setFilterVisibility] = useState<"all" | "selected" | "available">("all");
   const [copiedRedirect, setCopiedRedirect] = useState(false);
@@ -146,7 +141,7 @@ export function InstagramIntegrationModule({
     }
   }, []);
 
-  // 1. Trigger Official Meta / Instagram OAuth Flow (with force_authentication=1 & force_reauth=true)
+  // 1. Trigger Official Meta / Instagram OAuth Flow (Zero Password Forms)
   const handleConnectInstagram = async () => {
     setIsConnecting(true);
     try {
@@ -173,38 +168,12 @@ export function InstagramIntegrationModule({
     }
   };
 
-  // 2. Connect via Long-Lived Access Token (For direct token usage)
-  const handleTokenConnectSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inputToken.trim()) return;
-
-    setIsSubmittingToken(true);
-    try {
-      const res = await fetch("/api/admin/social/instagram/token-connect", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ accessToken: inputToken.trim() }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to connect Instagram with token");
-
-      notify("success", data.message || "Real Instagram account connected successfully!");
-      setInputToken("");
-      await fetchModuleData();
-    } catch (err: any) {
-      notify("error", err.message || "Token connection failed");
-    } finally {
-      setIsSubmittingToken(false);
-    }
-  };
-
-  // 3. Disconnect Instagram Account (Immediately switches to Login View and clears data)
+  // 2. Disconnect Instagram Account (Full Revocation & Wipe)
   const handleDisconnect = async () => {
     setIsDisconnecting(true);
     setIsDisconnectModalOpen(false);
 
-    // Instant optimistic state transition so user sees the login view right away
+    // Optimistic state transition
     setConnection({
       id: "",
       instagramUserId: "",
@@ -229,77 +198,53 @@ export function InstagramIntegrationModule({
 
       notify(
         "success",
-        "Instagram account disconnected! You can now connect any new account below."
+        "Instagram account disconnected! You can now connect a new account."
       );
     } catch (err: any) {
       console.warn("Disconnect error:", err);
-      notify("success", "Instagram account disconnected locally.");
+      notify("success", "Instagram account disconnected.");
     } finally {
       setIsDisconnecting(false);
+      await fetchModuleData();
     }
   };
 
-  // 3b. Direct Connect by Instagram Handle (No Meta Developer Setup Required)
-  const handleDirectConnect = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const cleanHandle = inputHandle.replace(/^@/, "").trim();
-    if (!cleanHandle) return;
+  // 3. Toggle "Show Selected Reels on Website" Switch
+  const handleToggleWebsiteDisplay = async () => {
+    if (!connection || connection.status !== "connected") {
+      notify("error", "Please connect an active Instagram account before enabling website display.");
+      return;
+    }
 
-    setIsConnectingHandle(true);
+    const nextState = !settings.instagramEnabled;
+    setIsTogglingWebsite(true);
+
     try {
-      const res = await fetch("/api/admin/social/instagram/direct-connect", {
-        method: "POST",
+      const res = await fetch("/api/admin/social/instagram/settings", {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: cleanHandle }),
+        body: JSON.stringify({ instagramEnabled: nextState }),
       });
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Failed to connect Instagram account");
+        throw new Error(data.error || "Failed to update display setting");
       }
 
-      notify("success", data.message || `Account @${cleanHandle} connected successfully!`);
-      setInputHandle("");
-      await fetchModuleData();
+      setSettings((prev) => ({ ...prev, instagramEnabled: nextState }));
+      notify(
+        "success",
+        nextState
+          ? "Instagram Reels section is now LIVE on your public website!"
+          : "Instagram Reels section is now HIDDEN from your website."
+      );
     } catch (err: any) {
-      notify("error", err.message || "Failed to connect Instagram account");
+      notify("error", err.message || "Failed to update display settings");
     } finally {
-      setIsConnectingHandle(false);
+      setIsTogglingWebsite(false);
     }
   };
 
-  // 3c. Add Instagram Reel by Link
-  const handleAddReel = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inputReelUrl.trim()) return;
-
-    setIsAddingReel(true);
-    try {
-      const res = await fetch("/api/admin/social/instagram/reels/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          url: inputReelUrl.trim(),
-          caption: inputReelCaption.trim(),
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to add reel");
-      }
-
-      notify("success", data.message || "Instagram Reel added successfully!");
-      setInputReelUrl("");
-      setInputReelCaption("");
-      setIsAddReelModalOpen(false);
-      await fetchModuleData();
-    } catch (err: any) {
-      notify("error", err.message || "Failed to add reel");
-    } finally {
-      setIsAddingReel(false);
-    }
-  };
-
-  // 4. Sync Instagram Reels from Meta API (Keeps existing 4 selected reels untouched)
+  // 4. Sync Instagram Media from Meta API (Non-destructive to selections)
   const handleSyncInstagram = async () => {
     setIsSyncing(true);
     try {
@@ -312,7 +257,7 @@ export function InstagramIntegrationModule({
         if (data.code === "TOKEN_EXPIRED") {
           notify(
             "error",
-            "Instagram session has expired or was revoked. Please log in again below."
+            "Instagram authorization has expired or was revoked. Please reconnect your account."
           );
           await fetchModuleData();
           return;
@@ -327,7 +272,7 @@ export function InstagramIntegrationModule({
         if (data.code === "PERMISSIONS_ERROR") {
           notify(
             "error",
-            "Missing Instagram permissions (instagram_business_basic). Please ensure your account is a Professional account."
+            "Missing Instagram permissions. Please ensure your account is a Professional account."
           );
           return;
         }
@@ -351,7 +296,7 @@ export function InstagramIntegrationModule({
       if (selectedIds.length >= 4) {
         notify(
           "error",
-          "Maximum 4 reels can be selected for website display. Please deselect an existing reel first."
+          "Maximum 4 reels can be selected for website display. Please unselect another reel first."
         );
         return;
       }
@@ -359,12 +304,12 @@ export function InstagramIntegrationModule({
     }
   };
 
-  // 6. Remove Reel from Selected Website Showcase
+  // 6. Remove Reel from Selected
   const handleRemoveFromSelected = (reelId: string) => {
     setSelectedIds(selectedIds.filter((id) => id !== reelId));
   };
 
-  // 7. Save Selected Reels to Backend & Database
+  // 7. Save Selected Reels
   const handleSaveSelectedReels = async () => {
     if (selectedIds.length > 4) {
       notify("error", "Maximum 4 reels can be selected.");
@@ -398,6 +343,38 @@ export function InstagramIntegrationModule({
     }
   };
 
+  // 8. Add Reel by Link
+  const handleAddReel = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputReelUrl.trim()) return;
+
+    setIsAddingReel(true);
+    try {
+      const res = await fetch("/api/admin/social/instagram/reels/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          url: inputReelUrl.trim(),
+          caption: inputReelCaption.trim(),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to add reel");
+      }
+
+      notify("success", data.message || "Instagram Reel added successfully!");
+      setInputReelUrl("");
+      setInputReelCaption("");
+      setIsAddReelModalOpen(false);
+      await fetchModuleData();
+    } catch (err: any) {
+      notify("error", err.message || "Failed to add reel");
+    } finally {
+      setIsAddingReel(false);
+    }
+  };
+
   // Copy redirect URI helper
   const handleCopyRedirect = () => {
     if (metaConfig.redirectUri) {
@@ -409,6 +386,7 @@ export function InstagramIntegrationModule({
 
   // Computed Values
   const isConnected = connection?.status === "connected" && !!connection?.username;
+  const isExpired = connection?.status === "expired";
   const hasUnsavedChanges =
     selectedIds.length !== savedSelectedIds.length ||
     selectedIds.some((id) => !savedSelectedIds.includes(id)) ||
@@ -433,175 +411,171 @@ export function InstagramIntegrationModule({
     return matchesSearch && matchesVisibility;
   });
 
-  // Selected Reel Objects for Section 1
+  // Selected Reel Objects
   const selectedReelsList = reels.filter(
     (r) => selectedIds.includes(r.id) || selectedIds.includes(r.instagramMediaId)
   );
 
   if (isLoading) {
     return (
-      <div className="bg-[#1F2833] border border-white/10 rounded-2xl p-10 text-center space-y-4 animate-pulse">
-        <div className="w-12 h-12 rounded-2xl bg-white/10 mx-auto" />
-        <div className="h-4 w-48 bg-white/10 mx-auto rounded" />
-        <div className="h-3 w-64 bg-white/5 mx-auto rounded" />
+      <div className="bg-[#1F2833] border border-white/10 rounded-2xl p-12 text-center space-y-4 animate-pulse">
+        <div className="w-14 h-14 rounded-2xl bg-white/10 mx-auto" />
+        <div className="h-4 w-52 bg-white/10 mx-auto rounded" />
+        <div className="h-3 w-72 bg-white/5 mx-auto rounded" />
       </div>
     );
   }
 
   return (
     <div className="space-y-8">
-      {/* Breadcrumbs Navigation */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-xs font-mono text-[#8A8D93]">
-          <span>SETTINGS</span>
-          <span>&rsaquo;</span>
-          <span>SOCIAL MEDIA</span>
-          <span>&rsaquo;</span>
-          <span className="text-[#00E5FF] font-bold">META &bull; INSTAGRAM INTEGRATION</span>
+      {/* Top Header / Breadcrumb */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2 text-xs font-mono text-[#8A8D93]">
+            <span>INTEGRATIONS</span>
+            <span>&rsaquo;</span>
+            <span className="text-[#00E5FF] font-bold">INSTAGRAM FEED (SMASH BALLOON STANDARD)</span>
+          </div>
+          <h1 className="font-heading font-black text-2xl sm:text-3xl text-white uppercase tracking-tight mt-1">
+            Instagram Feed &amp; Reels
+          </h1>
         </div>
 
         <button
           type="button"
           onClick={() => setIsSetupGuideModalOpen(true)}
-          className="inline-flex items-center gap-1.5 text-xs font-mono text-[#00E5FF] hover:underline cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-xs font-mono text-[#00E5FF] hover:border-[#00E5FF]/40 transition-all cursor-pointer w-fit"
         >
-          <HelpCircle className="w-3.5 h-3.5" />
+          <HelpCircle className="w-4 h-4" />
           <span>Meta Setup Guide</span>
         </button>
       </div>
 
       {/* ============================================================ */}
-      {/* 1. DISCONNECTED VIEW: DEDICATED INSTAGRAM ACCOUNT LOGIN CARD  */}
+      {/* EXPIRED TOKEN BANNER                                         */}
+      {/* ============================================================ */}
+      {isExpired && (
+        <div className="relative bg-gradient-to-r from-amber-500/15 via-rose-500/15 to-amber-500/15 border border-amber-500/40 rounded-2xl p-5 sm:p-6 shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-start gap-4">
+            <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex-shrink-0">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="font-heading font-black text-white text-base uppercase">
+                Instagram Authorization Expired or Revoked
+              </h3>
+              <p className="text-xs text-[#F5F6FA]/80 mt-1 max-w-2xl leading-relaxed">
+                Meta invalidated the session for @{connection?.username || "account"} (Error 190). Please click below to reconnect your account and restore automatic sync.
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleConnectInstagram}
+            disabled={isConnecting}
+            className="px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer shadow-lg disabled:opacity-50 shrink-0"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isConnecting ? "animate-spin" : ""}`} />
+            <span>{isConnecting ? "Redirecting..." : "Reconnect Account"}</span>
+          </button>
+        </div>
+      )}
+
+      {/* ============================================================ */}
+      {/* 1. DISCONNECTED VIEW: SMASH BALLOON STYLE SETUP CARD         */}
       {/* ============================================================ */}
       {!isConnected ? (
-        <div className="space-y-6">
-          <div className="relative bg-[#1F2833] border border-white/15 rounded-2xl p-6 sm:p-10 shadow-2xl overflow-hidden">
-            {/* Ambient Instagram Glow */}
-            <div className="absolute -top-12 -right-12 w-96 h-96 bg-gradient-to-bl from-[#833ab4]/20 via-[#fd1d1d]/15 to-transparent rounded-full blur-3xl pointer-events-none" />
+        <div className="relative bg-[#1F2833] border border-white/15 rounded-3xl p-6 sm:p-12 shadow-2xl overflow-hidden">
+          {/* Ambient Glow */}
+          <div className="absolute -top-16 -right-16 w-[450px] h-[450px] bg-gradient-to-bl from-[#833ab4]/25 via-[#fd1d1d]/20 to-transparent rounded-full blur-3xl pointer-events-none" />
 
-            <div className="relative z-10 max-w-2xl mx-auto text-center space-y-6">
-              {/* Instagram Icon */}
-              <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] flex items-center justify-center shadow-[0_0_35px_rgba(225,48,108,0.45)] mx-auto">
-                <InstagramIcon className="w-10 h-10 text-white" />
+          <div className="relative z-10 max-w-2xl mx-auto text-center space-y-8">
+            {/* Instagram Official Icon */}
+            <div className="w-24 h-24 rounded-3xl bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] flex items-center justify-center shadow-[0_0_40px_rgba(225,48,108,0.5)] mx-auto">
+              <InstagramIcon className="w-12 h-12 text-white" />
+            </div>
+
+            <div className="space-y-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-[#00E5FF] font-mono text-xs uppercase">
+                <span className="w-2 h-2 rounded-full bg-[#00E5FF] animate-pulse" />
+                <span>OFFICIAL META OAUTH 2.0 INTEGRATION</span>
               </div>
+              <h2 className="font-heading font-black text-3xl sm:text-4xl text-white uppercase tracking-tight">
+                Connect an Instagram Account
+              </h2>
+              <p className="text-xs sm:text-sm text-[#8A8D93] max-w-xl mx-auto leading-relaxed">
+                Connect your official Instagram account to automatically import reels and videos into your website feed.
+              </p>
+            </div>
 
-              <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-[#00E5FF] font-mono text-xs uppercase mb-3">
-                  <span className="w-2 h-2 rounded-full bg-[#00E5FF] animate-pulse" />
-                  <span>READY TO CONNECT INSTAGRAM</span>
-                </div>
-                <h2 className="font-heading font-black text-2xl sm:text-4xl text-white uppercase tracking-tight">
-                  Connect Instagram Account
-                </h2>
-                <p className="text-xs sm:text-sm text-[#8A8D93] mt-2 leading-relaxed">
-                  Connect any Instagram profile to showcase official performance reels on your website.
-                </p>
-              </div>
-
-              {/* METHOD 1: Direct Instant Connect by Handle (Recommended - No Developer Roadblocks) */}
-              <div className="p-5 rounded-2xl bg-[#0B0C10] border border-[#00E5FF]/30 text-left space-y-3 shadow-[0_0_20px_rgba(0,229,255,0.08)]">
+            {/* Smash Balloon Account Options Info */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
+              <div className="p-4 rounded-2xl bg-[#0B0C10] border border-emerald-500/30 space-y-1.5 shadow-md">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#00E5FF] uppercase">
-                    <UserCheck className="w-4 h-4 text-[#00E5FF]" />
-                    <span>Instant Connect Any Instagram ID (Recommended)</span>
-                  </div>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                    Zero Setup
+                  <span className="font-mono text-xs font-bold text-emerald-400 uppercase">
+                    Business / Creator
+                  </span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">
+                    Recommended
                   </span>
                 </div>
-                <p className="text-xs text-[#8A8D93]">
-                  Enter your Instagram username directly. Connects in 1 click without Meta App review or developer tester restrictions:
+                <p className="text-[11px] text-[#8A8D93] leading-normal">
+                  Full support for Instagram Reels, videos, likes, captions, and 60-day auto-refreshing access tokens.
                 </p>
-                <form onSubmit={handleDirectConnect} className="flex flex-col sm:flex-row gap-2.5">
-                  <div className="relative flex-1">
-                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono text-sm text-[#8A8D93]">
-                      @
-                    </span>
-                    <input
-                      type="text"
-                      required
-                      value={inputHandle}
-                      onChange={(e) => setInputHandle(e.target.value)}
-                      placeholder="doomrideraico"
-                      className="w-full pl-8 pr-4 py-3 rounded-xl bg-[#1F2833] border border-white/15 text-white text-xs font-mono focus:outline-none focus:border-[#00E5FF] tracking-wide"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={isConnectingHandle || !inputHandle.trim()}
-                    className="px-6 py-3 rounded-xl bg-[#00E5FF] hover:bg-[#00cce6] text-black font-heading font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,229,255,0.35)] cursor-pointer disabled:opacity-50 shrink-0"
-                  >
-                    <span>{isConnectingHandle ? "Connecting..." : "Connect Account"}</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </form>
               </div>
 
-              {/* METHOD 2: Primary Meta OAuth Login */}
-              <div className="pt-2 border-t border-white/10 space-y-3">
-                <div className="flex items-center justify-between text-left">
-                  <span className="text-xs font-mono text-[#8A8D93] uppercase font-bold">
-                    Or Connect via Meta / Instagram Login:
+              <div className="p-4 rounded-2xl bg-[#0B0C10] border border-white/15 space-y-1.5 shadow-md">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-xs font-bold text-white uppercase">
+                    Personal Account
+                  </span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-[#8A8D93]">
+                    Basic
                   </span>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleConnectInstagram}
-                  disabled={isConnecting}
-                  className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] hover:opacity-95 text-white font-heading font-black text-xs tracking-wider uppercase flex items-center justify-center gap-2.5 shadow-lg transition-all cursor-pointer disabled:opacity-50"
-                >
-                  <InstagramIcon className="w-4 h-4 text-white" />
-                  <span>{isConnecting ? "Redirecting to Meta Login..." : "Log In with Official Meta Instagram"}</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
+                <p className="text-[11px] text-[#8A8D93] leading-normal">
+                  Standard photo and video feeds. Easily upgrade to a Creator account for free in the Instagram mobile app.
+                </p>
               </div>
+            </div>
 
-              {/* Direct Token Connect Fallback */}
-              <div className="pt-2 border-t border-white/10 text-left space-y-3">
-                <div className="flex items-center gap-2 text-xs font-mono text-[#8A8D93] uppercase font-bold">
-                  <Key className="w-3.5 h-3.5 text-[#00E5FF]" />
-                  <span>Or Connect Using Meta Access Token:</span>
-                </div>
+            {/* Prominent Smash Balloon Style "Connect Instagram" Button */}
+            <div className="space-y-4 pt-2">
+              <button
+                type="button"
+                onClick={handleConnectInstagram}
+                disabled={isConnecting}
+                className="w-full sm:w-auto px-10 py-4 rounded-2xl bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] hover:opacity-95 text-white font-heading font-black text-sm uppercase tracking-wider flex items-center justify-center gap-3 shadow-[0_0_35px_rgba(225,48,108,0.5)] transition-all cursor-pointer disabled:opacity-50 mx-auto hover:scale-105"
+              >
+                <InstagramIcon className="w-5 h-5 text-white" />
+                <span>{isConnecting ? "Redirecting to Meta Login..." : "Connect an Instagram Account"}</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
 
-                <form onSubmit={handleTokenConnectSubmit} className="space-y-3">
-                  <textarea
-                    rows={2}
-                    required
-                    value={inputToken}
-                    onChange={(e) => setInputToken(e.target.value)}
-                    placeholder="Paste Meta User Access Token for your new Instagram account..."
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#0B0C10] border border-white/10 text-white text-xs focus:outline-none focus:border-[#00E5FF] font-mono resize-none"
-                  />
-                  <button
-                    type="submit"
-                    disabled={isSubmittingToken || !inputToken.trim()}
-                    className="px-5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white font-mono text-xs font-bold uppercase transition-colors disabled:opacity-50 cursor-pointer"
-                  >
-                    {isSubmittingToken ? "Authenticating Token..." : "Connect via Token"}
-                  </button>
-                </form>
+              <div className="flex items-center justify-center gap-2 text-xs font-mono text-[#8A8D93]">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <span>We never ask for or store your Instagram password. Authenticate directly with Meta.</span>
               </div>
             </div>
           </div>
         </div>
       ) : (
         /* ============================================================ */
-        /* 2. CONNECTED VIEW: ACCOUNT BANNER & SELECTION DASHBOARD      */
+        /* 2. CONNECTED VIEW: ACCOUNT BANNER & FEED CONTROLS            */
         /* ============================================================ */
         <>
-          {/* Connected Account Card */}
+          {/* Account Profile Card */}
           <div className="relative bg-[#1F2833] border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl overflow-hidden">
-            {/* Subtle Instagram Gradient Glow */}
             <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl from-[#E1306C]/10 via-[#F77737]/5 to-transparent rounded-full blur-3xl pointer-events-none" />
 
             <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-              {/* Identity & Status */}
+              {/* Account Identity */}
               <div className="flex items-center gap-5">
-                {/* Profile Picture */}
                 <div className="relative w-16 h-16 rounded-2xl overflow-hidden p-0.5 bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] flex-shrink-0 shadow-[0_0_25px_rgba(225,48,108,0.35)]">
                   <img
                     src={connection?.profilePicture || "/images/dj_hero.jpg"}
-                    alt={connection?.username || "Instagram Account"}
+                    alt={connection?.username || "Instagram Profile"}
                     className="w-full h-full object-cover rounded-[14px] bg-black"
                   />
                 </div>
@@ -612,16 +586,20 @@ export function InstagramIntegrationModule({
                       @{connection?.username}
                     </h3>
 
-                    {/* Status Badge */}
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold tracking-wider uppercase shadow-sm">
                       <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                       <span>CONNECTED</span>
                     </span>
                   </div>
 
-                  {/* Connected Details */}
                   <div className="flex flex-wrap items-center gap-3 text-xs text-[#8A8D93] mt-2 font-mono">
-                    <span className="text-[#00E5FF] font-semibold">Professional Account</span>
+                    <span className="text-[#00E5FF] font-semibold">
+                      {connection?.accountType || "Business / Creator"}
+                    </span>
+                    <span>&bull;</span>
+                    <span className="text-white/70">
+                      ID: {connection?.instagramUserId || "N/A"}
+                    </span>
                     <span>&bull;</span>
                     <a
                       href={`https://instagram.com/${connection?.username}`}
@@ -633,16 +611,6 @@ export function InstagramIntegrationModule({
                       <ExternalLink className="w-3 h-3" />
                     </a>
                     <span>&bull;</span>
-                    <span className="flex items-center gap-1 text-[#F5F6FA]/80">
-                      <Clock className="w-3 h-3 text-[#00E5FF]" />
-                      <span>
-                        Connected:{" "}
-                        {new Date(
-                          connection?.connectedAt || connection?.createdAt || new Date()
-                        ).toLocaleDateString()}
-                      </span>
-                    </span>
-                    <span>&bull;</span>
                     <span className="text-emerald-400 font-bold">
                       {connection?.tokenDaysRemaining !== null &&
                       connection?.tokenDaysRemaining !== undefined
@@ -653,7 +621,7 @@ export function InstagramIntegrationModule({
                 </div>
               </div>
 
-              {/* Connected Actions: Add Reel, Sync & Disconnect */}
+              {/* Action Buttons */}
               <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
                 <button
                   type="button"
@@ -670,212 +638,208 @@ export function InstagramIntegrationModule({
                   onClick={handleSyncInstagram}
                   disabled={isSyncing}
                   className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-white text-xs font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md disabled:opacity-50"
-                  title="Fetch latest reels from Meta API while keeping your current 4 selected reels untouched"
+                  title="Fetch latest reels from Meta API while preserving your current 4 selected reels"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? "animate-spin text-[#00E5FF]" : ""}`} />
-                  <span>{isSyncing ? "Syncing..." : "Sync"}</span>
+                  <span>{isSyncing ? "Sync Instagram..." : "Sync Instagram"}</span>
                 </button>
 
                 <button
                   type="button"
-                  onClick={handleDisconnect}
+                  onClick={() => setIsDisconnectModalOpen(true)}
                   disabled={isDisconnecting}
                   className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 hover:border-rose-500/50 text-rose-400 text-xs font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md"
-                  title="Disconnect current account and connect a different Instagram ID"
+                  title="Disconnect current account and allow switching to a different Instagram ID"
                 >
                   <X className="w-3.5 h-3.5" />
-                  <span>{isDisconnecting ? "Disconnecting..." : "Disconnect / Switch"}</span>
+                  <span>Disconnect</span>
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Selection Bar: Maximum 4 Counter & Save Button */}
-          <div className="bg-[#1F2833] border border-white/10 rounded-2xl p-5 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div
-                className={`px-4 py-2 rounded-xl border font-mono text-xs font-black tracking-wider uppercase flex items-center gap-2 shadow-inner ${
-                  selectedIds.length === 4
-                    ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-400 shadow-[0_0_20px_rgba(34,197,94,0.25)]"
-                    : selectedIds.length > 0
-                    ? "bg-[#00E5FF]/10 border-[#00E5FF]/30 text-[#00E5FF]"
-                    : "bg-white/5 border-white/10 text-[#8A8D93]"
-                }`}
-              >
-                {selectedIds.length === 4 ? (
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                ) : (
-                  <Film className="w-4 h-4 text-[#00E5FF]" />
-                )}
-                <span>{selectedIds.length} / 4 Reels Selected</span>
+          {/* Settings & Selection Controls Bar */}
+          <div className="bg-[#1F2833] border border-white/10 rounded-2xl p-6 shadow-xl space-y-5">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-5 border-b border-white/10">
+              {/* "Show Selected Reels on Website" Switch Toggle */}
+              <div className="flex items-center gap-4">
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={settings.instagramEnabled}
+                  disabled={isTogglingWebsite}
+                  onClick={handleToggleWebsiteDisplay}
+                  className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                    settings.instagramEnabled ? "bg-emerald-500" : "bg-white/20"
+                  }`}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                      settings.instagramEnabled ? "translate-x-7" : "translate-x-0"
+                    }`}
+                  />
+                </button>
+
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-heading font-black text-sm text-white uppercase tracking-wider">
+                      Show Selected Reels on Website
+                    </span>
+                    <span
+                      className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold uppercase ${
+                        settings.instagramEnabled
+                          ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                          : "bg-white/10 text-[#8A8D93] border border-white/15"
+                      }`}
+                    >
+                      {settings.instagramEnabled ? "ENABLED // LIVE" : "DISABLED // HIDDEN"}
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#8A8D93] mt-0.5">
+                    When enabled, the curated 1-4 reels below will be displayed in the public #instagram homepage section.
+                  </p>
+                </div>
               </div>
 
-              <div className="text-xs text-[#8A8D93]">
-                {selectedIds.length === 4 ? (
-                  <span className="text-emerald-400 font-bold">
-                    Maximum 4 reels selected for website display.
-                  </span>
-                ) : selectedIds.length === 0 ? (
-                  <span>0 reels selected. Choose up to 4 reels below.</span>
-                ) : (
-                  <span>
-                    {4 - selectedIds.length} slot{4 - selectedIds.length > 1 ? "s" : ""} available for website display.
-                  </span>
-                )}
-              </div>
-            </div>
+              {/* Selection Counter & Save Button */}
+              <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
+                <div
+                  className={`px-4 py-2 rounded-xl border font-mono text-xs font-black tracking-wider uppercase flex items-center gap-2 ${
+                    selectedIds.length === 4
+                      ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-400 shadow-[0_0_20px_rgba(34,197,94,0.2)]"
+                      : selectedIds.length > 0
+                      ? "bg-[#00E5FF]/10 border-[#00E5FF]/30 text-[#00E5FF]"
+                      : "bg-white/5 border-white/10 text-[#8A8D93]"
+                  }`}
+                >
+                  {selectedIds.length === 4 ? (
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  ) : (
+                    <Film className="w-4 h-4 text-[#00E5FF]" />
+                  )}
+                  <span>{selectedIds.length} / 4 Reels Selected</span>
+                </div>
 
-            <div className="flex items-center gap-3 w-full md:w-auto">
-              {hasUnsavedChanges && (
-                <span className="text-[11px] font-mono text-amber-400 flex items-center gap-1 animate-pulse">
-                  <AlertTriangle className="w-3.5 h-3.5" />
-                  <span>Unsaved changes</span>
-                </span>
-              )}
+                <div className="flex items-center gap-2">
+                  {hasUnsavedChanges && (
+                    <span className="text-[11px] font-mono text-amber-400 flex items-center gap-1 animate-pulse">
+                      <AlertTriangle className="w-3.5 h-3.5" />
+                      <span className="hidden sm:inline">Unsaved</span>
+                    </span>
+                  )}
 
-              <button
-                type="button"
-                onClick={handleSaveSelectedReels}
-                disabled={isSavingSelection}
-                className={`w-full md:w-auto px-6 py-2.5 rounded-xl font-heading font-black text-xs tracking-wider uppercase flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg disabled:opacity-50 ${
-                  hasUnsavedChanges
-                    ? "bg-[#00E5FF] hover:bg-[#00B4D8] text-black shadow-[0_0_25px_rgba(0,229,255,0.4)]"
-                    : "bg-white/10 hover:bg-white/15 text-white border border-white/15"
-                }`}
-              >
-                {isSavingSelection ? (
-                  <RefreshCw className="w-4 h-4 animate-spin text-black" />
-                ) : (
-                  <Save className="w-4 h-4" />
-                )}
-                <span>{isSavingSelection ? "Saving..." : "Save Selected Reels"}</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Section 1: Selected for Website */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-heading font-black text-lg text-white uppercase tracking-tight flex items-center gap-2">
-                  <span>Selected for Website</span>
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#00E5FF]/15 text-[#00E5FF] font-mono text-xs font-bold border border-[#00E5FF]/30">
-                    {selectedIds.length} / 4
-                  </span>
-                </h3>
-                <p className="text-xs text-[#8A8D93]">
-                  Only these reels are showcased live on your public website. You can replace any reel by unselecting it.
-                </p>
-              </div>
-            </div>
-
-            {selectedReelsList.length === 0 ? (
-              <div className="bg-[#1F2833]/60 border border-dashed border-white/15 rounded-2xl p-8 text-center space-y-2">
-                <Film className="w-8 h-8 text-[#8A8D93] mx-auto opacity-60" />
-                <h4 className="font-heading font-bold text-white text-sm uppercase">
-                  No Reels Selected for Website
-                </h4>
-                <p className="text-xs text-[#8A8D93] max-w-md mx-auto">
-                  Choose up to 4 reels from the library below using the checkboxes, then click{" "}
-                  <strong className="text-white">&quot;Save Selected Reels&quot;</strong> to feature them on your website.
-                </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {selectedReelsList.map((reel) => (
-                  <div
-                    key={reel.id}
-                    className="group relative bg-[#1F2833] border border-emerald-500/30 hover:border-emerald-500/60 rounded-2xl overflow-hidden shadow-lg transition-all flex flex-col"
+                  <button
+                    type="button"
+                    onClick={handleSaveSelectedReels}
+                    disabled={isSavingSelection}
+                    className={`px-5 py-2 rounded-xl font-heading font-black text-xs tracking-wider uppercase flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg disabled:opacity-50 ${
+                      hasUnsavedChanges
+                        ? "bg-[#00E5FF] hover:bg-[#00B4D8] text-black shadow-[0_0_25px_rgba(0,229,255,0.4)]"
+                        : "bg-white/10 hover:bg-white/15 text-white border border-white/15"
+                    }`}
                   >
-                    <div className="relative aspect-[9/16] w-full bg-black overflow-hidden">
-                      <img
-                        src={reel.thumbnailUrl || "/images/dj_hero.jpg"}
-                        alt={reel.caption}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/40 flex items-center justify-center">
-                        <button
-                          type="button"
-                          onClick={() => setPreviewReel(reel)}
-                          className="w-12 h-12 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center border border-white/20 transition-transform hover:scale-110 cursor-pointer"
-                          title="Preview Reel"
-                        >
-                          <Play className="w-5 h-5 fill-white text-white ml-0.5" />
-                        </button>
-                      </div>
+                    {isSavingSelection ? (
+                      <RefreshCw className="w-4 h-4 animate-spin text-black" />
+                    ) : (
+                      <Save className="w-4 h-4" />
+                    )}
+                    <span>{isSavingSelection ? "Saving..." : "Save Selection"}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
 
-                      <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between gap-1 z-10">
-                        <span className="px-2 py-0.5 rounded bg-emerald-500/90 text-black font-mono text-[9px] font-black uppercase tracking-wider flex items-center gap-1 shadow-sm">
-                          <Check className="w-2.5 h-2.5 stroke-[3]" />
-                          <span>ON WEBSITE</span>
-                        </span>
+            {/* Showcase Tray (Currently Selected for Website) */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono text-[#8A8D93] uppercase font-bold tracking-wider flex items-center gap-2">
+                  <Layers className="w-4 h-4 text-[#00E5FF]" />
+                  <span>Website Showcase Tray ({selectedReelsList.length} of 4)</span>
+                </span>
+                <span className="text-[11px] font-mono text-[#8A8D93]">
+                  {4 - selectedReelsList.length} slot{4 - selectedReelsList.length !== 1 ? "s" : ""} remaining
+                </span>
+              </div>
 
-                        <a
-                          href={reel.permalink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-1.5 rounded-full bg-black/70 hover:bg-black text-white hover:text-[#00E5FF] transition-colors"
-                          title="Open on Instagram"
-                        >
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
-                      </div>
-                    </div>
-
-                    <div className="p-3.5 flex flex-col justify-between flex-grow space-y-3 bg-[#1F2833]">
-                      <div>
-                        <p className="text-xs text-white line-clamp-2 leading-relaxed font-sans">
-                          {reel.caption}
-                        </p>
-                        <div className="flex items-center justify-between text-[10px] font-mono text-[#8A8D93] mt-2">
-                          <span className="text-[#00E5FF]">@{reel.username}</span>
-                          <span>{new Date(reel.publishedAt).toLocaleDateString()}</span>
+              {selectedReelsList.length === 0 ? (
+                <div className="p-6 rounded-xl bg-[#0B0C10] border border-dashed border-white/15 text-center text-xs text-[#8A8D93]">
+                  No reels selected yet. Click the &ldquo;Select for Website&rdquo; button on up to 4 reels from the feed below.
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                  {selectedReelsList.map((reel) => (
+                    <div
+                      key={reel.id}
+                      className="p-2.5 rounded-xl bg-[#0B0C10] border border-emerald-500/30 flex items-center gap-3 shadow-md"
+                    >
+                      <div className="relative w-12 h-16 rounded-lg overflow-hidden bg-black flex-shrink-0">
+                        <img
+                          src={reel.thumbnailUrl || "/images/dj_hero.jpg"}
+                          alt={reel.caption}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                          <Play className="w-3.5 h-3.5 text-white fill-white" />
                         </div>
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveFromSelected(reel.id)}
-                        className="w-full py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-400 text-xs font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                        <span>Remove from Website</span>
-                      </button>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-white truncate font-medium">
+                          {reel.caption || `Reel from @${reel.username}`}
+                        </p>
+                        <p className="text-[10px] font-mono text-[#8A8D93] mt-0.5">
+                          {new Date(reel.publishedAt).toLocaleDateString()}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveFromSelected(reel.id)}
+                          className="text-[10px] font-mono text-rose-400 hover:text-rose-300 hover:underline flex items-center gap-1 mt-1 cursor-pointer"
+                        >
+                          <X className="w-3 h-3" />
+                          <span>Remove</span>
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Section 2: All Instagram Reels Library */}
-          <div className="space-y-4 pt-4 border-t border-white/10">
+          {/* ============================================================ */}
+          {/* 3. VISUAL FEED / GRID OF AUTHORIZED MEDIA                    */}
+          {/* ============================================================ */}
+          <div className="space-y-5">
+            {/* Feed Header with View Mode Switcher and Search */}
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div>
-                <h3 className="font-heading font-black text-lg text-white uppercase tracking-tight flex items-center gap-2">
-                  <span>All Instagram Reels</span>
+                <h3 className="font-heading font-black text-xl text-white uppercase tracking-tight flex items-center gap-2.5">
+                  <span>Authorized Instagram Media</span>
                   <span className="px-2.5 py-0.5 rounded-full bg-white/10 text-white font-mono text-xs font-bold">
                     {reels.length} Total
                   </span>
                 </h3>
-                <p className="text-xs text-[#8A8D93]">
-                  All reels fetched from @{connection?.username}. Select up to 4 reels to showcase on your website.
+                <p className="text-xs text-[#8A8D93] mt-0.5">
+                  Browse and select up to 4 reels or videos to showcase on your website.
                 </p>
               </div>
 
-              {/* Search & Filter Controls */}
+              {/* View Switcher, Filter Tabs & Search */}
               <div className="flex flex-wrap items-center gap-3">
-                <div className="relative w-full sm:w-64">
+                {/* Search */}
+                <div className="relative w-full sm:w-56">
                   <input
                     type="text"
-                    placeholder="Search captions or ID..."
+                    placeholder="Search captions..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-[#0B0C10] border border-white/10 rounded-xl px-4 py-2 pl-9 text-xs text-white placeholder:text-[#8A8D93] focus:outline-none focus:border-[#00E5FF]"
+                    className="w-full bg-[#0B0C10] border border-white/10 rounded-xl px-3.5 py-2 pl-9 text-xs text-white placeholder:text-[#8A8D93] focus:outline-none focus:border-[#00E5FF]"
                   />
                   <Search className="w-3.5 h-3.5 text-[#8A8D93] absolute left-3 top-1/2 -translate-y-1/2" />
                 </div>
 
+                {/* Filter Tabs */}
                 <div className="flex items-center gap-1 bg-[#0B0C10] p-1 rounded-xl border border-white/10 font-mono text-xs">
                   <button
                     type="button"
@@ -911,32 +875,198 @@ export function InstagramIntegrationModule({
                     Available ({Math.max(0, reels.length - selectedIds.length)})
                   </button>
                 </div>
+
+                {/* Layout Mode Toggle (Grid vs List) */}
+                <div className="flex items-center gap-1 bg-[#0B0C10] p-1 rounded-xl border border-white/10">
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("grid")}
+                    className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                      viewMode === "grid"
+                        ? "bg-white/15 text-white"
+                        : "text-[#8A8D93] hover:text-white"
+                    }`}
+                    title="Visual Grid View (Smash Balloon)"
+                  >
+                    <LayoutGrid className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("list")}
+                    className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                      viewMode === "list"
+                        ? "bg-white/15 text-white"
+                        : "text-[#8A8D93] hover:text-white"
+                    }`}
+                    title="List View"
+                  >
+                    <List className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             </div>
 
-            {/* Reels Table */}
+            {/* Empty State */}
             {filteredReels.length === 0 ? (
-              <div className="bg-[#1F2833] border border-white/10 rounded-2xl p-12 text-center">
-                <InstagramIcon className="w-10 h-10 text-[#8A8D93] mx-auto mb-3" />
-                <h4 className="font-heading font-bold text-white text-base uppercase">No Reels Found</h4>
-                <p className="text-xs text-[#8A8D93] mt-1">
+              <div className="bg-[#1F2833] border border-white/10 rounded-2xl p-12 text-center space-y-3">
+                <InstagramIcon className="w-10 h-10 text-[#8A8D93] mx-auto opacity-50" />
+                <h4 className="font-heading font-bold text-white text-base uppercase">
+                  No Instagram Media Found
+                </h4>
+                <p className="text-xs text-[#8A8D93] max-w-md mx-auto">
                   {searchQuery
-                    ? "No reels matched your search filter."
-                    : "Click 'Sync Instagram' above to import reels from Meta."}
+                    ? "No media matched your search filter."
+                    : "No posts were returned from this account yet. Click Sync Instagram above to fetch fresh media or add a reel by link."}
                 </p>
               </div>
+            ) : viewMode === "grid" ? (
+              /* ============================================================ */
+              /* SMASH BALLOON VISUAL GRID VIEW                               */
+              /* ============================================================ */
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                {filteredReels.map((reel) => {
+                  const isSelected =
+                    selectedIds.includes(reel.id) ||
+                    selectedIds.includes(reel.instagramMediaId);
+                  const isLimitReached = !isSelected && selectedIds.length >= 4;
+
+                  return (
+                    <div
+                      key={reel.id}
+                      className={`group relative bg-[#1F2833] rounded-2xl overflow-hidden shadow-xl flex flex-col border transition-all duration-300 ${
+                        isSelected
+                          ? "border-emerald-500/50 shadow-[0_0_25px_rgba(34,197,94,0.2)]"
+                          : "border-white/10 hover:border-white/20"
+                      }`}
+                    >
+                      {/* Vertical Media Thumbnail 9:16 */}
+                      <div className="relative aspect-[9/16] w-full bg-black overflow-hidden">
+                        <img
+                          src={reel.thumbnailUrl || "/images/dj_hero.jpg"}
+                          alt={reel.caption}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/50 group-hover:via-black/10 transition-colors" />
+
+                        {/* Top Badges */}
+                        <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2 z-10">
+                          <span className="px-2.5 py-1 rounded bg-black/80 backdrop-blur-md border border-white/15 text-[9px] font-mono uppercase tracking-wider text-[#00E5FF] font-bold flex items-center gap-1">
+                            <Film className="w-3 h-3" />
+                            <span>{reel.mediaType || "REEL"}</span>
+                          </span>
+
+                          <div className="flex items-center gap-1.5">
+                            {reel.likesCount ? (
+                              <span className="px-2 py-1 rounded bg-black/80 backdrop-blur-md border border-white/15 text-[10px] font-mono text-white/90 flex items-center gap-1">
+                                <Heart className="w-3 h-3 text-[#ff3366] fill-[#ff3366]" />
+                                <span>{Number(reel.likesCount).toLocaleString()}</span>
+                              </span>
+                            ) : null}
+
+                            <a
+                              href={reel.permalink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-1.5 rounded-full bg-black/80 hover:bg-black text-white hover:text-[#00E5FF] transition-colors"
+                              title="Open on Instagram"
+                            >
+                              <ExternalLink className="w-3 h-3" />
+                            </a>
+                          </div>
+                        </div>
+
+                        {/* Center Play Button Overlay */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <button
+                            type="button"
+                            onClick={() => setPreviewReel(reel)}
+                            className="w-12 h-12 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center border border-white/20 transition-transform hover:scale-110 cursor-pointer shadow-lg"
+                            title="Preview Reel"
+                          >
+                            <Play className="w-5 h-5 fill-white text-white ml-0.5" />
+                          </button>
+                        </div>
+
+                        {/* Selected Indicator Ribbon */}
+                        {isSelected && (
+                          <div className="absolute bottom-3 left-3 right-3 z-10">
+                            <span className="w-full py-1 rounded-lg bg-emerald-500 text-black font-mono text-[10px] font-black uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-lg">
+                              <Check className="w-3 h-3 stroke-[3]" />
+                              <span>FEATURED ON WEBSITE</span>
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Content & Action Controls */}
+                      <div className="p-4 flex flex-col justify-between flex-grow space-y-3 bg-[#1F2833]">
+                        <div>
+                          <p className="text-xs text-white line-clamp-2 leading-relaxed font-sans font-medium">
+                            {reel.caption || `Reel from @${reel.username}`}
+                          </p>
+
+                          <div className="flex items-center justify-between text-[10px] font-mono text-[#8A8D93] mt-2">
+                            <span className="text-[#00E5FF]">@{reel.username}</span>
+                            <span>
+                              {new Date(reel.publishedAt).toLocaleDateString("en-US", {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              })}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Interactive Select Button */}
+                        <button
+                          type="button"
+                          disabled={isLimitReached}
+                          onClick={() => handleToggleReelSelection(reel.id)}
+                          className={`w-full py-2.5 rounded-xl font-mono text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                            isSelected
+                              ? "bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/40 text-rose-400"
+                              : isLimitReached
+                              ? "bg-white/5 border border-white/10 text-white/30 cursor-not-allowed"
+                              : "bg-[#00E5FF]/15 hover:bg-[#00E5FF]/25 border border-[#00E5FF]/40 text-[#00E5FF]"
+                          }`}
+                        >
+                          {isSelected ? (
+                            <>
+                              <X className="w-3.5 h-3.5" />
+                              <span>Unselect</span>
+                            </>
+                          ) : isLimitReached ? (
+                            <>
+                              <AlertCircle className="w-3.5 h-3.5" />
+                              <span>Max 4 Selected</span>
+                            </>
+                          ) : (
+                            <>
+                              <Plus className="w-3.5 h-3.5" />
+                              <span>Select for Website</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             ) : (
+              /* ============================================================ */
+              /* LIST / TABLE VIEW                                            */
+              /* ============================================================ */
               <div className="bg-[#1F2833] border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs font-sans">
                     <thead className="bg-[#0B0C10] text-[#8A8D93] font-mono uppercase tracking-wider border-b border-white/10">
                       <tr>
                         <th className="p-4 w-16 text-center">Select</th>
-                        <th className="p-4 w-28">Preview</th>
-                        <th className="p-4">Caption / Content</th>
+                        <th className="p-4 w-24">Preview</th>
+                        <th className="p-4">Caption / Media</th>
                         <th className="p-4 w-32">Published</th>
-                        <th className="p-4 w-36">Instagram URL</th>
-                        <th className="p-4 w-40 text-right">Website Status</th>
+                        <th className="p-4 w-36">Instagram</th>
+                        <th className="p-4 w-40 text-right">Status</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/[0.06]">
@@ -950,7 +1080,7 @@ export function InstagramIntegrationModule({
                           <tr
                             key={reel.id}
                             className={`hover:bg-white/[0.02] transition-colors ${
-                              isSelected ? "bg-emerald-500/[0.03]" : ""
+                              isSelected ? "bg-emerald-500/[0.04]" : ""
                             }`}
                           >
                             <td className="p-4 text-center">
@@ -967,16 +1097,14 @@ export function InstagramIntegrationModule({
                                 }`}
                                 title={
                                   isSelected
-                                    ? "Click to deselect from website"
+                                    ? "Click to deselect"
                                     : isLimitReached
-                                    ? "Maximum 4 reels selected. Deselect another reel first."
-                                    : "Click to select for website showcase"
+                                    ? "Max 4 reels selected"
+                                    : "Click to select"
                                 }
                               >
                                 {isSelected ? (
                                   <Check className="w-4 h-4 stroke-[3]" />
-                                ) : isLimitReached ? (
-                                  <X className="w-3.5 h-3.5 opacity-40" />
                                 ) : (
                                   <Square className="w-3.5 h-3.5 opacity-50" />
                                 )}
@@ -986,28 +1114,24 @@ export function InstagramIntegrationModule({
                             <td className="p-4">
                               <div
                                 onClick={() => setPreviewReel(reel)}
-                                className="relative w-16 h-24 rounded-lg overflow-hidden bg-black border border-white/15 cursor-pointer group shadow-md flex-shrink-0"
-                                title="Click to preview reel"
+                                className="relative w-14 h-20 rounded-lg overflow-hidden bg-black border border-white/15 cursor-pointer group shadow-md flex-shrink-0"
                               >
                                 <img
                                   src={reel.thumbnailUrl || "/images/dj_hero.jpg"}
                                   alt={reel.caption}
                                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                                 />
-                                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 flex items-center justify-center transition-colors">
-                                  <Play className="w-5 h-5 text-white fill-white drop-shadow-md group-hover:scale-125 transition-transform" />
+                                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                                  <Play className="w-4 h-4 text-white fill-white" />
                                 </div>
-                                <span className="absolute bottom-1 right-1 px-1 py-0.5 rounded bg-black/80 font-mono text-[8px] text-[#00E5FF] font-bold">
-                                  REEL
-                                </span>
                               </div>
                             </td>
 
                             <td className="p-4 max-w-md">
                               <p className="font-sans text-xs text-white line-clamp-2 leading-relaxed">
-                                {reel.caption}
+                                {reel.caption || `Reel from @${reel.username}`}
                               </p>
-                              <div className="flex items-center gap-2 mt-2 text-[10px] font-mono text-[#8A8D93]">
+                              <div className="flex items-center gap-2 mt-1.5 text-[10px] font-mono text-[#8A8D93]">
                                 <span className="text-[#00E5FF]">@{reel.username}</span>
                                 <span>&bull;</span>
                                 <span>ID: {reel.instagramMediaId.slice(0, 12)}</span>
@@ -1059,14 +1183,14 @@ export function InstagramIntegrationModule({
       )}
 
       {/* ============================================================ */}
-      {/* 3. REEL PREVIEW MODAL                                         */}
+      {/* 4. REEL PREVIEW MODAL                                         */}
       {/* ============================================================ */}
       {previewReel && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
           <div className="relative w-full max-w-md bg-[#1F2833] border border-white/20 rounded-2xl overflow-hidden shadow-2xl p-6 space-y-4">
             <button
               onClick={() => setPreviewReel(null)}
-              className="absolute top-4 right-4 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors cursor-pointer"
+              className="absolute top-4 right-4 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors cursor-pointer z-10"
             >
               <X className="w-5 h-5" />
             </button>
@@ -1096,7 +1220,7 @@ export function InstagramIntegrationModule({
                 <span>{new Date(previewReel.publishedAt).toLocaleDateString()}</span>
               </div>
               <p className="text-xs text-[#F5F6FA] line-clamp-3 leading-relaxed">
-                {previewReel.caption}
+                {previewReel.caption || `Reel from @${previewReel.username}`}
               </p>
             </div>
 
@@ -1141,7 +1265,7 @@ export function InstagramIntegrationModule({
       )}
 
       {/* ============================================================ */}
-      {/* 4. DISCONNECT CONFIRMATION MODAL                              */}
+      {/* 5. DISCONNECT CONFIRMATION MODAL                              */}
       {/* ============================================================ */}
       {isDisconnectModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
@@ -1155,7 +1279,7 @@ export function InstagramIntegrationModule({
                 Disconnect Instagram Account?
               </h3>
               <p className="text-xs text-[#8A8D93] mt-2 leading-relaxed">
-                Disconnecting will remove current tokens and selections. You will immediately see the login screen to connect your new Instagram account.
+                Disconnecting will revoke active Meta tokens, clear cached reels, and remove current website selections. Account B will be completely isolated with its own media and selections.
               </p>
             </div>
 
@@ -1173,7 +1297,7 @@ export function InstagramIntegrationModule({
                 disabled={isDisconnecting}
                 className="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-mono font-bold uppercase shadow-lg transition-colors cursor-pointer disabled:opacity-50"
               >
-                {isDisconnecting ? "Disconnecting..." : "Yes, Disconnect & Switch"}
+                {isDisconnecting ? "Disconnecting..." : "Yes, Disconnect Account"}
               </button>
             </div>
           </div>
@@ -1181,7 +1305,7 @@ export function InstagramIntegrationModule({
       )}
 
       {/* ============================================================ */}
-      {/* 5. META DEVELOPER SETUP GUIDE MODAL                           */}
+      {/* 6. META DEVELOPER SETUP GUIDE MODAL                           */}
       {/* ============================================================ */}
       {isSetupGuideModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
@@ -1286,7 +1410,7 @@ export function InstagramIntegrationModule({
       )}
 
       {/* ============================================================ */}
-      {/* 6. ADD REEL BY URL MODAL                                      */}
+      {/* 7. ADD REEL BY LINK MODAL                                     */}
       {/* ============================================================ */}
       {isAddReelModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
