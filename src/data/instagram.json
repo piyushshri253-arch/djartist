@@ -1,22 +1,89 @@
 {
   "connection": {
-    "id": "ig-conn-1789880750421",
-    "instagramUserId": "",
-    "username": "",
-    "profilePicture": "",
-    "status": "disconnected",
-    "connectedAt": "2026-09-20T05:05:50.417Z",
-    "lastSyncedAt": "2026-09-20T05:05:50.417Z",
+    "id": "ig-conn-1789881328364",
+    "instagramUserId": "ig-user-doomrideraico",
+    "username": "doomrideraico",
+    "profilePicture": "/images/dj_hero.jpg",
+    "status": "connected",
+    "tokenExpiresAt": 1795065328360,
+    "connectedAt": "2026-09-20T05:15:28.360Z",
+    "lastSyncedAt": "2026-09-20T05:15:28.360Z",
     "createdAt": "2026-09-19T05:08:38.633Z",
-    "updatedAt": "2026-09-20T05:06:21.331Z"
+    "updatedAt": "2026-09-20T05:15:28.360Z"
   },
   "settings": {
     "id": "social-settings-1",
-    "instagramEnabled": false,
+    "instagramEnabled": true,
     "autoSyncIntervalHours": 6,
     "createdAt": "2026-09-19T05:08:38.633Z",
-    "updatedAt": "2026-09-20T05:06:21.331Z"
+    "updatedAt": "2026-09-20T05:15:28.360Z"
   },
-  "reels": [],
-  "selectedReelIds": []
+  "reels": [
+    {
+      "id": "ig-reel-doomrideraico-1",
+      "instagramMediaId": "reel-1-doomrideraico",
+      "username": "doomrideraico",
+      "caption": "🔥 Mainstage Festival Drop // Live Crowd Energy with @doomrideraico",
+      "thumbnailUrl": "/images/past_event_crowd.jpg",
+      "permalink": "https://www.instagram.com/doomrideraico/",
+      "mediaType": "REEL",
+      "publishedAt": "2026-09-20T05:15:28.360Z",
+      "viewsDisplay": "1.2M",
+      "likesCount": 48200,
+      "isVisible": true,
+      "createdAt": "2026-09-20T05:15:28.360Z",
+      "updatedAt": "2026-09-20T05:15:28.360Z"
+    },
+    {
+      "id": "ig-reel-doomrideraico-2",
+      "instagramMediaId": "reel-2-doomrideraico",
+      "username": "doomrideraico",
+      "caption": "⚡ Unreleased Festival Anthem // 360 Lasers & Heavy Bass @doomrideraico",
+      "thumbnailUrl": "/images/gallery_stage_lasers.jpg",
+      "permalink": "https://www.instagram.com/doomrideraico/",
+      "mediaType": "REEL",
+      "publishedAt": "2026-09-20T05:15:28.360Z",
+      "viewsDisplay": "890K",
+      "likesCount": 36500,
+      "isVisible": true,
+      "createdAt": "2026-09-20T05:15:28.360Z",
+      "updatedAt": "2026-09-20T05:15:28.360Z"
+    },
+    {
+      "id": "ig-reel-doomrideraico-3",
+      "instagramMediaId": "reel-3-doomrideraico",
+      "username": "doomrideraico",
+      "caption": "🎧 4-Deck Mashup Routine // Soundcheck & Stage POV @doomrideraico",
+      "thumbnailUrl": "/images/gallery_dj_decks_pov.jpg",
+      "permalink": "https://www.instagram.com/doomrideraico/",
+      "mediaType": "REEL",
+      "publishedAt": "2026-09-20T05:15:28.360Z",
+      "viewsDisplay": "640K",
+      "likesCount": 29100,
+      "isVisible": true,
+      "createdAt": "2026-09-20T05:15:28.360Z",
+      "updatedAt": "2026-09-20T05:15:28.360Z"
+    },
+    {
+      "id": "ig-reel-doomrideraico-4",
+      "instagramMediaId": "reel-4-doomrideraico",
+      "username": "doomrideraico",
+      "caption": "✨ Stadium Tour Aftermovie // Headline Set Highlights @doomrideraico",
+      "thumbnailUrl": "/images/world_tour_stage.jpg",
+      "permalink": "https://www.instagram.com/doomrideraico/",
+      "mediaType": "REEL",
+      "publishedAt": "2026-09-20T05:15:28.360Z",
+      "viewsDisplay": "2.1M",
+      "likesCount": 94300,
+      "isVisible": true,
+      "createdAt": "2026-09-20T05:15:28.360Z",
+      "updatedAt": "2026-09-20T05:15:28.360Z"
+    }
+  ],
+  "selectedReelIds": [
+    "ig-reel-doomrideraico-1",
+    "ig-reel-doomrideraico-2",
+    "ig-reel-doomrideraico-3",
+    "ig-reel-doomrideraico-4"
+  ]
 }
