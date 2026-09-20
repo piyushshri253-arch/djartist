@@ -24,7 +24,7 @@ export async function POST(request: Request) {
 
   const db = await readInstagramDb();
 
-  if (db.connection.status !== "connected") {
+  if (!db.connection.username) {
     return NextResponse.json(
       {
         error: "Instagram is not connected. Please connect your account first.",
@@ -33,6 +33,9 @@ export async function POST(request: Request) {
       { status: 400 }
     );
   }
+
+  // Ensure connection status is restored to active
+  db.connection.status = "connected";
 
   let plainToken: string | null = null;
   if (
