@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import { sendWhatsAppLeadNotification } from "@/lib/whatsapp";
 
 const leadsFilePath = path.join(process.cwd(), "src/data/leads.json");
 
@@ -114,6 +115,8 @@ export async function POST(req: Request) {
       clientWhatsAppUrl,
       customerWhatsAppUrl,
       webhookStatus: "pending",
+      whatsappDeliveryStatus: "pending",
+      whatsappMessageId: "",
     };
 
     // Prepare complete webhook payload for Pabbly Connect (for automated WhatsApp dispatch)
@@ -156,7 +159,39 @@ export async function POST(req: Request) {
       user_message: newLead.notes,
     };
 
-    // Automatic dispatch to Pabbly Webhook
+    // 1. Automatic dispatch to official Meta WhatsApp Cloud API
+    try {
+      const waResult = await sendWhatsAppLeadNotification({
+        name: newLead.name,
+        phone: newLead.phone,
+        email: newLead.email,
+        type: newLead.type,
+        eventTitle: newLead.eventTitle,
+        eventCity: newLead.eventCity,
+        eventDate: newLead.eventDate,
+        tier: newLead.tier,
+        quantity: newLead.quantity,
+        totalPrice: newLead.totalPrice,
+        notes: newLead.notes,
+        eventType: newLead.eventType,
+        location: newLead.location,
+        budget: newLead.budget,
+      });
+
+      newLead.whatsappDeliveryStatus = waResult.success ? "delivered" : "failed";
+      if (waResult.messageId) {
+        newLead.whatsappMessageId = waResult.messageId;
+      }
+      if (waResult.error) {
+        (newLead as any).whatsappError = waResult.error;
+      }
+    } catch (waErr: any) {
+      console.error("Meta WhatsApp Cloud API dispatch error:", waErr?.message || waErr);
+      newLead.whatsappDeliveryStatus = "failed";
+      (newLead as any).whatsappError = waErr?.message || "Unknown error";
+    }
+
+    // 2. Automatic dispatch to Pabbly Webhook (redundancy backup)
     try {
       const webhookRes = await fetch(PABBLY_WEBHOOK_URL, {
         method: "POST",
