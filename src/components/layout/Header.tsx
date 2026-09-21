@@ -21,7 +21,7 @@ export function Header() {
 
   const navLinks = [
     { label: "HOME", href: "/" },
-    { label: "EVENTS", href: "/events" },
+    { label: "UPCOMING EVENTS", href: "/events" },
     { label: "PAST EVENTS", href: "/past-events" },
     { label: "ABOUT", href: "/#about" },
     { label: "SOCIAL", href: "/#social" },

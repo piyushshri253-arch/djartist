@@ -75,55 +75,11 @@ export default function ContactPage() {
       </div>
 
       {/* Directory Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-        {[
-          {
-            icon: Mail,
-            title: "Artist Management",
-            desc: "Tour routing, corporate partnerships, and executive representation.",
-            email: "mgmt@djgspark.com",
-          },
-          {
-            icon: Newspaper,
-            title: "Press & Media",
-            desc: "Interviews, publication assets, and festival photo credentials.",
-            email: "press@djgspark.com",
-          },
-          {
-            icon: Disc,
-            title: "Sync & Licensing",
-            desc: "Original tracks for film, television, video games, and commercials.",
-            email: "licensing@djgspark.com",
-          },
-          {
-            icon: Users,
-            title: "Spark Syndicate",
-            desc: "Exclusive pre-sale codes, meet & greet passes, and community.",
-            email: "syndicate@djgspark.com",
-          },
-        ].map((c) => {
-          const Icon = c.icon;
-          return (
-            <div key={c.title} className="glass-card p-6 rounded-2xl border border-white/10 space-y-4">
-              <div className="w-10 h-10 rounded-xl bg-[#00E5FF]/10 border border-[#00E5FF]/30 flex items-center justify-center text-[#00E5FF]">
-                <Icon className="w-5 h-5" />
-              </div>
-              <h3 className="text-base font-bold text-white">{c.title}</h3>
-              <p className="text-xs text-[#8A8D93] leading-relaxed">{c.desc}</p>
-              <a
-                href={`mailto:${c.email}`}
-                className="text-xs font-bold text-[#00B4D8] hover:text-white transition-colors block pt-2"
-              >
-                {c.email} &rarr;
-              </a>
-            </div>
-          );
-        })}
-      </div>
+     
 
       {/* Quick Dispatch Form */}
       <div className="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 max-w-2xl mx-auto">
-        <div className="text-center mb-8">
+        {/* <div className="text-center mb-8">
           <span className="text-xs font-bold tracking-[0.2em] text-[#00B4D8] uppercase block mb-2">
             DIRECT MESSAGE
           </span>
@@ -131,7 +87,7 @@ export default function ContactPage() {
           <p className="text-xs text-[#888888] mt-1 font-mono">
             Directly routed to Artist Management
           </p>
-        </div>
+        </div> */}
 
         {isSent ? (
           <div className="py-8 text-center space-y-5">

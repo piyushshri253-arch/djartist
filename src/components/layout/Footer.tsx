@@ -14,11 +14,11 @@ export function Footer() {
         {/* Top Call to Action Banner */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between pb-16 border-b border-white/10 gap-8">
           <div>
-            <span className="text-xs font-semibold tracking-[0.24em] text-[#00E5FF] uppercase block mb-2">
+            {/* <span className="text-xs font-semibold tracking-[0.24em] text-[#00E5FF] uppercase block mb-2">
               WORLD TOUR 2026
-            </span>
+            </span> */}
             <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-[#F5F6FA]">
-              FEEL THE SPARK. <span className="text-[#00E5FF]">ENTER THE SOUND.</span>
+              DJ G-Spark <span className="text-[#00E5FF]">One Of The Best DJ From Delhi (INDIA)</span>
             </h2>
           </div>
           <div className="flex items-center gap-4">
@@ -26,13 +26,13 @@ export function Footer() {
               href="/booking"
               className="px-8 py-3.5 rounded-full bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-[#0B0C10] font-black text-xs tracking-[0.14em] uppercase shadow-[0_0_20px_rgba(0,229,255,0.4)] hover:shadow-[0_0_30px_rgba(0,229,255,0.7)] transition-all duration-300"
             >
-              Book DJ G Spark
+              Book DJ G-Spark
             </Link>
             <Link
               href="/events"
               className="px-8 py-3.5 rounded-full border border-white/20 text-[#F5F6FA] font-bold text-xs tracking-[0.14em] uppercase hover:border-[#00E5FF] hover:text-[#00E5FF] transition-all duration-300"
             >
-              Tour Dates
+              Events Dates
             </Link>
           </div>
         </div>
@@ -49,7 +49,8 @@ export function Footer() {
               />
             </Link>
             <p className="text-sm text-[#8A8D93] leading-relaxed">
-              International electronic music producer and arena headliner delivering high-octane 360-degree holographic concert experiences.
+              One of the best DJ from delhi....
+Dj G-Spark, A dj who is best in multi-genres like Bollywood, Punjabi, Commercial, Retro, Edm, etc....
             </p>
             <div className="flex items-center gap-4 pt-2 text-[#8A8D93]">
               <a
@@ -88,12 +89,13 @@ export function Footer() {
               Navigation
             </h4>
             <ul className="space-y-2.5 text-xs tracking-[0.1em] text-[#8A8D93]">
-              <li><Link href="/" className="hover:text-[#F5F6FA] transition-colors">3D VIRTUAL TOUR</Link></li>
-              <li><Link href="/events" className="hover:text-[#F5F6FA] transition-colors">UPCOMING TOUR 2026</Link></li>
-              <li><Link href="/past-events" className="hover:text-[#F5F6FA] transition-colors">CONCERT ARCHIVES</Link></li>
-              <li><Link href="/music" className="hover:text-[#F5F6FA] transition-colors">DISCOGRAPHY & STEMS</Link></li>
-              <li><Link href="/blog" className="hover:text-[#F5F6FA] transition-colors">STUDIO CHRONICLES</Link></li>
-              <li><Link href="/about" className="hover:text-[#F5F6FA] transition-colors">BIOGRAPHY & RIDER</Link></li>
+              <li><Link href="/" className="hover:text-[#F5F6FA] transition-colors">Home</Link></li>
+              <li><Link href="/about" className="hover:text-[#F5F6FA] transition-colors">About</Link></li>
+              <li><Link href="/events" className="hover:text-[#F5F6FA] transition-colors">Upcoming Events</Link></li>
+              <li><Link href="/past-events" className="hover:text-[#F5F6FA] transition-colors">Past Events</Link></li>
+              
+              <li><Link href="/blog" className="hover:text-[#F5F6FA] transition-colors">blogs</Link></li>
+              
             </ul>
           </div>
 
@@ -117,10 +119,9 @@ export function Footer() {
               Representation
             </h4>
             <div className="space-y-3 text-xs text-[#8A8D93]">
-              <p><strong className="text-[#F5F6FA]">Management:</strong> Redline Global Talent / Armada</p>
-              <p><strong className="text-[#F5F6FA]">Booking:</strong> booking@djgspark.com</p>
-              <p><strong className="text-[#F5F6FA]">Press:</strong> press@djgspark.com</p>
-              <p><strong className="text-[#F5F6FA]">Sync:</strong> licensing@djgspark.com</p>
+              <p><strong className="text-[#F5F6FA]">Management:</strong> Dj G-spark Team</p>
+              <p><strong className="text-[#F5F6FA]">Booking:</strong> djgspark98@gmail.com</p>
+              
             </div>
           </div>
         </div>
@@ -129,9 +130,9 @@ export function Footer() {
         <div className="flex flex-col sm:flex-row items-center justify-between pt-8 text-xs text-[#8A8D93] gap-4">
           <p>© 2026 DJ G SPARK. All Rights Reserved. Engineered for Ultra-High Fidelity.</p>
           <div className="flex items-center gap-6">
-            <Link href="/about" className="hover:text-[#F5F6FA] transition-colors">Technical Rider</Link>
+            <Link href="/about" className="hover:text-[#F5F6FA] transition-colors">Tech-Rider</Link>
             <span>•</span>
-            <Link href="/booking" className="hover:text-[#F5F6FA] transition-colors">Booking Offer</Link>
+            <Link href="/booking" className="hover:text-[#F5F6FA] transition-colors">Booking</Link>
             <span>•</span>
             <Link href="/contact" className="hover:text-[#F5F6FA] transition-colors">Press Inquiries</Link>
             <span>•</span>

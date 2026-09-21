@@ -47,9 +47,9 @@ const SOCIAL_PLATFORMS = [
   {
     name: "YOUTUBE",
     handle: "@djg-spark",
-    stat: "10.5M+",
+    stat: "18.5M+",
     metric: "TOTAL WATCH VIEWS",
-    subtext: "125K+ Subscribers • 4K HDR Live Sets & Official Tour Aftermovies",
+    subtext: "40K+ Subscribers • 4K HDR Live Sets & Official Tour Aftermovies",
     link: "https://youtube.com/@djg-spark",
     badge: "OFFICIAL CHANNEL",
     accent: "#FF0000",
@@ -60,9 +60,9 @@ const SOCIAL_PLATFORMS = [
   {
     name: "INSTAGRAM",
     handle: "@djgspark",
-    stat: "6.8M+",
+    stat: "300k+",
     metric: "REEL PLAYS & ENGAGEMENT",
-    subtext: "95K+ Followers • Viral Stage Drops & Exclusive Backstage Logs",
+    subtext: "10K+ Followers • Viral Stage Drops & Exclusive Backstage Logs",
     link: "https://www.instagram.com/djgspark",
     badge: "VERIFIED ARTIST",
     accent: "#E1306C",
@@ -73,7 +73,7 @@ const SOCIAL_PLATFORMS = [
   {
     name: "FACEBOOK",
     handle: "DJ G SPARK",
-    stat: "2.4M+",
+    stat: "100k+",
     metric: "COMMUNITY REACH & UPDATES",
     subtext: "Official Tour Announcements, Concert Photos & Live Updates",
     link: "https://www.facebook.com/share/1BxXiXLitH/",
@@ -255,7 +255,7 @@ const VIDEO_SHOWCASE = [
   },
   {
     id: "v2",
-    title: "Viral Festival Drop & Pyro Blast",
+    title: "Viral New Year Event  & Pyro Blast",
     tag: "4K 60FPS REEL // BASS CLIMAX",
     duration: "00:30",
     thumbnail: "/images/thumb_lv_0_20250622150320.jpg",
@@ -574,30 +574,32 @@ export default function HomePage() {
         {/* Hero Content Container */}
         <div className="relative z-10 max-w-[1400px] mx-auto px-6 sm:px-10 text-center flex flex-col items-center">
           {/* Live Status Badge */}
-          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-black/60 border border-[#00E5FF]/40 backdrop-blur-md mb-6 shadow-[0_0_20px_rgba(0, 229, 255, 0.25)]">
+          {/* <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-black/60 border border-[#00E5FF]/40 backdrop-blur-md mb-6 shadow-[0_0_20px_rgba(0, 229, 255, 0.25)]">
             <span className="w-2 h-2 rounded-full bg-[#00E5FF] shadow-[0_0_10px_#00E5FF] animate-pulse" />
             <span className="text-[11px] sm:text-xs font-mono tracking-[0.22em] text-[#00B4D8] uppercase font-semibold">
               DJ G SPARK • WORLD TOUR 2026
             </span>
-          </div>
+          </div> */}
 
           {/* Main Hero Headline */}
           <h1 className="font-heading font-black text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-[-0.03em] uppercase leading-[0.95] max-w-5xl mb-4 text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.9)]">
-            FEEL THE SPARK. <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00E5FF] via-[#FFA030] to-[#00B4D8]">
-              ENTER THE SOUND.
-            </span>
+            DJ G-Spark <br />
+           
           </h1>
+           <span className="text-transparent  bg-clip-text bg-gradient-to-r from-[#00E5FF] via-[#FFA030] to-[#00B4D8] text-4sm">
+              One Of The Best DJ From Delhi (INDIA)
+            </span>
+            
 
           {/* Tagline / Subtitle */}
-          <p className="max-w-2xl text-sm sm:text-base md:text-lg text-[#CCCCCC] font-normal leading-relaxed mb-8 sm:mb-10 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+          {/* <p className="max-w-2xl text-sm sm:text-base md:text-lg text-[#CCCCCC] font-normal leading-relaxed mb-8 sm:mb-10 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
             Pioneering the hybrid signature of progressive electronic melodies and driving stadium energy. Experience the international concert spectacle live across 4 continents.
-          </p>
+          </p> */}
 
           {/* Interactive CTAs */}
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
             {/* Audio Anthem Play Button */}
-            <button
+            {/* <button
               onClick={togglePlay}
               className="w-full sm:w-auto px-7 py-4 rounded-md bg-[#00E5FF] text-black font-heading font-bold text-xs tracking-[0.2em] uppercase hover:bg-white transition-all shadow-[0_0_30px_rgba(0, 229, 255, 0.5)] flex items-center justify-center gap-3 group"
             >
@@ -612,49 +614,49 @@ export default function HomePage() {
                   <span>LISTEN TO ANTHEM</span>
                 </>
               )}
-            </button>
+            </button> */}
 
             {/* Upcoming Dates Button */}
-            <a
+            {/* <a
               href="#events"
               className="w-full sm:w-auto px-7 py-4 rounded-md border border-white/20 bg-black/50 text-[#F5F6FA] font-heading font-bold text-xs tracking-[0.2em] uppercase hover:border-[#00E5FF] hover:text-[#00E5FF] transition-all backdrop-blur-md flex items-center justify-center gap-2"
             >
               <span>UPCOMING DATES</span>
               <ArrowRight className="w-4 h-4" />
-            </a>
+            </a> */}
 
             {/* Watch Aftermovie Button */}
-            <button
+            {/* <button
               onClick={() => setActiveVideoModal("/images/C5083.MP4")}
               className="w-full sm:w-auto px-7 py-4 rounded-md border border-white/10 bg-white/5 text-[#CCCCCC] font-heading font-medium text-xs tracking-[0.2em] uppercase hover:text-white hover:border-white/30 transition-all backdrop-blur-md flex items-center justify-center gap-2"
             >
               <Sparkles className="w-4 h-4 text-[#FFA030]" />
               <span>WATCH AFTERMOVIE</span>
-            </button>
+            </button> */}
           </div>
 
           {/* Quick Metrics Bar */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-12 mt-14 pt-8 border-t border-white/10 w-full max-w-4xl">
             <div>
-              <span className="font-heading font-black text-2xl sm:text-3xl text-white">15+</span>
+              <span className="font-heading font-black text-2xl sm:text-3xl text-white">10+</span>
               <span className="block text-[10px] sm:text-xs font-mono tracking-[0.2em] text-[#888888] uppercase mt-1">
                 Years Headlining
               </span>
             </div>
             <div>
-              <span className="font-heading font-black text-2xl sm:text-3xl text-[#00E5FF]">240K+</span>
+              <span className="font-heading font-black text-2xl sm:text-3xl text-[#00E5FF]">50K+</span>
               <span className="block text-[10px] sm:text-xs font-mono tracking-[0.2em] text-[#888888] uppercase mt-1">
                 Fans United
               </span>
             </div>
             <div>
-              <span className="font-heading font-black text-2xl sm:text-3xl text-white">50M+</span>
+              <span className="font-heading font-black text-2xl sm:text-3xl text-white">20M+</span>
               <span className="block text-[10px] sm:text-xs font-mono tracking-[0.2em] text-[#888888] uppercase mt-1">
                 Streams Worldwide
               </span>
             </div>
             <div>
-              <span className="font-heading font-black text-2xl sm:text-3xl text-[#00E5FF]">18</span>
+              <span className="font-heading font-black text-2xl sm:text-3xl text-[#00E5FF]">04</span>
               <span className="block text-[10px] sm:text-xs font-mono tracking-[0.2em] text-[#888888] uppercase mt-1">
                 Countries Toured
               </span>
@@ -671,10 +673,7 @@ export default function HomePage() {
           {/* Section Header */}
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12 sm:mb-16">
             <div>
-              <div className="inline-flex items-center gap-2 text-xs font-mono tracking-[0.24em] text-[#00B4D8] uppercase mb-3">
-                <Calendar className="w-3.5 h-3.5" />
-                <span>WORLD TOUR 2026 // LIVE CONCERT DATES</span>
-              </div>
+             
               <h2 className="font-heading font-black text-3xl sm:text-5xl tracking-[-0.02em] uppercase text-white">
                 UPCOMING <span className="text-[#00E5FF]">EVENTS</span>
               </h2>
@@ -812,14 +811,14 @@ export default function HomePage() {
             <div>
               <div className="inline-flex items-center gap-2 text-xs font-mono tracking-[0.24em] text-[#00B4D8] uppercase mb-3">
                 <Calendar className="w-3.5 h-3.5" />
-                <span>CONCERT ARCHIVES // COMPLETED ARENA & FESTIVAL SETS</span>
+                {/* <span>CONCERT ARCHIVES // COMPLETED ARENA & FESTIVAL SETS</span> */}
               </div>
               <h2 className="font-heading font-black text-3xl sm:text-5xl tracking-[-0.02em] uppercase text-white">
                 PAST <span className="text-[#00E5FF]">EVENTS</span>
               </h2>
-              <p className="text-sm text-[#8A8D93] max-w-xl mt-2">
+              {/* <p className="text-sm text-[#8A8D93] max-w-xl mt-2">
                 Relive the electric energy, full tracklists, and fan moments from completed headline tour dates worldwide.
-              </p>
+              </p> */}
             </div>
 
             <Link
@@ -909,7 +908,7 @@ export default function HomePage() {
             <div className="lg:col-span-5 relative">
               <div className="relative aspect-[4/5] rounded-xl overflow-hidden border border-white/10 shadow-[0_0_50px_rgba(0, 229, 255, 0.18)]">
                 <Image
-                  src="/images/dj_hero.jpg"
+                  src="/images/gallery_eep09781.jpg"
                   alt="DJ G SPARK Live Portrait"
                   fill
                   className="object-cover object-top"
@@ -923,11 +922,9 @@ export default function HomePage() {
                   OFFICIAL ARTIST
                 </span>
                 <span className="font-heading font-black text-xl sm:text-2xl text-white">
-                  DJ G SPARK
+                  DJ G-SPARK
                 </span>
-                <span className="text-xs text-[#929292] font-mono block mt-0.5">
-                  100% Live 4-Deck Sets
-                </span>
+                
               </div>
             </div>
 
@@ -939,17 +936,30 @@ export default function HomePage() {
               </div>
 
               <h2 className="font-heading font-black text-3xl sm:text-5xl tracking-[-0.02em] uppercase text-white mb-6">
-                BEYOND THE DECKS. <br />
-                <span className="text-[#00E5FF]">INTO THE FREQUENCY.</span>
+                Behind the beats<br />
+                <span className="text-[#00E5FF]">Dj G-Spark</span>
               </h2>
 
-              <p className="text-base sm:text-lg text-[#CCCCCC] leading-relaxed mb-6">
-                Pioneering the hybrid signature of progressive electronic melodies and driving stadium energy, DJ G SPARK has established himself as one of the most electrifying live performers on the international circuit.
-              </p>
+             
 
               <p className="text-sm sm:text-base text-[#929292] leading-relaxed mb-8">
-                From headlining 55,000-strong crowds at Sunburn Goa to sunset arenas at Tomorrowland and cavernous arenas in Dubai, his sets are celebrated for hypnotic builds, raw analog synthesis, and transcendent mainstage euphoria.
+               DJ G Spark is a dynamic and high-energy DJ known for bringing explosive beats and seamless transitions to the dance floor.
               </p>
+              <p className="text-sm sm:text-base text-[#929292] leading-relaxed mb-8">
+              DJ G-Spark (Gaurav Singh) is a popular Delhi-based open-format DJ and music producer widely recognized for his high-energy performances at weddings, corporate gigs, and large-scale parties across India. Specialising in vibrant, non-stop dance mixes, he seamlessly blends multiple genres to keep the dance floor packed.
+              </p>
+                 <h2 className="font-heading font-black text-6xl sm:text-2xl tracking-[-0.02em] uppercase text-white mb-6">
+                Key Details & Expertise<br />
+                
+              </h2>
+              <ul>
+                <li><b>Genres:</b>  Bollywood, Punjabi/Bhangra, Commercial, Retro, Electronic Dance Music (EDM), Bollytech, Bollyafro, Melodic Techno.</li>
+                <li><b>Specialities: </b> 
+                      Sangeet ceremonies, cocktail parties, wedding receptions, destination weddings, and concerts.</li>
+                 <li><b>Performance Style:</b>  High-energy open-format mixing tailored closely to the crowd’s vibe and personal preferences.</li>
+              </ul>
+
+              
 
               {/* Sonic Philosophy Callout */}
               <blockquote className="p-5 sm:p-6 rounded-lg bg-[#0c0c10] border-l-4 border-[#00E5FF] mb-8">
@@ -1004,15 +1014,15 @@ export default function HomePage() {
               Across All Social Media Platforms!
             </h2>
 
-            <p className="text-base sm:text-lg text-[#B0B0B0] max-w-2xl mx-auto font-sans leading-relaxed">
+            {/* <p className="text-base sm:text-lg text-[#B0B0B0] max-w-2xl mx-auto font-sans leading-relaxed">
               From explosive 50,000-person festival drops in Goa and Dubai to viral behind-the-decks transitions and trending club soundbites — join the global movement fueling modern electronic music.
-            </p>
+            </p> */}
 
             {/* Quick Live Metric Badges */}
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mt-8">
               <div className="px-4 py-2 rounded-lg bg-white/[0.04] border border-white/[0.08] backdrop-blur-md flex items-center gap-2.5">
                 <span className="w-2 h-2 rounded-full bg-[#22c55e] animate-ping" />
-                <span className="text-xs font-mono tracking-wider text-white">45+ COUNTRIES STREAMING</span>
+                <span className="text-xs font-mono tracking-wider text-white">10+ COUNTRIES STREAMING</span>
               </div>
               <div className="px-4 py-2 rounded-lg bg-white/[0.04] border border-white/[0.08] backdrop-blur-md flex items-center gap-2.5">
                 <Users className="w-3.5 h-3.5 text-[#00E5FF]" />
@@ -1108,14 +1118,14 @@ export default function HomePage() {
                 <div className="relative z-10 p-5 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="relative w-10 h-10 rounded-full overflow-hidden border border-[#00E5FF] bg-black">
-                      <Image src="/images/dj_hero.jpg" alt="DJ G Spark" fill className="object-cover" />
+                      <Image src="/images/gallery_eep09781.webp" alt="DJ G Spark" fill className="object-cover" />
                     </div>
                     <div>
                       <div className="flex items-center gap-1.5">
                         <span className="font-heading font-bold text-sm text-white uppercase">DJ G SPARK</span>
                         <CheckCircle2 className="w-3.5 h-3.5 text-[#00bfff] fill-[#00bfff]/20" />
                       </div>
-                      <span className="text-[10px] font-mono text-[#00B4D8]">VIRAL FESTIVAL DROP</span>
+                      <span className="text-[10px] font-mono text-[#00B4D8]">VIRAL NEW YEAR EVENT</span>
                     </div>
                   </div>
 
@@ -1161,13 +1171,13 @@ export default function HomePage() {
                 {/* Reel Caption & Audio Strip */}
                 <div className="relative z-10 p-5 bg-gradient-to-t from-black via-black/80 to-transparent">
                   <p className="text-xs sm:text-sm text-white leading-snug font-medium mb-3">
-                    When 40,000 hands reach for the lasers right before the drop hits... Unbelievable energy tonight! 🔥⚡
+                    When 1,000 hands reach for the lasers right before the drop hits... Unbelievable energy tonight! 🔥⚡
                   </p>
 
-                  <div className="flex items-center gap-2 text-[11px] font-mono text-[#00B4D8] bg-black/60 px-3 py-1.5 rounded-full border border-white/10 w-fit backdrop-blur-sm">
+                  {/* <div className="flex items-center gap-2 text-[11px] font-mono text-[#00B4D8] bg-black/60 px-3 py-1.5 rounded-full border border-white/10 w-fit backdrop-blur-sm">
                     <Radio className="w-3 h-3 animate-pulse text-[#00E5FF]" />
                     <span className="truncate">DJ G Spark — Spark Theory (Festival VIP)</span>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -1180,7 +1190,7 @@ export default function HomePage() {
                 STAY IN SYNC WITH DJ G SPARK
               </span>
               <p className="text-sm sm:text-base font-heading font-bold text-white uppercase">
-                FOLLOW FOR NEW DROPS, TOUR ANNOUNCEMENTS & EXCLUSIVE VIP RELEASES
+                FOLLOW FOR NEW DROPS, SHOWS ANNOUNCEMENTS & EXCLUSIVE VIP RELEASES
               </p>
             </div>
 
@@ -1367,7 +1377,7 @@ export default function HomePage() {
             <div className="text-center py-16 px-6 glass-card rounded-2xl border border-white/10 max-w-xl mx-auto">
               <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] mx-auto mb-5 shadow-[0_0_25px_rgba(225,48,108,0.4)]">
                 <img
-                  src={instagramData.profilePicture || "/images/dj_hero.jpg"}
+                  src={instagramData.profilePicture || "/images/gallery_eep09781.webp"}
                   alt={instagramData.handle}
                   className="w-full h-full object-cover rounded-full"
                 />
@@ -1432,7 +1442,7 @@ export default function HomePage() {
             <div>
               <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/30 text-xs font-mono tracking-[0.24em] text-[#00B4D8] uppercase mb-4">
                 <Star className="w-3.5 h-3.5 fill-[#00E5FF] text-[#00E5FF]" />
-                <span>4.98 / 5.0 RATING • 250+ ARENA & FESTIVAL PERFORMANCES</span>
+                <span>4.98 / 5.0 RATING • 250+ SHOWS & EVENTS</span>
               </div>
               <h2 className="font-heading font-black text-3xl sm:text-5xl lg:text-6xl tracking-[-0.02em] uppercase text-white leading-[1.05]">
                 WHAT THEY SAY // <br className="hidden sm:inline" />
@@ -1454,16 +1464,16 @@ export default function HomePage() {
                   <span className="block font-heading font-black text-xl text-white mt-1">4.98 / 5.0</span>
                   <span className="text-[10px] font-mono text-[#888888] uppercase">GLOBAL RATING</span>
                 </div>
-                <div className="px-3 border-r border-white/10">
+                {/* <div className="px-3 border-r border-white/10">
                   <span className="font-heading font-black text-xl text-[#00E5FF]">100%</span>
                   <span className="block font-heading font-black text-sm text-white">SOLD OUT</span>
                   <span className="text-[10px] font-mono text-[#888888] uppercase">ARENA DATES</span>
-                </div>
-                <div className="px-3">
+                </div> */}
+                {/* <div className="px-3">
                   <span className="font-heading font-black text-xl text-white">#14</span>
                   <span className="block font-heading font-black text-sm text-[#00B4D8]">TOP 100</span>
                   <span className="text-[10px] font-mono text-[#888888] uppercase">DJ MAG INNOVATION</span>
-                </div>
+                </div> */}
               </div>
 
               {/* Primary Write Review CTA */}
@@ -1481,9 +1491,9 @@ export default function HomePage() {
           <div className="flex flex-wrap items-center gap-2 mb-10">
             {[
               { id: "all", label: `ALL REVIEWS (${reviewsList.length})` },
-              { id: "promoter", label: "FESTIVAL DIRECTORS" },
-              { id: "critic", label: "PRESS & CRITICS" },
-              { id: "fan", label: "VERIFIED FANS" },
+              { id: "promoter", label: "Performance" },
+              { id: "critic", label: "Punctuality" },
+              { id: "fan", label: "Behaviour" },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -1556,7 +1566,7 @@ export default function HomePage() {
           </div>
 
           {/* Bottom Reviewer Call-To-Action */}
-          <div className="mt-14 p-8 rounded-2xl bg-gradient-to-r from-[#120D08] via-[#0C0C11] to-[#0A0A0E] border border-[#00E5FF]/25 flex flex-col md:flex-row items-center justify-between gap-6 shadow-[0_10px_35px_rgba(0, 229, 255, 0.1)]">
+          {/* <div className="mt-14 p-8 rounded-2xl bg-gradient-to-r from-[#120D08] via-[#0C0C11] to-[#0A0A0E] border border-[#00E5FF]/25 flex flex-col md:flex-row items-center justify-between gap-6 shadow-[0_10px_35px_rgba(0, 229, 255, 0.1)]">
             <div>
               <span className="text-xs font-mono tracking-[0.22em] text-[#00B4D8] uppercase block mb-1">
                 FESTIVAL PROMOTER OR CONCERT-GOER?
@@ -1584,7 +1594,7 @@ export default function HomePage() {
                 <span>WRITE FAN REVIEW</span>
               </button>
             </div>
-          </div>
+          </div> */}
         </div>
       </section>
 

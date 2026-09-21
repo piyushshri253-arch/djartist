@@ -348,24 +348,16 @@ export default function BookingPage() {
 
             <div className="space-y-4 text-xs text-[#8A8D93]">
               <div>
-                <strong className="text-white block">North & South America:</strong>
-                <p>Marcus Vance • Redline Beverly Hills</p>
-                <p className="text-[#00B4D8]">usa-booking@djgspark.com</p>
+                <strong className="text-white block">Address:</strong>
+                <p>Dwarka New Delhi (India)</p>
+                <p className="text-[#00B4D8]">djgspark98@gmail.com</p>
               </div>
-              <div>
-                <strong className="text-white block">Europe & United Kingdom:</strong>
-                <p>Elena Rostova • Armada Live Amsterdam</p>
-                <p className="text-[#00B4D8]">europe-booking@djgspark.com</p>
-              </div>
-              <div>
-                <strong className="text-white block">Asia-Pacific & Middle East:</strong>
-                <p>Kabir Singhania • Spark Syndicate Mumbai</p>
-                <p className="text-[#00B4D8]">asia-booking@djgspark.com</p>
-              </div>
+             
+             
             </div>
           </div>
 
-          <div className="glass-card p-6 rounded-2xl border border-white/10 space-y-3">
+          {/* <div className="glass-card p-6 rounded-2xl border border-white/10 space-y-3">
             <h4 className="text-sm font-bold text-white uppercase tracking-wider">
               Promoter Guidelines
             </h4>
@@ -375,7 +367,7 @@ export default function BookingPage() {
               <li>• 50% deposit required upon contract signature.</li>
               <li>• Dedicated artist security required backstage.</li>
             </ul>
-          </div>
+          </div> */}
         </div>
       </div>
     </main>
