@@ -28,15 +28,7 @@ export async function PATCH(request: Request) {
 
     const db = await readInstagramDb();
 
-    if (instagramEnabled && db.connection.status !== "connected") {
-      return NextResponse.json(
-        {
-          error:
-            "Cannot enable Instagram section on website while Instagram account is not connected. Please connect Instagram first.",
-        },
-        { status: 400 }
-      );
-    }
+
 
     db.settings.instagramEnabled = instagramEnabled;
     db.settings.updatedAt = new Date().toISOString();

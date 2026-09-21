@@ -4,11 +4,11 @@ import { readInstagramDb } from "@/lib/instagram-crypto";
 export async function GET() {
   const db = await readInstagramDb();
 
-  // If global section is disabled or account is not connected, return disabled state
-  if (!db.settings.instagramEnabled || db.connection.status !== "connected") {
+  // If global section is explicitly disabled by admin, return disabled
+  if (db.settings.instagramEnabled === false) {
     return NextResponse.json({
       enabled: false,
-      username: db.connection.username,
+      username: db.connection.username || "djgspark",
       totalReels: 0,
       reels: [],
     }, {
@@ -35,12 +35,14 @@ export async function GET() {
     }));
 
   return NextResponse.json({
-    enabled: true,
+    enabled: visibleReels.length > 0,
     account: {
-      username: db.connection.username,
-      profilePicture: db.connection.profilePicture,
-      profileUrl: `https://instagram.com/${db.connection.username}`,
-      status: db.connection.status,
+      username: db.connection.username || "djgspark",
+      profilePicture: db.connection.profilePicture || "/images/dj_hero.jpg",
+      profileUrl: db.connection.username
+        ? `https://instagram.com/${db.connection.username}`
+        : "https://instagram.com/djgspark",
+      status: "connected",
       lastSyncedAt: db.connection.lastSyncedAt,
     },
     totalReels: visibleReels.length,

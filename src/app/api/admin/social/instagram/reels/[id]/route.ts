@@ -107,6 +107,10 @@ export async function DELETE(
       );
     }
 
+    db.selectedReelIds = (db.selectedReelIds || []).filter(
+      (reelId) => reelId !== id && !reelId.includes(id)
+    );
+
     await writeInstagramDb(db);
 
     return NextResponse.json({

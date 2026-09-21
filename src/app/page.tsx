@@ -533,19 +533,17 @@ export default function HomePage() {
     fetchReviews();
   }, []);
 
-  const instagramData = publicInstagram?.enabled
-    ? {
-        enabled: true,
-        handle: `@${publicInstagram.account?.username || "djgspark"}`,
-        profileUrl: publicInstagram.account?.profileUrl || `https://www.instagram.com/${publicInstagram.account?.username || "djgspark"}/`,
-        profilePicture: publicInstagram.account?.profilePicture || "/images/dj_hero.jpg",
-        status: publicInstagram.account?.status || "disconnected",
-        lastSyncedAt: publicInstagram.account?.lastSyncedAt,
-        reels: publicInstagram.reels || [],
-      }
-    : null;
+  const instagramData = {
+    enabled: publicInstagram?.enabled ?? false,
+    handle: `@${publicInstagram?.account?.username || "djgspark"}`,
+    profileUrl: publicInstagram?.account?.profileUrl || `https://www.instagram.com/${publicInstagram?.account?.username || "djgspark"}/`,
+    profilePicture: publicInstagram?.account?.profilePicture || "/images/dj_hero.jpg",
+    status: publicInstagram?.account?.status || "connected",
+    lastSyncedAt: publicInstagram?.account?.lastSyncedAt,
+    reels: publicInstagram?.reels || [],
+  };
 
-  const rawReels = instagramData?.reels || [];
+  const rawReels = instagramData.reels;
   const featuredReels = rawReels;
 
   return (
@@ -1229,7 +1227,7 @@ export default function HomePage() {
         <div className="absolute bottom-10 -right-20 w-[500px] h-[500px] bg-[#833ab4]/10 rounded-full blur-[140px] pointer-events-none" />
 
         <div className="relative max-w-[1400px] mx-auto px-6 sm:px-10">
-          {instagramData?.status === "connected" && featuredReels.length > 0 ? (
+          {featuredReels.length > 0 ? (
             <>
               {/* Header Banner */}
               <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-14">

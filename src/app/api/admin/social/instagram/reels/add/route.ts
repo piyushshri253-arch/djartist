@@ -21,52 +21,69 @@ export async function POST(request: Request) {
       );
     }
 
-    // Extract shortcode from standard Instagram formats (e.g. instagram.com/reel/C3abc123/ or /p/C3abc123/)
-    const match = reelUrl.match(/(?:reel|p)\/([A-Za-z0-9_-]+)/i);
-    const shortcode = match ? match[1] : `custom-${Date.now()}`;
+    // Extract shortcode from standard Instagram formats (reel, p, tv, share/reel)
+    const match = reelUrl.match(/(?:reel|p|tv|share\/reel)\/([A-Za-z0-9_-]+)/i);
+    const shortcode = match ? match[1] : `reel-${Date.now()}`;
 
     const db = await readInstagramDb();
     const now = new Date().toISOString();
     const username = db.connection.username || "instagram_artist";
 
-    // Check if already exists
+    // Dynamic rotation of concert/stage thumbnails if no custom thumbnail is provided
+    const fallbackPosters = [
+      "/images/past_event_crowd.jpg",
+      "/images/gallery_stage_lasers.jpg",
+      "/images/gallery_dj_decks_pov.jpg",
+      "/images/world_tour_stage.jpg",
+      "/images/dj_hero.jpg",
+    ];
+    const defaultThumbnail =
+      fallbackPosters[db.reels.length % fallbackPosters.length];
+
+    // Check if already exists in library
     const existingIndex = db.reels.findIndex(
-      (r) => r.instagramMediaId === shortcode || r.permalink === reelUrl
+      (r) => r.instagramMediaId === shortcode || r.permalink.includes(shortcode)
     );
+
+    db.selectedReelIds = db.selectedReelIds || [];
+    const shouldBeVisible = db.selectedReelIds.length < 4;
 
     const newReel: InstagramReel = {
       id: `ig-reel-${shortcode}`,
       instagramMediaId: shortcode,
       username,
-      caption: customCaption || `Performance Reel by @${username}`,
-      thumbnailUrl: body.thumbnailUrl || "/images/dj_hero.jpg",
-      permalink: reelUrl.startsWith("http") ? reelUrl : `https://www.instagram.com/reel/${shortcode}/`,
+      caption: customCaption || `Instagram Reel // @${username}`,
+      thumbnailUrl: body.thumbnailUrl || defaultThumbnail,
+      permalink: `https://www.instagram.com/reel/${shortcode}/`,
       mediaType: "REEL",
       publishedAt: now,
-      viewsDisplay: "Featured Reel",
+      viewsDisplay: "Featured",
       likesCount: body.likesCount || 0,
-      isVisible: true, // newly added reels are selected
+      isVisible: shouldBeVisible,
       createdAt: now,
       updatedAt: now,
     };
 
     if (existingIndex >= 0) {
-      db.reels[existingIndex] = newReel;
+      db.reels[existingIndex] = {
+        ...db.reels[existingIndex],
+        caption: customCaption || db.reels[existingIndex].caption,
+        thumbnailUrl: body.thumbnailUrl || db.reels[existingIndex].thumbnailUrl,
+        permalink: `https://www.instagram.com/reel/${shortcode}/`,
+        updatedAt: now,
+      };
     } else {
       db.reels.unshift(newReel);
     }
 
-    // Ensure selectedReelIds contains this reel (strictly enforce max 4)
-    db.selectedReelIds = db.selectedReelIds || [];
-    if (!db.selectedReelIds.includes(newReel.id)) {
-      if (db.selectedReelIds.length >= 4) {
-        db.selectedReelIds = [newReel.id, ...db.selectedReelIds.slice(0, 3)];
-      } else {
-        db.selectedReelIds.push(newReel.id);
-      }
+    if (shouldBeVisible && !db.selectedReelIds.includes(newReel.id)) {
+      db.selectedReelIds.push(newReel.id);
     }
 
-    // Update isVisible flag on all reels according to selectedReelIds
+    // Auto-enable Instagram section on website
+    db.settings.instagramEnabled = true;
+
+    // Keep isVisible flag in sync
     db.reels.forEach((r) => {
       r.isVisible = (db.selectedReelIds || []).includes(r.id);
     });
