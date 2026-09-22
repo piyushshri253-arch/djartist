@@ -17,7 +17,6 @@ export function MobileDrawer({ isOpen, onClose, links }: MobileDrawerProps) {
   if (!isOpen) return null;
 
   const extraLinks = [
-    { label: "PAST EVENTS", href: "/past-events" },
     { label: "CONTACT", href: "/contact" },
   ];
 
@@ -30,28 +29,28 @@ export function MobileDrawer({ isOpen, onClose, links }: MobileDrawerProps) {
       />
 
       {/* Drawer Panel */}
-      <div className="fixed top-0 right-0 w-full max-w-[320px] h-full bg-[#1F2833] border-l border-white/10 p-6 flex flex-col justify-between z-10">
+      <div className="fixed top-0 right-0 w-full max-w-[320px] h-full bg-[#141620] border-l border-white/10 p-6 flex flex-col justify-between z-10 shadow-2xl">
         <div>
           {/* Header */}
-          <div className="flex items-center justify-between pb-6 border-b border-white/10">
+          <div className="flex items-center justify-between pb-5 border-b border-white/10">
             <Link href="/" onClick={onClose} className="inline-block py-1">
               <img
                 src="/images/DJ-G-SPARK-Light.png"
                 alt="Dj G-Spark"
-                className="h-11 sm:h-12 w-auto object-contain drop-shadow-[0_0_18px_rgba(245,246,250,0.4)]"
+                className="h-9 sm:h-10 w-auto object-contain drop-shadow-[0_0_18px_rgba(245,246,250,0.4)]"
               />
             </Link>
             <button
               onClick={onClose}
-              className="p-1 text-[#8A8D93] hover:text-[#F5F6FA] transition-colors"
+              className="p-1.5 text-white/80 hover:text-white transition-colors rounded-full hover:bg-white/10"
               aria-label="Close navigation"
             >
-              <X className="w-6 h-6" />
+              <X className="w-5 h-5" />
             </button>
           </div>
 
           {/* Links List */}
-          <nav className="flex flex-col gap-4 mt-8">
+          <nav className="flex flex-col gap-2.5 mt-6">
             {[...links, ...extraLinks].map((link) => {
               const isActive = pathname === link.href;
               return (
@@ -59,8 +58,10 @@ export function MobileDrawer({ isOpen, onClose, links }: MobileDrawerProps) {
                   key={link.label}
                   href={link.href}
                   onClick={onClose}
-                  className={`text-sm tracking-[0.16em] font-medium transition-colors py-2 flex items-center justify-between ${
-                    isActive ? "text-[#00E5FF] font-bold" : "text-[#8A8D93] hover:text-[#F5F6FA]"
+                  className={`text-sm tracking-[0.16em] uppercase font-bold transition-all py-2.5 px-3 rounded-lg flex items-center justify-between ${
+                    isActive
+                      ? "text-[#00E5FF] bg-white/[0.08]"
+                      : "text-white hover:text-[#00E5FF] hover:bg-white/[0.05]"
                   }`}
                 >
                   <span>{link.label}</span>
@@ -83,8 +84,8 @@ export function MobileDrawer({ isOpen, onClose, links }: MobileDrawerProps) {
 
         {/* Footer */}
         <div className="pt-6 border-t border-white/10">
-          <p className="text-[11px] tracking-[0.2em] text-[#8A8D93] uppercase mb-4">
-            FEEL THE SPARK. ENTER THE SOUND.
+          <p className="text-[11px] tracking-[0.2em] text-white/60 font-mono uppercase mb-4">
+            Dj G-Spark • Official Platform
           </p>
           <div className="flex items-center gap-4 text-[#8A8D93]">
             <a
