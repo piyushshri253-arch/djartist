@@ -95,60 +95,10 @@ export async function POST(request: Request) {
       console.warn("Could not fetch media items with token:", mediaErr);
     }
 
-    // If no media items were returned, seed 4 curated festival reels for this account
+    // If no media items were returned via API, keep existing real reels
     if (realReels.length === 0) {
-      const curatedCards = [
-        {
-          id: `ig-reel-${username}-1`,
-          shortcode: `reel-1-${username}`,
-          caption: `🔥 Mainstage Festival Drop // Live Crowd Energy with @${username}`,
-          thumb: "/images/past_event_crowd.jpg",
-          views: "1.2M",
-          likes: 48200,
-        },
-        {
-          id: `ig-reel-${username}-2`,
-          shortcode: `reel-2-${username}`,
-          caption: `⚡ Unreleased Festival Anthem // 360 Lasers & Heavy Bass @${username}`,
-          thumb: "/images/gallery_stage_lasers.jpg",
-          views: "890K",
-          likes: 36500,
-        },
-        {
-          id: `ig-reel-${username}-3`,
-          shortcode: `reel-3-${username}`,
-          caption: `🎧 4-Deck Mashup Routine // Soundcheck & Stage POV @${username}`,
-          thumb: "/images/gallery_dj_decks_pov.jpg",
-          views: "640K",
-          likes: 29100,
-        },
-        {
-          id: `ig-reel-${username}-4`,
-          shortcode: `reel-4-${username}`,
-          caption: `✨ Stadium Tour Aftermovie // Headline Set Highlights @${username}`,
-          thumb: "/images/world_tour_stage.jpg",
-          views: "2.1M",
-          likes: 94300,
-        },
-      ];
-
-      curatedCards.forEach((c) => {
-        realReels.push({
-          id: c.id,
-          instagramMediaId: c.shortcode,
-          username,
-          caption: c.caption,
-          thumbnailUrl: c.thumb,
-          permalink: `https://www.instagram.com/${username}/`,
-          mediaType: "REEL",
-          publishedAt: now,
-          viewsDisplay: c.views,
-          likesCount: c.likes,
-          isVisible: true,
-          createdAt: now,
-          updatedAt: now,
-        });
-      });
+      const existingDb = await readInstagramDb();
+      realReels.push(...(existingDb.reels || []));
     }
 
     // 3. Encrypt access token securely at rest with AES-256-GCM

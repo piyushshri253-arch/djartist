@@ -58,71 +58,8 @@ export async function POST(request: Request) {
     db.connection.lastSyncedAt = now;
     db.connection.updatedAt = now;
 
-    // Ensure at least 4 curated reels exist
-    if (!Array.isArray(db.reels) || db.reels.length === 0) {
-      db.reels = [
-        {
-          id: `ig-reel-${cleanUsername}-1`,
-          instagramMediaId: `reel-1-${cleanUsername}`,
-          username: cleanUsername,
-          caption: `🔥 Mainstage Festival Drop // Live Crowd Energy with @${cleanUsername}`,
-          thumbnailUrl: "/images/past_event_crowd.jpg",
-          permalink: `https://www.instagram.com/${cleanUsername}/`,
-          mediaType: "REEL",
-          publishedAt: now,
-          viewsDisplay: "1.2M",
-          likesCount: 48200,
-          isVisible: true,
-          createdAt: now,
-          updatedAt: now,
-        },
-        {
-          id: `ig-reel-${cleanUsername}-2`,
-          instagramMediaId: `reel-2-${cleanUsername}`,
-          username: cleanUsername,
-          caption: `⚡ Unreleased Festival Anthem // 360 Lasers & Heavy Bass @${cleanUsername}`,
-          thumbnailUrl: "/images/gallery_stage_lasers.jpg",
-          permalink: `https://www.instagram.com/${cleanUsername}/`,
-          mediaType: "REEL",
-          publishedAt: now,
-          viewsDisplay: "890K",
-          likesCount: 36500,
-          isVisible: true,
-          createdAt: now,
-          updatedAt: now,
-        },
-        {
-          id: `ig-reel-${cleanUsername}-3`,
-          instagramMediaId: `reel-3-${cleanUsername}`,
-          username: cleanUsername,
-          caption: `🎧 4-Deck Mashup Routine // Soundcheck & Stage POV @${cleanUsername}`,
-          thumbnailUrl: "/images/gallery_dj_decks_pov.jpg",
-          permalink: `https://www.instagram.com/${cleanUsername}/`,
-          mediaType: "REEL",
-          publishedAt: now,
-          viewsDisplay: "640K",
-          likesCount: 29100,
-          isVisible: true,
-          createdAt: now,
-          updatedAt: now,
-        },
-        {
-          id: `ig-reel-${cleanUsername}-4`,
-          instagramMediaId: `reel-4-${cleanUsername}`,
-          username: cleanUsername,
-          caption: `✨ Stadium Tour Aftermovie // Headline Set Highlights @${cleanUsername}`,
-          thumbnailUrl: "/images/world_tour_stage.jpg",
-          permalink: `https://www.instagram.com/${cleanUsername}/`,
-          mediaType: "REEL",
-          publishedAt: now,
-          viewsDisplay: "2.1M",
-          likesCount: 94300,
-          isVisible: true,
-          createdAt: now,
-          updatedAt: now,
-        },
-      ];
-      db.selectedReelIds = db.reels.map((r) => r.id);
+    if (!Array.isArray(db.reels)) {
+      db.reels = [];
     }
 
     await writeInstagramDb(db);

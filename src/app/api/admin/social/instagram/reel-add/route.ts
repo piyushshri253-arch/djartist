@@ -47,9 +47,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // Try fetching official oEmbed from Instagram if possible
     let resolvedTitle = caption || "Official Instagram Reel";
-    let resolvedThumb = thumbnailUrl || "/images/gallery_stage_lasers.jpg";
+    let resolvedThumb = thumbnailUrl || "";
 
     try {
       const oembedRes = await fetch(

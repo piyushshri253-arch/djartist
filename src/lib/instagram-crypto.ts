@@ -157,6 +157,13 @@ export async function readInstagramDb(): Promise<InstagramDatabase> {
   try {
     const data = await readJsonFile<InstagramDatabase>("instagram.json");
     if (data && data.connection && data.settings && Array.isArray(data.reels)) {
+      // Filter out any dummy auto-generated reels with fake photos
+      data.reels = data.reels.filter(
+        (r) => !r.instagramMediaId.startsWith("reel-") && !r.thumbnailUrl?.startsWith("/images/")
+      );
+      data.selectedReelIds = (data.selectedReelIds || []).filter((id) =>
+        data.reels.some((r) => r.id === id)
+      );
       return data;
     }
     const defaultDb = getDefaultInstagramDb();
