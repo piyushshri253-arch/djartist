@@ -4,23 +4,59 @@ import path from "path";
 import { sendWhatsAppLeadNotification } from "@/lib/whatsapp";
 
 const leadsFilePath = path.join(process.cwd(), "src/data/leads.json");
+const tmpLeadsFilePath = path.join(
+  process.platform === "win32" ? process.cwd() : "/tmp",
+  "leads.json"
+);
 
-function getLeads() {
+// In-memory leads storage for serverless environments (e.g. Vercel)
+let inMemoryLeads: any[] = [];
+
+function getLeads(): any[] {
+  // 1. Try reading from project directory (local dev)
   try {
-    if (!fs.existsSync(leadsFilePath)) {
-      fs.writeFileSync(leadsFilePath, JSON.stringify([], null, 2), "utf-8");
-      return [];
+    if (fs.existsSync(leadsFilePath)) {
+      const data = fs.readFileSync(leadsFilePath, "utf-8");
+      const parsed = JSON.parse(data || "[]");
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
     }
-    const data = fs.readFileSync(leadsFilePath, "utf-8");
-    return JSON.parse(data || "[]");
   } catch (err) {
-    console.error("Error reading leads:", err);
-    return [];
+    // Read-only filesystem or missing file
   }
+
+  // 2. Try reading from /tmp (serverless storage)
+  try {
+    if (fs.existsSync(tmpLeadsFilePath)) {
+      const data = fs.readFileSync(tmpLeadsFilePath, "utf-8");
+      const parsed = JSON.parse(data || "[]");
+      if (Array.isArray(parsed)) {
+        return parsed;
+      }
+    }
+  } catch (err) {}
+
+  return inMemoryLeads;
 }
 
 function saveLeads(leads: any[]) {
-  fs.writeFileSync(leadsFilePath, JSON.stringify(leads, null, 2), "utf-8");
+  inMemoryLeads = leads;
+
+  // Try saving to project directory (works in local dev)
+  try {
+    fs.writeFileSync(leadsFilePath, JSON.stringify(leads, null, 2), "utf-8");
+    return;
+  } catch (err) {
+    // Vercel serverless filesystem is read-only (EROFS)
+  }
+
+  // Fallback: save to /tmp directory on Vercel
+  try {
+    fs.writeFileSync(tmpLeadsFilePath, JSON.stringify(leads, null, 2), "utf-8");
+  } catch (err) {
+    // Silently ignore if /tmp is also unavailable; in-memory cache is already updated
+  }
 }
 
 export async function GET() {
