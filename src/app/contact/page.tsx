@@ -37,6 +37,11 @@ export default function ContactPage() {
     const waLink = `https://api.whatsapp.com/send?phone=${CLIENT_WHATSAPP_NUMBER}&text=${encodeURIComponent(waMsg)}`;
     setWhatsappUrl(waLink);
 
+    // Automatically launch WhatsApp with prefilled contact inquiry
+    if (typeof window !== "undefined") {
+      window.open(waLink, "_blank");
+    }
+
     try {
       await fetch("/api/leads", {
         method: "POST",

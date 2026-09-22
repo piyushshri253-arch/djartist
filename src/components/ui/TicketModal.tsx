@@ -107,6 +107,11 @@ export function TicketModal({
     const waUrl = `https://api.whatsapp.com/send?phone=${CLIENT_WHATSAPP_NUMBER}&text=${encodeURIComponent(waText)}`;
     setWhatsappDirectUrl(waUrl);
 
+    // Automatically launch WhatsApp with prefilled ticket booking details
+    if (typeof window !== "undefined") {
+      window.open(waUrl, "_blank");
+    }
+
     try {
       // Save lead to backend which automatically handles client routing
       await fetch("/api/leads", {
