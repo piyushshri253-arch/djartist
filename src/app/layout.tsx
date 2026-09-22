@@ -11,16 +11,16 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.djgspark.com"),
-  title: "Dj G-Spark | Feel The Spark. Enter The Sound.",
+  title: "Dj G-Spark | Weddings | Corporates | Concerts",
   description:
-    "Dj G-Spark\nWeddings | Corporates | Concerts\nOne of the best DJ from Delhi",
+    "Weddings | Corporates | Concerts • One of the best DJ from Delhi",
   alternates: {
     canonical: "https://www.djgspark.com",
   },
   openGraph: {
-    title: "Dj G-Spark | Feel The Spark. Enter The Sound.",
+    title: "Dj G-Spark",
     description:
-      "Dj G-Spark\nWeddings | Corporates | Concerts\nOne of the best DJ from Delhi",
+      "Weddings | Corporates | Concerts\nOne of the best DJ from Delhi",
     url: "https://www.djgspark.com",
     siteName: "Dj G-Spark",
     images: [
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
         url: "/images/DJ-G-SPARK-Light.png",
         width: 1200,
         height: 630,
-        alt: "Dj G-Spark Official Logo",
+        alt: "Dj G-Spark",
       },
     ],
     locale: "en_US",
@@ -36,9 +36,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Dj G-Spark | Feel The Spark. Enter The Sound.",
+    title: "Dj G-Spark",
     description:
-      "Dj G-Spark\nWeddings | Corporates | Concerts\nOne of the best DJ from Delhi",
+      "Weddings | Corporates | Concerts\nOne of the best DJ from Delhi",
     images: ["/images/DJ-G-SPARK-Light.png"],
   },
   icons: {
