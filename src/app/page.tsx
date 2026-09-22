@@ -904,202 +904,137 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="instagram" className="relative py-24 sm:py-32 border-t border-white/[0.08] bg-[#08080d] overflow-hidden">
-        {/* Ambient Glows */}
-        <div className="absolute top-1/4 -left-20 w-[500px] h-[500px] bg-[#E1306C]/10 rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute bottom-10 -right-20 w-[500px] h-[500px] bg-[#833ab4]/10 rounded-full blur-[140px] pointer-events-none" />
+      {featuredReels.length > 0 && (
+        <section id="instagram" className="relative py-24 sm:py-32 border-t border-white/[0.08] bg-[#08080d] overflow-hidden">
+          {/* Ambient Glows */}
+          <div className="absolute top-1/4 -left-20 w-[500px] h-[500px] bg-[#E1306C]/10 rounded-full blur-[140px] pointer-events-none" />
+          <div className="absolute bottom-10 -right-20 w-[500px] h-[500px] bg-[#833ab4]/10 rounded-full blur-[140px] pointer-events-none" />
 
-        <div className="relative max-w-[1400px] mx-auto px-6 sm:px-10">
-          {featuredReels.length > 0 ? (
-            <>
-              {/* Header Banner */}
-              <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-14">
-                <div>
-                  {/* Connected Instagram Pill */}
-                  <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-[#E1306C]/15 via-[#833ab4]/15 to-[#00E5FF]/15 border border-[#E1306C]/40 text-xs font-mono tracking-[0.2em] text-[#00B4D8] uppercase mb-4 shadow-[0_0_20px_rgba(225,48,108,0.2)]">
-                    <div className="w-5 h-5 rounded-full bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] flex items-center justify-center text-white">
-                      <InstagramIcon className="w-3 h-3" />
-                    </div>
-                    <span className="font-bold text-white">{instagramData.handle}</span>
-                    <span className="text-[#888888]">•</span>
-                    <span className="text-[#22c55e] flex items-center gap-1 font-semibold">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] animate-pulse" />
-                      <span>OFFICIAL INSTAGRAM</span>
-                    </span>
+          <div className="relative max-w-[1400px] mx-auto px-6 sm:px-10">
+            {/* Header Banner */}
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-14">
+              <div>
+                {/* Connected Instagram Pill */}
+                <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-[#E1306C]/15 via-[#833ab4]/15 to-[#00E5FF]/15 border border-[#E1306C]/40 text-xs font-mono tracking-[0.2em] text-[#00B4D8] uppercase mb-4 shadow-[0_0_20px_rgba(225,48,108,0.2)]">
+                  <div className="w-5 h-5 rounded-full bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] flex items-center justify-center text-white">
+                    <InstagramIcon className="w-3 h-3" />
                   </div>
-
-                  <h2 className="font-heading font-black text-3xl sm:text-5xl lg:text-6xl tracking-[-0.02em] uppercase text-white leading-[1.05]">
-                    FOLLOW ON INSTAGRAM // <br className="hidden sm:inline" />
-                    <span className="bg-gradient-to-r from-[#E1306C] via-[#00E5FF] to-[#F77737] bg-clip-text text-transparent">
-                      VIRAL 4K REELS
-                    </span>
-                  </h2>
-                  <p className="text-sm sm:text-base text-[#8A8D93] max-w-2xl mt-3 leading-relaxed">
-                    Catch the explosive crowd drops, live 4-deck mashups, and stadium aftermovies directly from official Instagram feeds.
-                  </p>
-                </div>
-
-                {/* View Profile Quick Link */}
-                <a
-                  href={instagramData.profileUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hidden sm:inline-flex items-center gap-2.5 px-6 py-3 rounded-full border border-[#E1306C]/40 hover:border-[#E1306C] bg-[#E1306C]/10 text-white font-heading font-bold text-xs tracking-[0.18em] uppercase transition-all hover:shadow-[0_0_25px_rgba(225,48,108,0.4)]"
-                >
-                  <InstagramIcon className="w-4 h-4 text-[#E1306C]" />
-                  <span>FOLLOW {instagramData.handle}</span>
-                  <ArrowUpRight className="w-3.5 h-3.5" />
-                </a>
-              </div>
-
-              {/* Selected Reels Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {featuredReels.slice(0, 4).map((reel: any, idx: number) => (
-                  <a
-                    key={reel.id || idx}
-                    href={reel.permalink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group relative bg-[#0c0c12] border border-white/[0.08] hover:border-[#E1306C]/60 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_15px_45px_rgba(225,48,108,0.25)] flex flex-col cursor-pointer"
-                  >
-                    {/* Vertical Video Poster */}
-                    <div className="relative aspect-[9/16] w-full overflow-hidden bg-black">
-                      <img
-                        src={reel.thumbnailUrl || "/images/past_event_crowd.jpg"}
-                        alt={reel.caption || "Instagram Reel"}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/50 group-hover:via-black/10 transition-colors" />
-
-                      {/* Top Row: Tag & Viral Views Badge */}
-                      <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2 z-10">
-                        <span className="px-2.5 py-1 rounded bg-black/80 border border-white/10 text-[9px] font-mono uppercase tracking-wider text-[#00B4D8] font-bold flex items-center gap-1">
-                          <InstagramIcon className="w-2.5 h-2.5 text-[#E1306C]" />
-                          <span>REEL</span>
-                        </span>
-                        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/80 border border-[#22c55e]/40 text-[10px] font-mono font-bold text-[#22c55e] shadow-[0_0_15px_rgba(34,197,94,0.3)]">
-                          <Eye className="w-3 h-3" />
-                          <span>{reel.viewsDisplay || "Viral"}</span>
-                        </div>
-                      </div>
-
-                      {/* Center Play Button with Instagram Gradient Glow */}
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white flex items-center justify-center shadow-[0_0_30px_rgba(225,48,108,0.6)] group-hover:scale-110 transition-transform">
-                          <Play className="w-6 h-6 fill-white ml-1" />
-                        </div>
-                      </div>
-
-                      {/* Bottom Likes & Reel Badge */}
-                      <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs z-10">
-                        <div className="flex items-center gap-1 text-white/90 font-mono text-[11px] bg-black/60 px-2.5 py-1 rounded-md backdrop-blur-sm">
-                          <Heart className="w-3.5 h-3.5 text-[#ff3366] fill-[#ff3366]" />
-                          <span>{reel.likesCount ? Number(reel.likesCount).toLocaleString() : "Trending"}</span>
-                        </div>
-                        <span className="text-[10px] font-mono text-white/70 uppercase">
-                          INSTAGRAM
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Caption & Instagram Link */}
-                    <div className="p-4 flex flex-col flex-grow justify-between bg-[#1F2833]">
-                      <h4 className="font-heading font-bold text-xs uppercase text-white line-clamp-2 leading-snug group-hover:text-[#00B4D8] transition-colors">
-                        {reel.caption}
-                      </h4>
-
-                      <div className="mt-3 pt-3 border-t border-white/[0.06] text-[11px] font-mono text-[#AAAAAA] group-hover:text-[#E1306C] flex items-center justify-between transition-colors">
-                        <span className="flex items-center gap-1.5 font-semibold">
-                          <InstagramIcon className="w-3.5 h-3.5 text-[#E1306C]" />
-                          <span>Watch on Instagram</span>
-                        </span>
-                        <ExternalLink className="w-3 h-3" />
-                      </div>
-                    </div>
-                  </a>
-                ))}
-              </div>
-
-              {/* Bottom Giant CTA Banner */}
-              <div className="mt-14 p-8 rounded-2xl bg-gradient-to-r from-[#170B16] via-[#100B16] to-[#0A0A0E] border border-[#E1306C]/30 flex flex-col md:flex-row items-center justify-between gap-6 shadow-[0_10px_40px_rgba(225,48,108,0.15)] text-center md:text-left">
-                <div>
-                  <span className="text-xs font-mono tracking-[0.24em] text-[#00B4D8] uppercase block mb-1">
-                    OFFICIAL ARTIST PROFILE
+                  <span className="font-bold text-white">{instagramData.handle}</span>
+                  <span className="text-[#888888]">•</span>
+                  <span className="text-[#22c55e] flex items-center gap-1 font-semibold">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] animate-pulse" />
+                    <span>OFFICIAL INSTAGRAM</span>
                   </span>
-                  <h3 className="font-heading font-black text-2xl sm:text-3xl text-white uppercase">
-                    WANT TO EXPERIENCE MORE EXCLUSIVE DROPS?
-                  </h3>
-                  <p className="text-xs sm:text-sm text-[#8A8D93] max-w-xl mt-1">
-                    Watch official festival aftermovies, live soundcheck reels, and direct DM announcements on {instagramData.handle}.
-                  </p>
                 </div>
 
-                <a
-                  href={instagramData.profileUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full sm:w-auto px-9 py-4 rounded-full bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] text-white font-heading font-black text-xs tracking-[0.2em] uppercase hover:shadow-[0_0_35px_rgba(225,48,108,0.7)] hover:scale-105 transition-all flex items-center justify-center gap-2 flex-shrink-0"
-                >
-                  <InstagramIcon className="w-4 h-4" />
-                  <span>VIEW MORE ON INSTAGRAM ({instagramData.handle})</span>
-                  <ArrowRight className="w-4 h-4" />
-                </a>
+                <h2 className="font-heading font-black text-3xl sm:text-5xl lg:text-6xl tracking-[-0.02em] uppercase text-white leading-[1.05]">
+                  FOLLOW ON INSTAGRAM // <br className="hidden sm:inline" />
+                  <span className="bg-gradient-to-r from-[#E1306C] via-[#00E5FF] to-[#F77737] bg-clip-text text-transparent">
+                    VIRAL 4K REELS
+                  </span>
+                </h2>
+                <p className="text-sm sm:text-base text-[#8A8D93] max-w-2xl mt-3 leading-relaxed">
+                  Catch the explosive crowd drops, live 4-deck mashups, and stadium aftermovies directly from official Instagram feeds.
+                </p>
               </div>
-            </>
-          ) : instagramData?.status === "connected" ? (
-            <div className="text-center py-16 px-6 glass-card rounded-2xl border border-white/10 max-w-xl mx-auto">
-              <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] mx-auto mb-5 shadow-[0_0_25px_rgba(225,48,108,0.4)]">
-                <img
-                  src={instagramData.profilePicture || "/images/gallery_eep09781.webp"}
-                  alt={instagramData.handle}
-                  className="w-full h-full object-cover rounded-full"
-                />
-              </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono text-[10px] uppercase mb-3">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Account Connected &bull; {instagramData.handle}</span>
-              </div>
-              <h3 className="font-heading font-black text-2xl text-white uppercase mb-3">
-                Curating Live 4K Reels
-              </h3>
-              <p className="text-xs text-[#8A8D93] leading-relaxed mb-6">
-                Featured festival reels from {instagramData.handle} are being selected in the Admin Panel. Visit the official profile on Instagram to stream live sets and stories.
-              </p>
+
+              {/* View Profile Quick Link */}
               <a
                 href={instagramData.profileUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] text-white font-heading font-bold text-xs uppercase tracking-wider hover:opacity-95 transition-opacity shadow-[0_0_25px_rgba(225,48,108,0.4)]"
+                className="hidden sm:inline-flex items-center gap-2.5 px-6 py-3 rounded-full border border-[#E1306C]/40 hover:border-[#E1306C] bg-[#E1306C]/10 text-white font-heading font-bold text-xs tracking-[0.18em] uppercase transition-all hover:shadow-[0_0_25px_rgba(225,48,108,0.4)]"
               >
-                <InstagramIcon className="w-4 h-4" />
-                <span>Follow {instagramData.handle} on Instagram</span>
+                <InstagramIcon className="w-4 h-4 text-[#E1306C]" />
+                <span>FOLLOW {instagramData.handle}</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </a>
+            </div>
+
+            {/* Selected Reels Grid (4 Cards) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {featuredReels.slice(0, 4).map((reel: any, idx: number) => (
+                <a
+                  key={reel.id || idx}
+                  href={reel.permalink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative bg-[#0c0c12] border border-white/[0.08] hover:border-[#E1306C]/60 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_15px_45px_rgba(225,48,108,0.25)] flex flex-col cursor-pointer"
+                >
+                  {/* Vertical Video Poster */}
+                  <div className="relative aspect-[9/16] w-full overflow-hidden bg-black">
+                    <img
+                      src={reel.thumbnailUrl || "/images/past_event_crowd.jpg"}
+                      alt={reel.caption || "Instagram Reel"}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/50 group-hover:via-black/10 transition-colors" />
+
+                    {/* Top Row: Tag & Viral Views Badge */}
+                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2 z-10">
+                      <span className="px-2.5 py-1 rounded bg-black/80 border border-white/10 text-[9px] font-mono uppercase tracking-wider text-[#00B4D8] font-bold flex items-center gap-1">
+                        <InstagramIcon className="w-2.5 h-2.5 text-[#E1306C]" />
+                        <span>REEL</span>
+                      </span>
+                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/80 border border-[#22c55e]/40 text-[10px] font-mono font-bold text-[#22c55e] shadow-[0_0_15px_rgba(34,197,94,0.3)]">
+                        <Eye className="w-3 h-3" />
+                        <span>{reel.viewsDisplay || "Viral"}</span>
+                      </div>
+                    </div>
+
+                    {/* Center Play Button with Instagram Gradient Glow */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white flex items-center justify-center shadow-[0_0_30px_rgba(225,48,108,0.6)] group-hover:scale-110 transition-transform">
+                        <Play className="w-6 h-6 fill-white ml-1" />
+                      </div>
+                    </div>
+
+                    {/* Bottom Likes & Reel Badge */}
+                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs z-10">
+                      <div className="flex items-center gap-1 text-white/90 font-mono text-[11px] bg-black/60 px-2.5 py-1 rounded-md backdrop-blur-sm">
+                        <Heart className="w-3.5 h-3.5 text-[#ff3366] fill-[#ff3366]" />
+                        <span>{reel.likesCount ? Number(reel.likesCount).toLocaleString() : "Trending"}</span>
+                      </div>
+                      <span className="text-[10px] font-mono text-white/70 uppercase">
+                        INSTAGRAM
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Caption & Instagram Link */}
+                  <div className="p-4 flex flex-col flex-grow justify-between bg-[#1F2833]">
+                    <h4 className="font-heading font-bold text-xs uppercase text-white line-clamp-2 leading-snug group-hover:text-[#00B4D8] transition-colors">
+                      {reel.caption}
+                    </h4>
+
+                    <div className="mt-3 pt-3 border-t border-white/[0.06] text-[11px] font-mono text-[#AAAAAA] group-hover:text-[#E1306C] flex items-center justify-between transition-colors">
+                      <span className="flex items-center gap-1.5 font-semibold">
+                        <InstagramIcon className="w-3.5 h-3.5 text-[#E1306C]" />
+                        <span>Watch on Instagram</span>
+                      </span>
+                      <ExternalLink className="w-3 h-3" />
+                    </div>
+                  </div>
+                </a>
+              ))}
+            </div>
+
+            {/* Bottom View More CTA */}
+            <div className="mt-14 text-center">
+              <a
+                href={instagramData.profileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-3 px-9 py-4 rounded-full bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] text-white font-heading font-black text-xs sm:text-sm tracking-[0.2em] uppercase hover:shadow-[0_0_35px_rgba(225,48,108,0.7)] hover:scale-105 transition-all shadow-[0_4px_25px_rgba(225,48,108,0.3)]"
+              >
+                <InstagramIcon className="w-5 h-5" />
+                <span>VIEW MORE ON INSTAGRAM ({instagramData.handle})</span>
                 <ArrowRight className="w-4 h-4" />
               </a>
             </div>
-          ) : (
-            <div className="text-center py-16 px-6 glass-card rounded-2xl border border-white/10 max-w-xl mx-auto">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#f09433]/20 via-[#dc2743]/20 to-[#bc1888]/20 border border-[#E1306C]/30 flex items-center justify-center mx-auto mb-5 text-[#E1306C]">
-                <InstagramIcon className="w-7 h-7" />
-              </div>
-              <h3 className="font-heading font-black text-2xl text-white uppercase mb-3">
-                Instagram Feed
-              </h3>
-              <p className="text-xs text-[#8A8D93] leading-relaxed mb-6">
-                Official live feeds and festival reels will appear here once the verified account is linked from the Admin Panel.
-              </p>
-              <a
-                href="https://www.instagram.com/djgspark"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] text-white font-heading font-bold text-xs uppercase tracking-wider hover:opacity-95 transition-opacity shadow-[0_0_25px_rgba(225,48,108,0.4)]"
-              >
-                <InstagramIcon className="w-4 h-4" />
-                <span>Visit @djgspark on Instagram</span>
-              </a>
-            </div>
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
       <section id="events" className="relative py-24 sm:py-32 border-t border-white/[0.08] bg-[#0B0C10]">
         <div className="max-w-[1400px] mx-auto px-6 sm:px-10">
