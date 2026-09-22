@@ -481,7 +481,7 @@ export default function HomePage() {
           muted
           playsInline
           preload="auto"
-          className="absolute inset-0 w-full h-full object-cover object-center"
+          className="absolute inset-0 w-full h-full object-cover object-[center_top]"
         >
           <source src="/images/C5083.MP4" type="video/mp4" />
           <source src="/images/c5083.mp4" type="video/mp4" />
