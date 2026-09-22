@@ -1105,24 +1105,16 @@ export default function HomePage() {
         <div className="max-w-[1400px] mx-auto px-6 sm:px-10">
           {/* Section Header */}
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12 sm:mb-16">
-            <div className="relative">
-              {/* Glowing Ambient Calendar Icon Backdrop */}
-              <div className="absolute -top-6 -left-4 sm:-top-8 sm:-left-6 w-16 h-16 sm:w-24 sm:h-24 text-[#00E5FF]/15 pointer-events-none -z-0">
-                <Calendar className="w-full h-full text-[#00E5FF] stroke-[1.2] drop-shadow-[0_0_25px_rgba(0,229,255,0.4)]" />
-              </div>
-
-              <div className="relative z-10 flex items-center gap-3 mb-3">
-                {/* Cyan Neon Calendar Icon Badge */}
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#00E5FF]/10 border border-[#00E5FF]/40 flex items-center justify-center text-[#00E5FF] shadow-[0_0_20px_rgba(0,229,255,0.4)]">
-                  <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-[#00E5FF] stroke-[2.2] drop-shadow-[0_0_10px_#00E5FF]" />
-                </div>
+            <div>
+              <div className="flex items-center gap-2 mb-3">
                 <span className="text-xs font-mono tracking-[0.24em] text-[#00E5FF] uppercase font-semibold">
                   TOUR &amp; WEDDING SCHEDULE
                 </span>
               </div>
 
-              <h2 className="relative z-10 font-heading font-black text-3xl sm:text-5xl tracking-[-0.02em] uppercase text-white">
-                UPCOMING <span className="text-[#00E5FF]">EVENTS</span>
+              <h2 className="font-heading font-black text-3xl sm:text-5xl tracking-[-0.02em] uppercase text-white flex items-center gap-3 sm:gap-4">
+                <Calendar className="w-7 h-7 sm:w-9 sm:h-9 text-[#00E5FF] stroke-[2.2] drop-shadow-[0_0_10px_#00E5FF] shrink-0" />
+                <span>UPCOMING <span className="text-[#00E5FF]">EVENTS</span></span>
               </h2>
             </div>
 
@@ -1251,24 +1243,16 @@ export default function HomePage() {
         <div className="max-w-[1400px] mx-auto px-6 sm:px-10">
           {/* Section Header */}
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12 sm:mb-16">
-            <div className="relative">
-              {/* Glowing Ambient Calendar Icon Backdrop */}
-              <div className="absolute -top-6 -left-4 sm:-top-8 sm:-left-6 w-16 h-16 sm:w-24 sm:h-24 text-[#00E5FF]/15 pointer-events-none -z-0">
-                <Calendar className="w-full h-full text-[#00E5FF] stroke-[1.2] drop-shadow-[0_0_25px_rgba(0,229,255,0.4)]" />
-              </div>
-
-              <div className="relative z-10 flex items-center gap-3 mb-3">
-                {/* Cyan Neon Calendar Icon Badge */}
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#00E5FF]/10 border border-[#00E5FF]/40 flex items-center justify-center text-[#00E5FF] shadow-[0_0_20px_rgba(0,229,255,0.4)]">
-                  <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-[#00E5FF] stroke-[2.2] drop-shadow-[0_0_10px_#00E5FF]" />
-                </div>
+            <div>
+              <div className="flex items-center gap-2 mb-3">
                 <span className="text-xs font-mono tracking-[0.24em] text-[#00E5FF] uppercase font-semibold">
                   CONCERT &amp; GIG ARCHIVES
                 </span>
               </div>
 
-              <h2 className="relative z-10 font-heading font-black text-3xl sm:text-5xl tracking-[-0.02em] uppercase text-white">
-                PAST <span className="text-[#00E5FF]">EVENTS</span>
+              <h2 className="font-heading font-black text-3xl sm:text-5xl tracking-[-0.02em] uppercase text-white flex items-center gap-3 sm:gap-4">
+                <Calendar className="w-7 h-7 sm:w-9 sm:h-9 text-[#00E5FF] stroke-[2.2] drop-shadow-[0_0_10px_#00E5FF] shrink-0" />
+                <span>PAST <span className="text-[#00E5FF]">EVENTS</span></span>
               </h2>
             </div>
 
