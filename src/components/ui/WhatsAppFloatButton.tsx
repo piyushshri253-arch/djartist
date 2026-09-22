@@ -11,7 +11,7 @@ interface WhatsAppFloatButtonProps {
 
 export function WhatsAppFloatButton({
   phoneNumber = "919540681934",
-  defaultMessage = "",
+  defaultMessage = "Hello! Can I get more info on this?",
 }: WhatsAppFloatButtonProps) {
   const [showTooltip, setShowTooltip] = useState(true);
 
