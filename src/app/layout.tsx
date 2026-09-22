@@ -11,16 +11,16 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.djgspark.com"),
-  title: "Dj G-Spark | Official Website | One of The Best DJ From Delhi (India)",
+  title: "Dj G-Spark | Feel The Spark. Enter The Sound.",
   description:
-    "Official website of Dj G-Spark (Gaurav Singh) — Top open-format DJ and music producer from Delhi (India). Explore upcoming shows, music releases, event gallery, and live bookings.",
+    "Dj G-Spark\nWeddings | Corporates | Concerts\nOne of the best DJ from Delhi",
   alternates: {
     canonical: "https://www.djgspark.com",
   },
   openGraph: {
-    title: "Dj G-Spark | One of The Best DJ From Delhi (India)",
+    title: "Dj G-Spark | Feel The Spark. Enter The Sound.",
     description:
-      "Official website of Dj G-Spark. Explore live tour dates, music releases, festival drops, and event booking.",
+      "Dj G-Spark\nWeddings | Corporates | Concerts\nOne of the best DJ from Delhi",
     url: "https://www.djgspark.com",
     siteName: "Dj G-Spark",
     images: [
@@ -36,9 +36,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Dj G-Spark | Official Website",
+    title: "Dj G-Spark | Feel The Spark. Enter The Sound.",
     description:
-      "Official website of Dj G-Spark — Top open-format DJ and music producer from Delhi (India).",
+      "Dj G-Spark\nWeddings | Corporates | Concerts\nOne of the best DJ from Delhi",
     images: ["/images/DJ-G-SPARK-Light.png"],
   },
   icons: {
