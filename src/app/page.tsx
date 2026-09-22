@@ -1106,12 +1106,6 @@ export default function HomePage() {
           {/* Section Header */}
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12 sm:mb-16">
             <div>
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-xs font-mono tracking-[0.24em] text-[#00E5FF] uppercase font-semibold">
-                  TOUR &amp; WEDDING SCHEDULE
-                </span>
-              </div>
-
               <h2 className="font-heading font-black text-3xl sm:text-5xl tracking-[-0.02em] uppercase text-white flex items-center gap-3 sm:gap-4">
                 <Calendar className="w-7 h-7 sm:w-9 sm:h-9 text-[#00E5FF] stroke-[2.2] drop-shadow-[0_0_10px_#00E5FF] shrink-0" />
                 <span>UPCOMING <span className="text-[#00E5FF]">EVENTS</span></span>
@@ -1244,12 +1238,6 @@ export default function HomePage() {
           {/* Section Header */}
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12 sm:mb-16">
             <div>
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-xs font-mono tracking-[0.24em] text-[#00E5FF] uppercase font-semibold">
-                  CONCERT &amp; GIG ARCHIVES
-                </span>
-              </div>
-
               <h2 className="font-heading font-black text-3xl sm:text-5xl tracking-[-0.02em] uppercase text-white flex items-center gap-3 sm:gap-4">
                 <Calendar className="w-7 h-7 sm:w-9 sm:h-9 text-[#00E5FF] stroke-[2.2] drop-shadow-[0_0_10px_#00E5FF] shrink-0" />
                 <span>PAST <span className="text-[#00E5FF]">EVENTS</span></span>
