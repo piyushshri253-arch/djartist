@@ -471,9 +471,9 @@ export default function HomePage() {
       {/* 1. HERO VIDEO BANNER                                          */}
       {/* ============================================================ */}
 
-      <section className="relative w-full min-h-[92vh] sm:min-h-screen flex items-center justify-center overflow-hidden pt-28 pb-16">
-        {/* Top Reach Marquee Ticker (Inspired by Reference Photo) */}
-        <div className="absolute top-0 left-0 right-0 z-20 w-full bg-[#10B981] text-black py-2 overflow-hidden whitespace-nowrap font-heading font-black text-xs sm:text-sm tracking-[0.2em] uppercase shadow-[0_0_20px_rgba(16,185,129,0.4)]">
+      <section className="relative w-full min-h-[95vh] sm:min-h-screen flex items-center justify-center overflow-hidden pt-36 sm:pt-44 pb-16">
+        {/* Top Reach Marquee Ticker (Positioned cleanly below fixed header) */}
+        <div className="absolute top-[68px] sm:top-[76px] lg:top-[80px] left-0 right-0 z-20 w-full bg-[#10B981] text-black py-2 overflow-hidden whitespace-nowrap font-heading font-black text-xs sm:text-sm tracking-[0.2em] uppercase shadow-[0_4px_25px_rgba(16,185,129,0.35)]">
           <div className="flex w-max animate-marquee space-x-8">
             <span>30 MILLION+ REACH • 150K+ FOLLOWERS • 3000+ WEDDINGS • 250+ SHOWS &amp; EVENTS • TOP WEDDING &amp; CLUB DJ</span>
             <span>•</span>
@@ -485,8 +485,7 @@ export default function HomePage() {
           </div>
         </div>
 
-
-        {/* Full-bleed background video */}
+        {/* Full-bleed background video with adjusted top focus and no clipping */}
         <video
           ref={heroVideoRef}
           autoPlay
@@ -494,16 +493,16 @@ export default function HomePage() {
           muted
           playsInline
           preload="auto"
-          className="absolute inset-0 w-full h-full object-cover object-center scale-105"
+          className="absolute inset-0 w-full h-full object-cover object-[center_top]"
         >
           <source src="/images/C5083.MP4" type="video/mp4" />
           <source src="/images/c5083.mp4" type="video/mp4" />
           <source src="/images/tour_04_dj_performing.mp4" type="video/mp4" />
         </video>
 
-        {/* Cinematic Gradient Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0B0C10]/85 via-[#0B0C10]/45 to-[#0B0C10]" />
-        <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#0B0C10]/50 to-[#0B0C10]" />
+        {/* Balanced Cinematic Gradient Overlays (Clearer at top so video is fully visible) */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0B0C10]/40 via-transparent to-[#0B0C10]" />
+        <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#0B0C10]/40 to-[#0B0C10]" />
 
         {/* Hero Content Container */}
         <div className="relative z-10 max-w-[1400px] mx-auto px-6 sm:px-10 text-center flex flex-col items-center">
