@@ -108,7 +108,7 @@ export default function EventSinglePage({ params }: { params: Promise<{ slug: st
                   { time: "18:00", title: "Gates Open & RFID Check-In", desc: "Merchandise village and food arena open" },
                   { time: "19:30", title: "Opening Set: Progressive Warmup", desc: "Deep ambient electronic selection" },
                   { time: "21:00", title: `Direct Support: ${event.lineup?.[1] || "Special Guest"}`, desc: "Peak-time driving techno" },
-                  { time: "22:30 - 02:00", title: "Dj G-spark (Extended 3.5-Hour Headline Set)", desc: "Full live visual sync, pyrotechnics, and album premiere" },
+                  { time: "22:30 - 02:00", title: "Dj G-Spark (Extended 3.5-Hour Headline Set)", desc: "Full live visual sync, pyrotechnics, and album premiere" },
                 ].map((slot, i) => (
                   <div
                     key={i}

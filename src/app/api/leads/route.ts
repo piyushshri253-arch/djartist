@@ -93,7 +93,7 @@ export async function POST(req: Request) {
       new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) + " IST";
 
     const formattedLeadText = [
-      "🔥 *NEW Dj G-spark LEAD / PASS RESERVATION* 🔥",
+      "🔥 *NEW Dj G-Spark LEAD / PASS RESERVATION* 🔥",
       "━━━━━━━━━━━━━━━━━━━━━━━━━",
       `👤 *Customer Name:* ${body.name.trim()}`,
       `📱 *Phone / WhatsApp:* ${body.phone.trim()}`,
@@ -113,7 +113,7 @@ export async function POST(req: Request) {
         : "",
       "━━━━━━━━━━━━━━━━━━━━━━━━━",
       `🕒 *Received At:* ${istTime}`,
-      "⚡ *Source:* Dj G-spark Official Website",
+      "⚡ *Source:* Dj G-Spark Official Website",
     ]
       .filter(Boolean)
       .join("\n");
@@ -122,7 +122,7 @@ export async function POST(req: Request) {
     const clientWhatsAppUrl = `https://api.whatsapp.com/send?phone=${clientWhatsAppNumber}&text=${encodedText}`;
     const cleanCustomerPhone = body.phone.replace(/[^0-9]/g, "");
     const customerWhatsAppUrl = `https://api.whatsapp.com/send?phone=${cleanCustomerPhone}&text=${encodeURIComponent(
-      `Hi ${body.name.trim()}, thank you for your interest in Dj G-spark passes for ${
+      `Hi ${body.name.trim()}, thank you for your interest in Dj G-Spark passes for ${
         body.eventTitle || "our upcoming tour"
       }. Our concierge team is reviewing your request.`
     )}`;
@@ -176,7 +176,7 @@ export async function POST(req: Request) {
       budget: newLead.budget,
       timestamp: newLead.timestamp,
       dateIST: istTime,
-      source: "Dj G-spark Official Website",
+      source: "Dj G-Spark Official Website",
       clientWhatsAppRecipient: clientWhatsAppNumber,
       clientWhatsAppDisplay,
       clientWhatsAppUrl,

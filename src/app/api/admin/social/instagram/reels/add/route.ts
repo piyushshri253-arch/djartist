@@ -54,7 +54,7 @@ export async function POST(request: Request) {
 
     const db = await readInstagramDb();
     const now = new Date().toISOString();
-    const username = db.connection.username || "Dj G-spark";
+    const username = db.connection.username || "Dj G-Spark";
     const canonicalUrl = `https://www.instagram.com/reel/${shortcode}/`;
 
     // Check if already exists in library

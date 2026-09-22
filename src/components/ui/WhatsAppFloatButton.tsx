@@ -75,7 +75,7 @@ export function WhatsAppFloatButton({
         href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Chat with Dj G-spark Team on WhatsApp"
+        aria-label="Chat with Dj G-Spark Team on WhatsApp"
         className="group relative flex items-center gap-3 p-3 sm:px-4 sm:py-3.5 rounded-full bg-gradient-to-r from-[#25D366] to-[#128C7E] text-white shadow-[0_10px_30px_rgba(37,211,102,0.35),0_0_20px_rgba(37,211,102,0.25)] hover:shadow-[0_15px_40px_rgba(37,211,102,0.5),0_0_30px_rgba(37,211,102,0.4)] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
       >
         {/* Subtle Outer Radar Pulse */}

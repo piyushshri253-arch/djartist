@@ -200,7 +200,7 @@ export function ArenaGates({ progress }: ArenaGatesProps) {
           letterSpacing={0.25}
           material-toneMapped={false}
         >
-          Dj G-spark • MAIN ARENA
+          Dj G-Spark • MAIN ARENA
         </Text>
         <Text
           position={[0, 2.7, 0.65]}
@@ -270,7 +270,7 @@ export function ArenaGates({ progress }: ArenaGatesProps) {
     </group>
 
     {/* ======================================================== */}
-    {/* 5. FULLY ARTICULATED 3D WALKING Dj G-spark GUIDE         */}
+    {/* 5. FULLY ARTICULATED 3D WALKING Dj G-Spark GUIDE         */}
     {/* (Follows continuous venue path curve leading the tour)   */}
     {/* ======================================================== */}
     <group ref={walkerRootRef} position={[0, 0, 95]}>

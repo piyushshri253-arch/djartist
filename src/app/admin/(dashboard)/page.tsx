@@ -109,8 +109,8 @@ export default function AdminDashboardPage() {
     instagram: {
       enabled: true,
       connected: false,
-      username: "Dj G-spark",
-      accountName: "Dj G-spark",
+      username: "Dj G-Spark",
+      accountName: "Dj G-Spark",
       profilePicture: "/images/dj_hero.jpg",
       profileUrl: "https://www.instagram.com/djgspark",
       lastSyncedAt: null,
@@ -184,7 +184,7 @@ export default function AdminDashboardPage() {
     image: "/images/past_event_crowd.jpg",
     description: "",
     detailedAbout: "",
-    lineup: "Dj G-spark (Headliner)",
+    lineup: "Dj G-Spark (Headliner)",
   });
 
   // Social Save Loading
@@ -535,7 +535,7 @@ export default function AdminDashboardPage() {
       image: "/images/past_event_crowd.jpg",
       description: "",
       detailedAbout: "",
-      lineup: "Dj G-spark (Headliner)",
+      lineup: "Dj G-Spark (Headliner)",
     });
     setActiveTab("event-editor");
   };
@@ -1007,7 +1007,7 @@ export default function AdminDashboardPage() {
               <div>
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-[11px] font-bold text-amber-800 uppercase tracking-wider mb-3">
                   <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                  <span>Dj G-spark OFFICIAL PORTAL</span>
+                  <span>Dj G-Spark OFFICIAL PORTAL</span>
                 </div>
                 <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                   Artist Operations Dashboard
@@ -2138,7 +2138,7 @@ export default function AdminDashboardPage() {
                       type="text"
                       value={eventForm.lineup}
                       onChange={(e) => setEventForm({ ...eventForm, lineup: e.target.value })}
-                      placeholder="Dj G-spark (Headliner), MC RHYTHM, NIKITA B2B"
+                      placeholder="Dj G-Spark (Headliner), MC RHYTHM, NIKITA B2B"
                       className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:border-amber-500"
                     />
                   </div>
@@ -2784,7 +2784,7 @@ export default function AdminDashboardPage() {
                     filteredLeads.map((lead) => {
                       const cleanPhone = (lead.phone || "").replace(/[^0-9]/g, "");
                       const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(
-                        `Hi ${lead.name}, regarding your pass request for ${lead.eventTitle || "Dj G-spark Concert"}:`
+                        `Hi ${lead.name}, regarding your pass request for ${lead.eventTitle || "Dj G-Spark Concert"}:`
                       )}`;
 
                       const formattedPrice = lead.totalPrice
@@ -3423,7 +3423,7 @@ export default function AdminDashboardPage() {
                 <label className="text-xs font-bold text-slate-700 block mb-1">Stage Name</label>
                 <input
                   type="text"
-                  defaultValue="Dj G-spark"
+                  defaultValue="Dj G-Spark"
                   className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-bold"
                 />
               </div>

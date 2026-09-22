@@ -23,10 +23,10 @@ export default function AboutPage() {
         </div>
         <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight uppercase mb-4">
           BEHIND THE BEATS <br className="hidden sm:block" />
-          <span className="text-[#00E5FF]">Dj G-spark</span>
+          <span className="text-[#00E5FF]">Dj G-Spark</span>
         </h1>
         <p className="text-sm sm:text-base text-[#8A8D93] leading-relaxed max-w-2xl mx-auto">
-          Dj G-spark is a dynamic and high-energy DJ known for bringing explosive beats and seamless transitions to the dance floor.
+          Dj G-Spark is a dynamic and high-energy DJ known for bringing explosive beats and seamless transitions to the dance floor.
         </p>
       </div>
 
@@ -37,7 +37,7 @@ export default function AboutPage() {
           <div className="relative aspect-[4/5] rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_50px_rgba(0,229,255,0.18)] bg-black/60">
             <Image
               src="/images/gallery_eep09781.jpg"
-              alt="Dj G-spark Live Portrait"
+              alt="Dj G-Spark Live Portrait"
               fill
               className="object-cover object-top"
               priority
@@ -51,7 +51,7 @@ export default function AboutPage() {
               OFFICIAL ARTIST
             </span>
             <span className="font-heading font-black text-xl sm:text-2xl text-white">
-              Dj G-spark
+              Dj G-Spark
             </span>
           </div>
         </div>
@@ -65,15 +65,15 @@ export default function AboutPage() {
 
           <h2 className="font-heading font-black text-3xl sm:text-5xl tracking-[-0.02em] uppercase text-white">
             Behind the beats<br />
-            <span className="text-[#00E5FF]">Dj G-spark</span>
+            <span className="text-[#00E5FF]">Dj G-Spark</span>
           </h2>
 
           <p className="text-sm sm:text-base text-[#929292] leading-relaxed">
-            Dj G-spark is a dynamic and high-energy DJ known for bringing explosive beats and seamless transitions to the dance floor.
+            Dj G-Spark is a dynamic and high-energy DJ known for bringing explosive beats and seamless transitions to the dance floor.
           </p>
 
           <p className="text-sm sm:text-base text-[#929292] leading-relaxed">
-            Dj G-spark (Gaurav Singh) is a popular Delhi-based open-format DJ and music producer widely recognized for his high-energy performances at weddings, corporate gigs, and large-scale parties across India. Specialising in vibrant, non-stop dance mixes, he seamlessly blends multiple genres to keep the dance floor packed.
+            Dj G-Spark (Gaurav Singh) is a popular Delhi-based open-format DJ and music producer widely recognized for his high-energy performances at weddings, corporate gigs, and large-scale parties across India. Specialising in vibrant, non-stop dance mixes, he seamlessly blends multiple genres to keep the dance floor packed.
           </p>
 
           {/* Key Details & Expertise */}
@@ -103,7 +103,7 @@ export default function AboutPage() {
               &quot;Music is not just heard — it is felt. When the drop hits at 128 BPM, forty thousand strangers breathe as one unified frequency. That is the spark.&quot;
             </p>
             <cite className="block text-xs font-mono tracking-[0.2em] text-[#00B4D8] uppercase mt-3 not-italic">
-              — Dj G-spark
+              — Dj G-Spark
             </cite>
           </blockquote>
 
@@ -113,7 +113,7 @@ export default function AboutPage() {
               href="/booking"
               className="px-7 py-3.5 rounded bg-[#00E5FF] text-black font-heading font-bold text-xs tracking-[0.2em] uppercase hover:bg-white transition-all shadow-[0_0_20px_rgba(0,229,255,0.4)]"
             >
-              BOOK Dj G-spark
+              BOOK Dj G-Spark
             </Link>
             <button
               onClick={handleDownloadEPK}

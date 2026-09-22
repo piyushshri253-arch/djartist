@@ -23,7 +23,7 @@ export default function ContactPage() {
     setIsSubmitting(true);
 
     const waMsg = [
-      "⚡ *Dj G-spark — DIRECT WEBSITE DISPATCH* ⚡",
+      "⚡ *Dj G-Spark — DIRECT WEBSITE DISPATCH* ⚡",
       "━━━━━━━━━━━━━━━━━━━━━",
       `👤 *Name:* ${formData.name.trim()}`,
       `📱 *Phone / WhatsApp:* ${formData.phone.trim() || "Not specified"}`,
@@ -31,7 +31,7 @@ export default function ContactPage() {
       `📌 *Subject:* ${formData.subject.trim()}`,
       `💬 *Message:* ${formData.message.trim()}`,
       "━━━━━━━━━━━━━━━━━━━━━",
-      "⚡ *Inquiry routed from Dj G-spark.com contact portal*",
+      "⚡ *Inquiry routed from Dj G-Spark.com contact portal*",
     ].join("\n");
 
     const waLink = `https://api.whatsapp.com/send?phone=${CLIENT_WHATSAPP_NUMBER}&text=${encodeURIComponent(waMsg)}`;

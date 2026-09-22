@@ -1,7 +1,7 @@
 [
     {
         "id": "BK-9021",
-        "artist": "Dj G-spark",
+        "artist": "Dj G-Spark",
         "name": "Live Nation Asia",
         "email": "promoter@livenation.asia",
         "phone": "+91 98110 99881",
@@ -12,13 +12,13 @@
         "eventType": "Stadium / Arena Headline (30,000+ Cap)",
         "guestCount": "35,000",
         "budgetTier": "Custom 3D Holographic Stage Tour ($150,000+)",
-        "message": "Direct headlining contract inquiry for Dj G-spark with full moving ceiling and laser rig production.",
+        "message": "Direct headlining contract inquiry for Dj G-Spark with full moving ceiling and laser rig production.",
         "timestamp": "2026-09-15 10:00:00",
         "status": "confirmed"
     },
     {
         "id": "SPARK-6729",
-        "artist": "Dj G-spark",
+        "artist": "Dj G-Spark",
         "promoter": "Live Nation Global",
         "name": "Alexander Wright",
         "email": "alexander.wright@livenation.example",
@@ -31,7 +31,7 @@
         "guestCount": "",
         "budgetTier": ",000+",
         "production": "Full Compliance Guaranteed",
-        "message": "Inquiry for Dj G-spark 360 headline show at SoFi Stadium.",
+        "message": "Inquiry for Dj G-Spark 360 headline show at SoFi Stadium.",
         "timestamp": "2026-09-15T07:39:06+02:00",
         "status": "Pending Review"
     }

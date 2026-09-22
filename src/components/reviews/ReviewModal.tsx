@@ -50,7 +50,7 @@ export default function ReviewModal({ isOpen, onClose, onSubmitted }: ReviewModa
     }
 
     const finalRole = role === "Other" ? customRole.trim() || "Music Fan" : role;
-    const finalEvent = event === "Other" ? customEvent.trim() || "Dj G-spark Live Tour" : event;
+    const finalEvent = event === "Other" ? customEvent.trim() || "Dj G-Spark Live Tour" : event;
 
     setIsSubmitting(true);
 
@@ -136,7 +136,7 @@ export default function ReviewModal({ isOpen, onClose, onSubmitted }: ReviewModa
             </h3>
 
             <p className="text-sm text-[#A0A0A8] leading-relaxed max-w-md mb-6">
-              Your feedback has been sent directly to the <strong className="text-white">Dj G-spark Artist Management Team</strong>. Once verified, it will be published live on the official website.
+              Your feedback has been sent directly to the <strong className="text-white">Dj G-Spark Artist Management Team</strong>. Once verified, it will be published live on the official website.
             </p>
 
             <div className="p-4 rounded-xl bg-black/40 border border-white/10 w-full mb-6 text-left flex items-start gap-3">
@@ -163,7 +163,7 @@ export default function ReviewModal({ isOpen, onClose, onSubmitted }: ReviewModa
                 <span>COMMUNITY & INDUSTRY ACCLAIM</span>
               </div>
               <h2 className="font-heading font-black text-2xl sm:text-3xl uppercase tracking-tight text-white">
-                RATE & REVIEW Dj G-spark
+                RATE & REVIEW Dj G-Spark
               </h2>
               <p className="text-xs sm:text-sm text-[#888899] mt-1">
                 Share your live arena experience, festival memory, or promoter verdict.

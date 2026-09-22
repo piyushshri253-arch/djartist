@@ -73,7 +73,7 @@ const SOCIAL_PLATFORMS = [
   },
   {
     name: "FACEBOOK",
-    handle: "Dj G-spark",
+    handle: "Dj G-Spark",
     stat: "100k+",
     metric: "COMMUNITY REACH & UPDATES",
     subtext: "Official Shows Announcements, Events Photos & Live Updates",
@@ -281,7 +281,7 @@ const PHOTO_GALLERY = [
 // Latest News / Blog Posts
 const LATEST_POSTS = [
   {
-    title: "Sunburn Festival 2026: Dj G-spark Confirmed as Mainstage Headliner",
+    title: "Sunburn Festival 2026: Dj G-Spark Confirmed as Mainstage Headliner",
     date: "OCTOBER 14, 2026",
     category: "FESTIVAL NEWS",
     image: "/images/past_event_crowd.jpg",
@@ -442,8 +442,8 @@ export default function HomePage() {
 
   const instagramData = {
     enabled: publicInstagram?.enabled ?? false,
-    handle: `@${publicInstagram?.account?.username || "Dj G-spark"}`,
-    profileUrl: publicInstagram?.account?.profileUrl || `https://www.instagram.com/${publicInstagram?.account?.username || "Dj G-spark"}/`,
+    handle: `@${publicInstagram?.account?.username || "Dj G-Spark"}`,
+    profileUrl: publicInstagram?.account?.profileUrl || `https://www.instagram.com/${publicInstagram?.account?.username || "Dj G-Spark"}/`,
     profilePicture: publicInstagram?.account?.profilePicture || "/images/dj_hero.jpg",
     status: publicInstagram?.account?.status || "connected",
     lastSyncedAt: publicInstagram?.account?.lastSyncedAt,
@@ -498,14 +498,14 @@ export default function HomePage() {
           {/* <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-black/60 border border-[#00E5FF]/40 backdrop-blur-md mb-6 shadow-[0_0_20px_rgba(0, 229, 255, 0.25)]">
             <span className="w-2 h-2 rounded-full bg-[#00E5FF] shadow-[0_0_10px_#00E5FF] animate-pulse" />
             <span className="text-[11px] sm:text-xs font-mono tracking-[0.22em] text-[#00B4D8] uppercase font-semibold">
-              Dj G-spark • WORLD TOUR 2026
+              Dj G-Spark • WORLD TOUR 2026
             </span>
           </div> */}
 
           {/* Main Hero Headline (Centered, matching reference image) */}
           <div className="flex flex-col items-center text-center max-w-5xl mx-auto mb-6 sm:mb-8">
             <h1 className="font-heading font-black text-5xl sm:text-7xl md:text-8xl lg:text-9xl tracking-[0.04em] sm:tracking-[0.08em] uppercase leading-none text-white drop-shadow-[0_8px_35px_rgba(0,0,0,0.95)]">
-              Dj G-spark
+              Dj G-Spark
             </h1>
             <p className="mt-3 sm:mt-4 text-xs sm:text-base md:text-xl font-heading font-bold tracking-[0.2em] sm:tracking-[0.35em] text-white/95 uppercase drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)]">
               ONE OF THE BEST DJ FROM DELHI (INDIA)
@@ -589,7 +589,7 @@ export default function HomePage() {
               <div className="relative aspect-[4/5] rounded-xl overflow-hidden border border-white/10 shadow-[0_0_50px_rgba(0, 229, 255, 0.18)]">
                 <Image
                   src="/images/gallery_eep09781.jpg"
-                  alt="Dj G-spark Live Portrait"
+                  alt="Dj G-Spark Live Portrait"
                   fill
                   className="object-cover object-top"
                 />
@@ -602,7 +602,7 @@ export default function HomePage() {
                   OFFICIAL ARTIST
                 </span>
                 <span className="font-heading font-black text-xl sm:text-2xl text-white">
-                  Dj G-spark
+                  Dj G-Spark
                 </span>
                 
               </div>
@@ -617,16 +617,16 @@ export default function HomePage() {
 
               <h2 className="font-heading font-black text-3xl sm:text-5xl tracking-[-0.02em] uppercase text-white mb-6">
                 Behind the beats<br />
-                <span className="text-[#00E5FF]">Dj G-spark</span>
+                <span className="text-[#00E5FF]">Dj G-Spark</span>
               </h2>
 
              
 
               <p className="text-sm sm:text-base text-[#929292] leading-relaxed mb-8">
-               Dj G-spark is a dynamic and high-energy DJ known for bringing explosive beats and seamless transitions to the dance floor.
+               Dj G-Spark is a dynamic and high-energy DJ known for bringing explosive beats and seamless transitions to the dance floor.
               </p>
               <p className="text-sm sm:text-base text-[#929292] leading-relaxed mb-8">
-              Dj G-spark (Gaurav Singh) is a popular Delhi-based open-format DJ and music producer widely recognized for his high-energy performances at weddings, corporate gigs, and large-scale parties across India. Specialising in vibrant, non-stop dance mixes, he seamlessly blends multiple genres to keep the dance floor packed.
+              Dj G-Spark (Gaurav Singh) is a popular Delhi-based open-format DJ and music producer widely recognized for his high-energy performances at weddings, corporate gigs, and large-scale parties across India. Specialising in vibrant, non-stop dance mixes, he seamlessly blends multiple genres to keep the dance floor packed.
               </p>
                  <h2 className="font-heading font-black text-6xl sm:text-2xl tracking-[-0.02em] uppercase text-white mb-6">
                 Key Details & Expertise<br />
@@ -647,7 +647,7 @@ export default function HomePage() {
                   &quot;Music is not just heard — it is felt. When the drop hits at 128 BPM, forty thousand strangers breathe as one unified frequency. That is the spark.&quot;
                 </p>
                 <cite className="block text-xs font-mono tracking-[0.2em] text-[#00B4D8] uppercase mt-3 not-italic">
-                  — Dj G-spark
+                  — Dj G-Spark
                 </cite>
               </blockquote>
 
@@ -707,7 +707,7 @@ export default function HomePage() {
               </div>
               <div className="px-4 py-2 rounded-lg bg-white/[0.04] border border-white/[0.08] backdrop-blur-md flex items-center gap-2.5">
                 <Sparkles className="w-3.5 h-3.5 text-[#FFAA00]" />
-                <span className="text-xs font-mono tracking-wider text-white">#Dj G-spark TRENDING</span>
+                <span className="text-xs font-mono tracking-wider text-white">#Dj G-Spark TRENDING</span>
               </div>
             </div>
           </div>
@@ -795,11 +795,11 @@ export default function HomePage() {
                 <div className="relative z-10 p-5 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="relative w-10 h-10 rounded-full overflow-hidden border border-[#00E5FF] bg-black">
-                      <Image src="/images/gallery_eep09781.webp" alt="Dj G-spark" fill className="object-cover" />
+                      <Image src="/images/gallery_eep09781.webp" alt="Dj G-Spark" fill className="object-cover" />
                     </div>
                     <div>
                       <div className="flex items-center gap-1.5">
-                        <span className="font-heading font-bold text-sm text-white uppercase">Dj G-spark</span>
+                        <span className="font-heading font-bold text-sm text-white uppercase">Dj G-Spark</span>
                         <CheckCircle2 className="w-3.5 h-3.5 text-[#00bfff] fill-[#00bfff]/20" />
                       </div>
                       <span className="text-[10px] font-mono text-[#00B4D8]">VIRAL NEW YEAR EVENT</span>
@@ -853,7 +853,7 @@ export default function HomePage() {
 
                   {/* <div className="flex items-center gap-2 text-[11px] font-mono text-[#00B4D8] bg-black/60 px-3 py-1.5 rounded-full border border-white/10 w-fit backdrop-blur-sm">
                     <Radio className="w-3 h-3 animate-pulse text-[#00E5FF]" />
-                    <span className="truncate">Dj G-spark — Spark Theory (Festival VIP)</span>
+                    <span className="truncate">Dj G-Spark — Spark Theory (Festival VIP)</span>
                   </div> */}
                 </div>
               </div>
@@ -861,42 +861,47 @@ export default function HomePage() {
           </div>
 
           {/* Bottom Call-to-Action Bar */}
-          <div className="mt-12 p-6 rounded-xl bg-[#0c0c12] border border-white/[0.08] flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="mt-12 p-6 sm:p-7 rounded-2xl bg-gradient-to-r from-[#0c0c14] via-[#141520] to-[#0c0c14] border border-white/15 shadow-[0_10px_35px_rgba(0,0,0,0.7)] flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="text-center md:text-left">
-              <span className="text-xs font-mono tracking-[0.2em] text-[#00B4D8] uppercase block mb-1">
-                STAY IN SYNC WITH Dj G-spark
+              <span className="text-xs font-mono tracking-[0.2em] text-[#00E5FF] uppercase block mb-1 font-bold">
+                STAY IN SYNC WITH Dj G-Spark
               </span>
-              <p className="text-sm sm:text-base font-heading font-bold text-white uppercase">
+              <p className="text-sm sm:text-base font-heading font-black text-white uppercase tracking-wide">
                 FOLLOW FOR NEW DROPS, SHOWS ANNOUNCEMENTS & EXCLUSIVE VIP RELEASES
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-3">
+            <div className="flex flex-wrap items-center justify-center gap-3.5">
+              {/* Instagram Highlight Button */}
               <a
                 href="https://www.instagram.com/djgspark"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-5 py-2.5 rounded-lg bg-white/5 hover:bg-[#E1306C] border border-white/10 text-white font-heading font-bold text-xs tracking-wider uppercase transition-all flex items-center gap-2"
+                className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] text-white font-heading font-black text-xs sm:text-sm tracking-wider uppercase transition-all duration-300 flex items-center gap-2.5 shadow-[0_0_25px_rgba(225,48,108,0.5)] hover:shadow-[0_0_35px_rgba(225,48,108,0.8)] hover:scale-105 active:scale-95"
               >
-                <InstagramIcon className="w-4 h-4" />
+                <InstagramIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 <span>INSTAGRAM</span>
               </a>
+
+              {/* YouTube Highlight Button */}
               <a
                 href="https://youtube.com/@djg-spark"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-5 py-2.5 rounded-lg bg-white/5 hover:bg-[#FF0000] border border-white/10 text-white font-heading font-bold text-xs tracking-wider uppercase transition-all flex items-center gap-2"
+                className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#FF0000] to-[#CC0000] text-white font-heading font-black text-xs sm:text-sm tracking-wider uppercase transition-all duration-300 flex items-center gap-2.5 shadow-[0_0_25px_rgba(255,0,0,0.5)] hover:shadow-[0_0_35px_rgba(255,0,0,0.8)] hover:scale-105 active:scale-95"
               >
-                <YouTubeIcon className="w-4 h-4" />
+                <YouTubeIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 <span>YOUTUBE</span>
               </a>
+
+              {/* Facebook Highlight Button */}
               <a
                 href="https://www.facebook.com/share/1BxXiXLitH/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-5 py-2.5 rounded-lg bg-white/5 hover:bg-[#1877F2] border border-white/10 text-white font-heading font-bold text-xs tracking-wider uppercase transition-all flex items-center gap-2"
+                className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#1877F2] to-[#0d5ec4] text-white font-heading font-black text-xs sm:text-sm tracking-wider uppercase transition-all duration-300 flex items-center gap-2.5 shadow-[0_0_25px_rgba(24,119,242,0.5)] hover:shadow-[0_0_35px_rgba(24,119,242,0.8)] hover:scale-105 active:scale-95"
               >
-                <FacebookIcon className="w-4 h-4" />
+                <FacebookIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 <span>FACEBOOK</span>
               </a>
             </div>
@@ -1587,10 +1592,10 @@ export default function HomePage() {
                 FESTIVAL PROMOTER OR CONCERT-GOER?
               </span>
               <h3 className="font-heading font-black text-xl sm:text-2xl text-white uppercase">
-                EXPERIENCED Dj G-spark LIVE ON STAGE?
+                EXPERIENCED Dj G-Spark LIVE ON STAGE?
               </h3>
               <p className="text-xs sm:text-sm text-[#8A8D93] max-w-xl mt-1">
-                Book Dj G-spark for your arena headline date, festival stage, or share your live concert review with our management team.
+                Book Dj G-Spark for your arena headline date, festival stage, or share your live concert review with our management team.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">

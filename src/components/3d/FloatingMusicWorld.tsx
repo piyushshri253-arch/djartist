@@ -93,7 +93,7 @@ export function FloatingMusicWorld() {
           anchorX="left"
           letterSpacing={0.12}
         >
-          Dj G-spark • 135 BPM • F MINOR
+          Dj G-Spark • 135 BPM • F MINOR
         </Text>
 
         {/* Interactive Play Button Ring */}

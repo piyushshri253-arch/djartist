@@ -154,7 +154,7 @@ export default function PastEventsPage() {
           LEGENDARY <span className="text-[#00E5FF]">NIGHTS</span>
         </h1>
         <p className="text-sm sm:text-base text-[#8A8D93] leading-relaxed">
-          Echoes of tens of thousands united under volumetric laser arrays and roaring stadium acoustics. Relive the greatest completed arena shows and festival sets in Dj G-spark history.
+          Echoes of tens of thousands united under volumetric laser arrays and roaring stadium acoustics. Relive the greatest completed arena shows and festival sets in Dj G-Spark history.
         </p>
       </div>
 

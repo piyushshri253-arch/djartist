@@ -69,7 +69,7 @@ export const EXPERIENCE_PATH: CameraWaypoint[] = [
     zone: "GALLERY CORRIDOR",
   },
   {
-    // 08: GALLERY: SUNBURN GOA & ABOUT Dj G-spark (50% - 58%)
+    // 08: GALLERY: SUNBURN GOA & ABOUT Dj G-Spark (50% - 58%)
     progress: 0.54,
     pos: new THREE.Vector3(-0.5, 2.1, 16),
     lookAt: new THREE.Vector3(-2.6, 2.3, 16),

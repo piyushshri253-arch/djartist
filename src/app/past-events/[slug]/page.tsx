@@ -100,7 +100,7 @@ export default function PastEventSinglePage({ params }: { params: Promise<{ slug
                 {event.description || event.summary}
               </p>
               <p className="text-sm text-[#8A8D93] leading-relaxed">
-                Under a sky ablaze with red lasers and stage pyrotechnics, Dj G-spark delivered a tour-de-force performance, synchronizing 140dB L-Acoustics arrays with a hypnotic, continuous melodic techno progression.
+                Under a sky ablaze with red lasers and stage pyrotechnics, Dj G-Spark delivered a tour-de-force performance, synchronizing 140dB L-Acoustics arrays with a hypnotic, continuous melodic techno progression.
               </p>
             </div>
 
@@ -145,10 +145,10 @@ export default function PastEventSinglePage({ params }: { params: Promise<{ slug
                   </thead>
                   <tbody className="divide-y divide-white/5 text-[#F5F6FA]">
                     {[
-                      { num: "01", title: "Spark Theory (Concert Intro)", artist: "Dj G-spark", bpm: "126", key: "F#m" },
-                      { num: "02", title: "Neon Horizons (Extended Club)", artist: "Dj G-spark", bpm: "128", key: "Am" },
-                      { num: "03", title: event.highlightTrack || "Velocity 9", artist: "Dj G-spark (VIP Edit)", bpm: "130", key: "Dm" },
-                      { num: "04", title: "Sub Zero Pulse (Encore Climax)", artist: "Dj G-spark", bpm: "128", key: "Em" },
+                      { num: "01", title: "Spark Theory (Concert Intro)", artist: "Dj G-Spark", bpm: "126", key: "F#m" },
+                      { num: "02", title: "Neon Horizons (Extended Club)", artist: "Dj G-Spark", bpm: "128", key: "Am" },
+                      { num: "03", title: event.highlightTrack || "Velocity 9", artist: "Dj G-Spark (VIP Edit)", bpm: "130", key: "Dm" },
+                      { num: "04", title: "Sub Zero Pulse (Encore Climax)", artist: "Dj G-Spark", bpm: "128", key: "Em" },
                     ].map((row) => (
                       <tr key={row.num} className="hover:bg-white/5">
                         <td className="p-4 font-mono text-[#00B4D8]">{row.num}</td>

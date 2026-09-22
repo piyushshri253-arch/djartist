@@ -50,7 +50,7 @@ export function TourHud({
           <span className="w-2 h-2 rounded-full bg-[#00E5FF] animate-pulse shadow-[0_0_12px_#00E5FF]" />
           <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3">
             <span className="text-[10px] tracking-[0.24em] uppercase text-white font-mono font-semibold">
-              Dj G-spark LIVE 3D
+              Dj G-Spark LIVE 3D
             </span>
             <span className="hidden sm:inline text-white/20">•</span>
             <span className="text-[9px] tracking-[0.2em] uppercase text-[#929292] font-mono">

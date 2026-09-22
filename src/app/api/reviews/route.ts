@@ -144,7 +144,7 @@ export async function POST(req: Request) {
     const rawEventId = body.eventId;
     const rawEventSlug = body.eventSlug;
     const rawEventTitle = body.eventTitle || body.event;
-    const rawEvent = rawEventTitle || (isArticleReview ? rawArticleTitle || "Article Reader" : "Dj G-spark Live Tour");
+    const rawEvent = rawEventTitle || (isArticleReview ? rawArticleTitle || "Article Reader" : "Dj G-Spark Live Tour");
 
     if (!rawName || typeof rawName !== "string" || rawName.trim().length < 2) {
       return NextResponse.json(
@@ -244,7 +244,7 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         success: true,
-        message: "Your review has been submitted for moderation! Dj G-spark management will verify and publish it to the website.",
+        message: "Your review has been submitted for moderation! Dj G-Spark management will verify and publish it to the website.",
         reviewId: newReview.id,
       },
       { status: 201 }

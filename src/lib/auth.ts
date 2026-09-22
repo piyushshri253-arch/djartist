@@ -86,7 +86,7 @@ export async function getAuthenticatedAdmin(): Promise<AdminUser | null> {
   return {
     email: result.email,
     role: "Super Admin",
-    name: "Dj G-spark Management",
+    name: "Dj G-Spark Management",
     permissions: [
       "*",
       "social_media.instagram.manage",

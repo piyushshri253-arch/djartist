@@ -68,7 +68,7 @@ export async function POST(request: Request) {
     const newReel: InstagramReel = {
       id: `ig-reel-${Date.now()}`,
       instagramMediaId: shortcode,
-      username: db.connection.username || "Dj G-spark",
+      username: db.connection.username || "Dj G-Spark",
       caption: resolvedTitle,
       thumbnailUrl: resolvedThumb,
       permalink: url.trim(),

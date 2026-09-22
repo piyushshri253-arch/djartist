@@ -79,7 +79,7 @@ export async function POST(request: Request) {
       attendance: attendance || "40,000+ Fans",
       image: image || "/images/past_event_crowd.jpg",
       excerpt: excerpt || `Legendary concert night in ${city}.`,
-      description: description || `Dj G-spark delivered an unforgettable headline set in ${city}.`,
+      description: description || `Dj G-Spark delivered an unforgettable headline set in ${city}.`,
       highlights: Array.isArray(highlights)
         ? highlights
         : typeof highlights === "string"
@@ -89,7 +89,7 @@ export async function POST(request: Request) {
         ? tracklist
         : typeof tracklist === "string"
         ? tracklist.split("\n").map((s) => s.trim()).filter(Boolean)
-        : ["01. Dj G-spark - Spark Theory (Live Intro VIP)"],
+        : ["01. Dj G-Spark - Spark Theory (Live Intro VIP)"],
     };
 
     pastEvents.unshift(newPastEvent);

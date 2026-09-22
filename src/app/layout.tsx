@@ -10,9 +10,9 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Dj G-spark | Feel The Spark. Enter The Sound.",
+  title: "Dj G-Spark | Feel The Spark. Enter The Sound.",
   description:
-    "Official 3D virtual concert tour and platform for international electronic music artist Dj G-spark. High-octane arena tour, original releases, and live tour dates.",
+    "Official 3D virtual concert tour and platform for international electronic music artist Dj G-Spark. High-octane arena tour, original releases, and live tour dates.",
   icons: {
     icon: "/images/DJ-G-SPARK-Light.png",
     apple: "/images/DJ-G-SPARK-Light.png",

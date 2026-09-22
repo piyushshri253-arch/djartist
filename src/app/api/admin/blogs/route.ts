@@ -67,7 +67,7 @@ export async function POST(request: Request) {
       date: dateIso,
       dateDisplay,
       readTime: readTime || "5 MIN READ",
-      author: author || "Dj G-spark",
+      author: author || "Dj G-Spark",
       authorRole: authorRole || "Artist & Performer",
       image: image || "/images/dj_hero.jpg",
       excerpt: excerpt || title,

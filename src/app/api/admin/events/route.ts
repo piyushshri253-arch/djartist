@@ -132,13 +132,13 @@ export async function POST(request: Request) {
       isPublished: isPublished !== undefined ? Boolean(isPublished) : true,
       currency: currency || "BOTH",
       image: image || "/images/past_event_crowd.jpg",
-      description: description || `Dj G-spark Live Concert in ${city} at ${venue}.`,
+      description: description || `Dj G-Spark Live Concert in ${city} at ${venue}.`,
       detailedAbout: detailedAbout || description || "",
       lineup: Array.isArray(lineup)
         ? lineup
         : typeof lineup === "string"
         ? lineup.split(",").map((s) => s.trim())
-        : ["Dj G-spark (Headline Extended Set)"],
+        : ["Dj G-Spark (Headline Extended Set)"],
       ticketCategories: Array.isArray(ticketCategories) ? ticketCategories : undefined,
     };
 

@@ -8,10 +8,10 @@
     "date": "2026-09-15",
     "dateDisplay": "15 SEP 2026",
     "readTime": "6 MIN READ",
-    "author": "Dj G-spark",
+    "author": "Dj G-Spark",
     "authorRole": "Artist & Creative Director",
     "image": "/images/gallery_stage_lasers.jpg",
-    "excerpt": "A behind-the-scenes blueprint of Dj G-spark's most ambitious arena production to date: 360-degree holographic LED monoliths, cryogenic atmospheric bursts, and custom analog synthesis.",
+    "excerpt": "A behind-the-scenes blueprint of Dj G-Spark's most ambitious arena production to date: 360-degree holographic LED monoliths, cryogenic atmospheric bursts, and custom analog synthesis.",
     "content": "<p>When we set out to blueprint the 2026 World Tour, we made one non-negotiable rule: no standard DJ booths, no generic LED walls, and no compromises on physical audio fidelity. We wanted every arena to feel less like a concert and more like an interplanetary launch sequence.</p><h3>The Monolith 360 Stage Architecture</h3><p>At the epicenter of the production sits a custom 14-meter hexagonal floating rig surrounded by multi-tier transparent micro-LED columns. As the tempo accelerates from 128 to 138 BPM, the columns mechanically shift elevation via automated DMX winches, completely altering the audience's perception of height and depth.</p><p>Coordinating with our European lighting directors, we deployed 64 solid-state green and cyan lasers programmed to intersect directly above the dance floor, forming a glowing canopy that pulses synchronously with the synthesizer arpeggiators.</p><blockquote>'A live set is not passive entertainment. It is an electric covenant between thirty thousand human beings unified by the exact same sonic frequency.'</blockquote><p>Coupled with synchronized CO2 cryo cannons and precision flame projectors calibrated to ignite on key downbeats, the sensory impact is unrelenting. From Tokyo to Amsterdam, this production is engineered to leave an indelible mark on modern electronic dance music.</p>"
   },
   {
@@ -23,11 +23,11 @@
     "date": "2026-08-24",
     "dateDisplay": "24 AUG 2026",
     "readTime": "5 MIN READ",
-    "author": "Dj G-spark",
+    "author": "Dj G-Spark",
     "authorRole": "Artist & Creative Director",
     "image": "/images/dj_hero.jpg",
-    "excerpt": "A deep dive into the audio architecture, sub-bass tuning, and 3D visual servers that power Dj G-spark's live stadium concerts.",
-    "content": "<p>When you stand in front of 35,000 people, sound isn't just something you hear with your ears — it is a physical force that moves through bone and muscle. For the 2026 World Tour, our sound engineering team spent five months redesigning our front-of-house subwoofer array from the ground up.</p><h3>The Science of Physical Resonance</h3><p>We engineered a cardioid directional bass array producing over 100,000 watts of continuous acoustic power focused precisely into the audience floor, eliminating backstage bleed and giving every kick drum an explosive, punchy transient response.</p><p>Alongside the physical audio hardware, our lighting designer mapped 32 multi-axis laser fixtures to a real-time OSC frequency bridge. When a filter sweeps or a build-up rises, the laser vectors physically compress and expand with the soundwave.</p><blockquote>'A great DJ set is not just track selection. It is the conscious manipulation of physical space, time, and human emotion.'</blockquote><p>Every venue requires hours of acoustic room calibration. What works in a concrete dome in Mumbai will behave completely differently in an open-air stadium in Delhi. That relentless attention to sonic detail is what defines the Dj G-spark experience.</p>"
+    "excerpt": "A deep dive into the audio architecture, sub-bass tuning, and 3D visual servers that power Dj G-Spark's live stadium concerts.",
+    "content": "<p>When you stand in front of 35,000 people, sound isn't just something you hear with your ears — it is a physical force that moves through bone and muscle. For the 2026 World Tour, our sound engineering team spent five months redesigning our front-of-house subwoofer array from the ground up.</p><h3>The Science of Physical Resonance</h3><p>We engineered a cardioid directional bass array producing over 100,000 watts of continuous acoustic power focused precisely into the audience floor, eliminating backstage bleed and giving every kick drum an explosive, punchy transient response.</p><p>Alongside the physical audio hardware, our lighting designer mapped 32 multi-axis laser fixtures to a real-time OSC frequency bridge. When a filter sweeps or a build-up rises, the laser vectors physically compress and expand with the soundwave.</p><blockquote>'A great DJ set is not just track selection. It is the conscious manipulation of physical space, time, and human emotion.'</blockquote><p>Every venue requires hours of acoustic room calibration. What works in a concrete dome in Mumbai will behave completely differently in an open-air stadium in Delhi. That relentless attention to sonic detail is what defines the Dj G-Spark experience.</p>"
   },
   {
     "id": "BLOG-02",
@@ -38,16 +38,16 @@
     "date": "2026-08-10",
     "dateDisplay": "10 AUG 2026",
     "readTime": "7 MIN READ",
-    "author": "Dj G-spark",
+    "author": "Dj G-Spark",
     "authorRole": "Producer & Performer",
     "image": "/images/concert_led.jpg",
     "excerpt": "How a relentless pursuit of analog synth textures and hypnotic percussion evolved into a globally recognized signature sound.",
-    "content": "<p>Every artist has a sonic fingerprint. For Dj G-spark, that identity was forged in late-night studio sessions working with vintage analog synthesizers — the Moog Sub 37, Prophet-6, and Roland drum machines.</p><h3>Bridging Melody and Raw Energy</h3><p>Electronic music often swings between two extremes: overly melodic pop EDM or stripped-down underground techno. My goal has always been to occupy the explosive sweet spot in between: cinematic, emotional harmonic chords underpinned by ferocious, driving basslines.</p><p>The title track of our latest EP, 'Feel The Spark', was born from a single arpeggio melody recorded at 4:00 AM after returning from a festival set. When we tested it live the next weekend in Amsterdam, the crowd's reaction confirmed that the frequency had found its mark.</p>"
+    "content": "<p>Every artist has a sonic fingerprint. For Dj G-Spark, that identity was forged in late-night studio sessions working with vintage analog synthesizers — the Moog Sub 37, Prophet-6, and Roland drum machines.</p><h3>Bridging Melody and Raw Energy</h3><p>Electronic music often swings between two extremes: overly melodic pop EDM or stripped-down underground techno. My goal has always been to occupy the explosive sweet spot in between: cinematic, emotional harmonic chords underpinned by ferocious, driving basslines.</p><p>The title track of our latest EP, 'Feel The Spark', was born from a single arpeggio melody recorded at 4:00 AM after returning from a festival set. When we tested it live the next weekend in Amsterdam, the crowd's reaction confirmed that the frequency had found its mark.</p>"
   },
   {
     "id": "BLOG-03",
-    "slug": "Dj G-spark-live-in-delhi-memoir",
-    "title": "Dj G-spark Live in Delhi: The Stadium Homecoming",
+    "slug": "Dj G-Spark-live-in-delhi-memoir",
+    "title": "Dj G-Spark Live in Delhi: The Stadium Homecoming",
     "category": "EVENTS",
     "categorySlug": "events",
     "date": "2026-07-18",
@@ -57,7 +57,7 @@
     "authorRole": "Tour Press Correspondent",
     "image": "/images/past_event_crowd.jpg",
     "excerpt": "Recapping the unforgettable night in New Delhi where 28,000 fans created an earthquake of pure electronic celebration.",
-    "content": "<p>The energy in Delhi is unlike anywhere else on earth. When the gates opened at JLN Stadium, the roar of the crowd could be heard three kilometers away.</p><p>By the time Dj G-spark took the stage at 10:30 PM, the atmosphere was at boiling point. Opening with the live edit of 'Quantum Resonance', a shockwave of red and cyan pyrotechnics lit up the capital's sky, signaling the start of a historic three-hour set.</p>"
+    "content": "<p>The energy in Delhi is unlike anywhere else on earth. When the gates opened at JLN Stadium, the roar of the crowd could be heard three kilometers away.</p><p>By the time Dj G-Spark took the stage at 10:30 PM, the atmosphere was at boiling point. Opening with the live edit of 'Quantum Resonance', a shockwave of red and cyan pyrotechnics lit up the capital's sky, signaling the start of a historic three-hour set.</p>"
   },
   {
     "id": "BLOG-04",
@@ -68,7 +68,7 @@
     "date": "2026-06-29",
     "dateDisplay": "29 JUN 2026",
     "readTime": "6 MIN READ",
-    "author": "Dj G-spark",
+    "author": "Dj G-Spark",
     "authorRole": "Resident DJ",
     "image": "/images/tour_poster.jpg",
     "excerpt": "The psychological architecture of pacing a headline performance: tension, release, dynamic shifts, and reading the crowd.",
@@ -83,7 +83,7 @@
     "date": "2026-05-14",
     "dateDisplay": "14 MAY 2026",
     "readTime": "5 MIN READ",
-    "author": "Dj G-spark",
+    "author": "Dj G-Spark",
     "authorRole": "Mixing Engineer",
     "image": "/images/album_art.jpg",
     "excerpt": "Technical breakdown of sub-bass saturation, transient shaping, and mix bus processing for modern stadium electronic music.",
@@ -98,7 +98,7 @@
     "date": "2026-04-02",
     "dateDisplay": "02 APR 2026",
     "readTime": "8 MIN READ",
-    "author": "Dj G-spark",
+    "author": "Dj G-Spark",
     "authorRole": "Tour Diary",
     "image": "/images/past_event_sunset.jpg",
     "excerpt": "Life at 35,000 feet: airport lounges, midnight soundchecks, jet lag, and the incomparable rush of stepping onto stage.",
