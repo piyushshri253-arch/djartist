@@ -127,6 +127,15 @@ export function InstagramIntegrationModule({
 
       setInputUrl("");
       setInputCaption("");
+
+      if (Array.isArray(data.reels)) {
+        setReels(data.reels);
+        const activeIds = data.reels
+          .filter((r: InstagramReel) => r.isVisible)
+          .map((r: InstagramReel) => r.id);
+        setSelectedIds(activeIds);
+      }
+
       await fetchModuleData();
     } catch (err: any) {
       notify("error", err.message || "Failed to add reel");

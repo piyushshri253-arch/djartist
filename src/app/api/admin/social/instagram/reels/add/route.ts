@@ -21,13 +21,16 @@ export async function POST(request: Request) {
       );
     }
 
-    // Extract shortcode from standard Instagram formats (reel, p, tv, share/reel)
-    const match = reelUrl.match(/(?:reel|p|tv|share\/reel)\/([A-Za-z0-9_-]+)/i);
+    // Extract shortcode from standard Instagram formats (reels, reel, p, tv, share/reel)
+    const match = reelUrl.match(/(?:reels?|p|tv|share\/reel)\/([A-Za-z0-9_-]+)/i);
     const shortcode = match ? match[1] : `reel-${Date.now()}`;
+    const cleanPermalink = reelUrl.startsWith("http")
+      ? reelUrl.split("?")[0].replace(/\/+$/, "") + "/"
+      : `https://www.instagram.com/reel/${shortcode}/`;
 
     const db = await readInstagramDb();
     const now = new Date().toISOString();
-    const username = db.connection.username || "instagram_artist";
+    const username = db.connection.username || "djgspark";
 
     // Dynamic rotation of concert/stage thumbnails if no custom thumbnail is provided
     const fallbackPosters = [
@@ -54,7 +57,7 @@ export async function POST(request: Request) {
       username,
       caption: customCaption || `Instagram Reel // @${username}`,
       thumbnailUrl: body.thumbnailUrl || defaultThumbnail,
-      permalink: `https://www.instagram.com/reel/${shortcode}/`,
+      permalink: cleanPermalink,
       mediaType: "REEL",
       publishedAt: now,
       viewsDisplay: "Featured",
