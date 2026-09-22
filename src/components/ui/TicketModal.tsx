@@ -64,7 +64,7 @@ export function TicketModal({
       : "Price on Request / VIP Concierge";
 
     const lines = [
-      "🎟️ *DJ G SPARK — OFFICIAL PASS RESERVATION* 🎟️",
+      "🎟️ *Dj G-spark — OFFICIAL PASS RESERVATION* 🎟️",
       "━━━━━━━━━━━━━━━━━━━━━━━━━",
       `⚡ *Event:* ${eventTitle}`,
       `📍 *Location & Date:* ${eventCity} • ${eventDate}`,
@@ -78,7 +78,7 @@ export function TicketModal({
       notes.trim() ? `📝 *Special Notes:* ${notes.trim()}` : "",
       `🆔 *Booking Ref:* ${refId}`,
       "━━━━━━━━━━━━━━━━━━━━━━━━━",
-      "⚡ *Direct booking lead from DJ G Spark Official Website*",
+      "⚡ *Direct booking lead from Dj G-spark Official Website*",
     ].filter(Boolean);
 
     return lines.join("\n");

@@ -165,7 +165,7 @@ export function BackstageCorridor() {
       <FlightCase
         position={[-4.5, 0, 10]}
         rotation={[0, 0.06, 0]}
-        labelTop="DJ G SPARK"
+        labelTop="Dj G-spark"
         labelBottom="MAIN STAGE"
         size={[2.2, 1.2, 1.1]}
       />
@@ -179,7 +179,7 @@ export function BackstageCorridor() {
       <FlightCase
         position={[-4.4, 0, -6]}
         rotation={[0, 0.08, 0]}
-        labelTop="DJ G SPARK"
+        labelTop="Dj G-spark"
         labelBottom="MAIN STAGE"
         size={[2.1, 1.1, 1.1]}
       />
@@ -193,7 +193,7 @@ export function BackstageCorridor() {
       <FlightCase
         position={[4.2, 0, -1]}
         rotation={[0, 0.05, 0]}
-        labelTop="DJ G SPARK"
+        labelTop="Dj G-spark"
         labelBottom="MAIN STAGE"
         size={[1.9, 1.0, 1.0]}
       />

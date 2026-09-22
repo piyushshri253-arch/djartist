@@ -3,8 +3,8 @@ import Link from "next/link";
 import { ArrowLeft, Shield } from "lucide-react";
 
 export const metadata = {
-  title: "Privacy Policy | DJ G Spark",
-  description: "Official Privacy Policy for DJ G Spark and Meta/Instagram Integration.",
+  title: "Privacy Policy | Dj G-spark",
+  description: "Official Privacy Policy for Dj G-spark and Meta/Instagram Integration.",
 };
 
 export default function PrivacyPolicyPage() {
@@ -38,7 +38,7 @@ export default function PrivacyPolicyPage() {
               1. Overview
             </h2>
             <p>
-              DJ G Spark (&quot;we&quot;, &quot;our&quot;, &quot;us&quot;) respects your privacy. This Privacy Policy explains how we handle information collected through our website and our official Meta / Instagram integration.
+              Dj G-spark (&quot;we&quot;, &quot;our&quot;, &quot;us&quot;) respects your privacy. This Privacy Policy explains how we handle information collected through our website and our official Meta / Instagram integration.
             </p>
           </section>
 
@@ -64,7 +64,7 @@ export default function PrivacyPolicyPage() {
               3. Purpose of Data Use
             </h2>
             <p>
-              The accessed Instagram content is strictly used to showcase up to 4 selected festival aftermovies, concert reels, and artist performance clips on the official DJ G Spark website.
+              The accessed Instagram content is strictly used to showcase up to 4 selected festival aftermovies, concert reels, and artist performance clips on the official Dj G-spark website.
             </p>
           </section>
 

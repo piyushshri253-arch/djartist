@@ -152,7 +152,7 @@ export default function MusicPage() {
                   </td>
                   <td className="p-4">
                     <div className="font-bold text-white text-sm">{track.title}</div>
-                    <div className="text-[#8A8D93] text-xs">DJ G SPARK</div>
+                    <div className="text-[#8A8D93] text-xs">Dj G-spark</div>
                   </td>
                   <td className="p-4 text-[#8A8D93] hidden sm:table-cell">{track.album}</td>
                   <td className="p-4 text-[#8A8D93] hidden md:table-cell">{track.genre}</td>

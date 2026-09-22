@@ -59,7 +59,7 @@ export default function AdminLoginPage() {
           <Link href="/" className="inline-block group mb-4">
             <img
               src="/images/DJ-G-SPARK-Light.png"
-              alt="DJ G SPARK"
+              alt="Dj G-spark"
               className="h-16 sm:h-20 md:h-24 w-auto mx-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-[0_0_28px_rgba(255,255,255,0.45)] hover:drop-shadow-[0_0_35px_rgba(0, 229, 255, 0.6)]"
             />
           </Link>

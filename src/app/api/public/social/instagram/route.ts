@@ -8,7 +8,7 @@ export async function GET() {
   if (db.settings.instagramEnabled === false) {
     return NextResponse.json({
       enabled: false,
-      username: db.connection.username || "djgspark",
+      username: db.connection.username || "Dj G-spark",
       totalReels: 0,
       reels: [],
     }, {
@@ -37,7 +37,7 @@ export async function GET() {
   return NextResponse.json({
     enabled: visibleReels.length > 0,
     account: {
-      username: db.connection.username || "djgspark",
+      username: db.connection.username || "Dj G-spark",
       profilePicture: db.connection.profilePicture || "/images/dj_hero.jpg",
       profileUrl: db.connection.username
         ? `https://instagram.com/${db.connection.username}`

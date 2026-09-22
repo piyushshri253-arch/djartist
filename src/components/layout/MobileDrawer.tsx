@@ -37,7 +37,7 @@ export function MobileDrawer({ isOpen, onClose, links }: MobileDrawerProps) {
             <Link href="/" onClick={onClose} className="inline-block py-1">
               <img
                 src="/images/DJ-G-SPARK-Light.png"
-                alt="DJ G SPARK"
+                alt="Dj G-spark"
                 className="h-11 sm:h-12 w-auto object-contain drop-shadow-[0_0_18px_rgba(245,246,250,0.4)]"
               />
             </Link>
@@ -76,7 +76,7 @@ export function MobileDrawer({ isOpen, onClose, links }: MobileDrawerProps) {
               onClick={onClose}
               className="block w-full py-3 text-center rounded-full bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-[#0B0C10] font-black text-xs tracking-[0.14em] uppercase shadow-[0_0_20px_rgba(0,229,255,0.4)]"
             >
-              Book DJ G Spark
+              Book Dj G-spark
             </Link>
           </div>
         </div>

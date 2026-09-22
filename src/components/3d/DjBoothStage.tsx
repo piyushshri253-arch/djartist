@@ -198,7 +198,7 @@ export function DjBoothStage() {
         </mesh>
       </group>
 
-      {/* 3. Central Performer Presence: DJ G SPARK (High-Resolution Reference Image Billboard) */}
+      {/* 3. Central Performer Presence: Dj G-spark (High-Resolution Reference Image Billboard) */}
       <group position={[0, 2.7, 1.2]}>
         <mesh>
           <planeGeometry args={[4.6, 3.2]} />

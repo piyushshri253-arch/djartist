@@ -27,7 +27,7 @@ export async function POST(request: Request) {
       message: "Admin authenticated successfully",
       user: {
         email,
-        name: "DJ G Spark Management",
+        name: "Dj G-spark Management",
         role: "Super Admin",
       },
     });

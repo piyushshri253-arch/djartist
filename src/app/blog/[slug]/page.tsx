@@ -117,7 +117,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
   // Share to WhatsApp
   const shareWhatsApp = () => {
     if (typeof window !== "undefined") {
-      const text = encodeURIComponent(`Check out "${post.title}" by DJ G SPARK:\n${window.location.href}`);
+      const text = encodeURIComponent(`Check out "${post.title}" by Dj G-spark:\n${window.location.href}`);
       window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
     }
   };
@@ -220,7 +220,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
               <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#00E5FF] shadow-[0_0_12px_rgba(0, 229, 255, 0.4)] flex-shrink-0">
                 <img
                   src="/images/dj_hero.jpg"
-                  alt={post.author || "DJ G SPARK"}
+                  alt={post.author || "Dj G-spark"}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -437,7 +437,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
                   <blockquote className="my-8 p-6 sm:p-8 rounded-2xl bg-white/5 border-l-4 border-[#00E5FF] text-xl sm:text-2xl font-bold text-white italic shadow-lg">
                     &quot;A great DJ set is not just track selection. It is the conscious manipulation of physical space, electromagnetic fields, and mass human euphoria.&quot;
                     <span className="block text-xs font-mono font-normal text-[#00B4D8] mt-3 not-italic">
-                      — DJ G SPARK, World Tour Sound Notes
+                      — Dj G-spark, World Tour Sound Notes
                     </span>
                   </blockquote>
 
@@ -487,7 +487,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
               <div className="my-10 rounded-2xl overflow-hidden border border-white/10 bg-black">
                 <img
                   src="/images/concert_led.jpg"
-                  alt="DJ G SPARK Live Concert Arena"
+                  alt="Dj G-spark Live Concert Arena"
                   className="w-full h-80 sm:h-96 object-cover"
                 />
                 <div className="p-4 bg-black/90 text-xs font-mono text-[#8A8D93] flex items-center justify-between border-t border-white/10">
@@ -528,7 +528,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
               <div className="pt-8 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
                 <div>
                   <span className="text-sm font-bold text-white block">
-                    Shared from DJ G SPARK Chronicles
+                    Shared from Dj G-spark Chronicles
                   </span>
                   <span className="text-xs text-[#8A8D93]">
                     Stay tuned for upcoming tour dispatches & sound architecture releases.
@@ -561,13 +561,13 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
                 <div className="w-24 h-24 rounded-2xl overflow-hidden border-2 border-[#00E5FF] shadow-[0_0_20px_rgba(0, 229, 255, 0.3)] flex-shrink-0">
                   <img
                     src="/images/dj_hero.jpg"
-                    alt="DJ G SPARK"
+                    alt="Dj G-spark"
                     className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="space-y-3 text-center sm:text-left flex-1">
                   <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                    <h4 className="text-xl font-bold text-white">DJ G SPARK</h4>
+                    <h4 className="text-xl font-bold text-white">Dj G-spark</h4>
                     <span className="px-2 py-0.5 rounded-full bg-[#00E5FF]/20 border border-[#00E5FF]/40 text-[10px] font-bold text-[#00B4D8] font-mono">
                       FOUNDER & HEADLINER
                     </span>
@@ -676,7 +676,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
                       Spark Theory (Arena Edit)
                     </h5>
                     <span className="text-[10px] font-mono text-[#8A8D93] block truncate">
-                      DJ G SPARK • 132 BPM
+                      Dj G-spark • 132 BPM
                     </span>
                   </div>
                 </div>

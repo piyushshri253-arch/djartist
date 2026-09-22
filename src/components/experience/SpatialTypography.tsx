@@ -16,7 +16,7 @@ export function SpatialTypography() {
           letterSpacing={0.12}
           material-toneMapped={false}
         >
-          DJ G SPARK
+          Dj G-spark
         </Text>
         <Text
           position={[0, -0.85, 0]}
@@ -151,7 +151,7 @@ export function SpatialTypography() {
           letterSpacing={0.08}
           material-toneMapped={false}
         >
-          DJ G SPARK
+          Dj G-spark
         </Text>
         <Text
           position={[0, -0.55, 0]}
@@ -201,7 +201,7 @@ export function SpatialTypography() {
           letterSpacing={0.12}
           material-toneMapped={false}
         >
-          DJ G SPARK
+          Dj G-spark
         </Text>
         <Text
           position={[0, -1.6, 0]}

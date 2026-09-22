@@ -109,7 +109,7 @@ export async function sendWhatsAppLeadNotification(
       : "On Request";
 
   const eventName =
-    lead.eventTitle || lead.location || "DJ G Spark World Tour";
+    lead.eventTitle || lead.location || "Dj G-spark World Tour";
 
   const templateParameters = [
     { type: "text", text: fullName },       // {{1}} Full Name

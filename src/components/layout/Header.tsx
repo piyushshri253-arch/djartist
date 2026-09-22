@@ -46,7 +46,7 @@ export function Header() {
             <Link href="/" className="group flex items-center py-0.5">
               <img
                 src="/images/DJ-G-SPARK-Light.png"
-                alt="DJ G SPARK"
+                alt="Dj G-spark"
                 className={`w-auto object-contain transition-all duration-300 group-hover:scale-105 drop-shadow-[0_2px_14px_rgba(245,246,250,0.35)] hover:drop-shadow-[0_0_22px_rgba(0,229,255,0.6)] ${
                   isScrolled
                     ? "h-9 sm:h-10 lg:h-11"
@@ -85,7 +85,7 @@ export function Header() {
               href="/booking"
               className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-[#0B0C10] font-heading font-black text-xs tracking-[0.14em] uppercase shadow-[0_0_20px_rgba(0,229,255,0.4)] hover:shadow-[0_0_30px_rgba(0,229,255,0.75)] transition-all hover:scale-105 active:scale-95 whitespace-nowrap"
             >
-              BOOK DJ G SPARK
+              BOOK Dj G-spark
             </Link>
           </div>
 

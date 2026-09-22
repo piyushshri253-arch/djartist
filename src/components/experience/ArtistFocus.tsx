@@ -20,7 +20,7 @@ export function ArtistFocus() {
 
   return (
     <group position={[0, 0.9, -25]}>
-      {/* 1. DJ G SPARK Performer 3D Character at Decks */}
+      {/* 1. Dj G-spark Performer 3D Character at Decks */}
       <mesh ref={djMeshRef} position={[0, 1.45, 0.6]} castShadow receiveShadow>
         <planeGeometry args={[2.2, 2.75]} />
         <meshStandardMaterial

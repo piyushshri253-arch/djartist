@@ -55,7 +55,7 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
       <div className="flex items-center gap-3 mb-4">
         <Zap className="w-5 h-5 text-[#00E5FF] fill-current" />
         <span className="font-sans font-bold tracking-[0.2em] text-xl text-[#F5F6FA]">
-          DJ G SPARK
+          Dj G-spark
         </span>
       </div>
 

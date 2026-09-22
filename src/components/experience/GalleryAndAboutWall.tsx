@@ -178,7 +178,7 @@ export function GalleryAndAboutWall() {
             <meshBasicMaterial color="#00E5FF" toneMapped={false} />
           </mesh>
 
-          {/* Left Side: Photo of DJ G Spark */}
+          {/* Left Side: Photo of Dj G-spark */}
           <mesh position={[-1.45, 0, 0.065]}>
             <planeGeometry args={[2.0, 2.8]} />
             <meshBasicMaterial map={djHeroPic} toneMapped={false} />
@@ -204,7 +204,7 @@ export function GalleryAndAboutWall() {
               letterSpacing={0.08}
               material-toneMapped={false}
             >
-              DJ G SPARK
+              Dj G-spark
             </Text>
             <Text
               position={[0, 0.28, 0]}

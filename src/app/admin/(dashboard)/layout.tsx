@@ -27,14 +27,14 @@ export default async function AdminDashboardLayout({
               <div className="bg-slate-950 p-1.5 px-2 rounded-xl flex items-center justify-center shadow-xs border border-slate-800">
                 <img
                   src="/images/DJ-G-SPARK-Light.png"
-                  alt="DJ G SPARK"
+                  alt="Dj G-spark"
                   className="h-7 sm:h-8 w-auto object-contain"
                 />
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-black tracking-tight text-slate-900 leading-tight">
-                    DJ G SPARK
+                    Dj G-spark
                   </span>
                   <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full bg-slate-900 text-amber-400 text-[10px] font-bold font-mono tracking-wider uppercase">
                     Client Portal

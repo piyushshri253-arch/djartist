@@ -18,7 +18,7 @@ export function Footer() {
               WORLD TOUR 2026
             </span> */}
             <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-[#F5F6FA]">
-              DJ G-Spark <span className="text-[#00E5FF]">One Of The Best DJ From Delhi (INDIA)</span>
+              Dj G-spark <span className="text-[#00E5FF]">One Of The Best DJ From Delhi (INDIA)</span>
             </h2>
           </div>
           <div className="flex items-center gap-4">
@@ -26,7 +26,7 @@ export function Footer() {
               href="/booking"
               className="px-8 py-3.5 rounded-full bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-[#0B0C10] font-black text-xs tracking-[0.14em] uppercase shadow-[0_0_20px_rgba(0,229,255,0.4)] hover:shadow-[0_0_30px_rgba(0,229,255,0.7)] transition-all duration-300"
             >
-              Book DJ G-Spark
+              Book Dj G-spark
             </Link>
             <Link
               href="/events"
@@ -44,13 +44,13 @@ export function Footer() {
             <Link href="/" className="inline-block group py-1">
               <img
                 src="/images/DJ-G-SPARK-Light.png"
-                alt="DJ G SPARK"
+                alt="Dj G-spark"
                 className="h-14 sm:h-18 md:h-20 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-[0_0_24px_rgba(245,246,250,0.35)] hover:drop-shadow-[0_0_28px_rgba(0,229,255,0.5)]"
               />
             </Link>
             <p className="text-sm text-[#8A8D93] leading-relaxed">
               One of the best DJ from delhi....
-Dj G-Spark, A dj who is best in multi-genres like Bollywood, Punjabi, Commercial, Retro, Edm, etc....
+Dj G-spark, A dj who is best in multi-genres like Bollywood, Punjabi, Commercial, Retro, Edm, etc....
             </p>
             <div className="flex items-center gap-4 pt-2 text-[#8A8D93]">
               <a
@@ -128,7 +128,7 @@ Dj G-Spark, A dj who is best in multi-genres like Bollywood, Punjabi, Commercial
 
         {/* Bottom Bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between pt-8 text-xs text-[#8A8D93] gap-4">
-          <p>© 2026 DJ G SPARK. All Rights Reserved. Engineered for Ultra-High Fidelity.</p>
+          <p>© 2026 Dj G-spark. All Rights Reserved. Engineered for Ultra-High Fidelity.</p>
           <div className="flex items-center gap-6">
             <Link href="/about" className="hover:text-[#F5F6FA] transition-colors">Tech-Rider</Link>
             <span>•</span>

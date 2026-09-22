@@ -169,7 +169,7 @@ export function ArticleReviewSection({ articleSlug, articleTitle }: ArticleRevie
               </div>
               <h4 className="text-xl font-black text-white">Review Submitted for Moderation!</h4>
               <p className="text-xs sm:text-sm text-[#b4b4c0] max-w-md mx-auto leading-relaxed">
-                Thank you for rating this chronicle. To maintain authenticity and protect our community, DJ G SPARK management reviews all comments before publishing live.
+                Thank you for rating this chronicle. To maintain authenticity and protect our community, Dj G-spark management reviews all comments before publishing live.
               </p>
               <div className="pt-2">
                 <button

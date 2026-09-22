@@ -23,7 +23,7 @@ export default function BookingPage() {
 
   const formatProposalWhatsAppMessage = () => {
     const lines = [
-      "🔥 *NEW DJ G SPARK BOOKING INQUIRY* 🔥",
+      "🔥 *NEW Dj G-spark BOOKING INQUIRY* 🔥",
       "━━━━━━━━━━━━━━━━━━━━━",
       `👤 *Full Name:* ${formData.name.trim()}`,
       `📱 *Phone / WhatsApp:* ${formData.phone.trim()}`,
@@ -33,7 +33,7 @@ export default function BookingPage() {
       `📅 *Date:* ${formData.date}`,
       formData.message.trim() ? `📝 *Message:* ${formData.message.trim()}` : "",
       "━━━━━━━━━━━━━━━━━━━━━",
-      "⚡ *Direct Inquiry from DJ G Spark Official Website*",
+      "⚡ *Direct Inquiry from Dj G-spark Official Website*",
     ].filter(Boolean);
     return lines.join("\n");
   };
@@ -85,10 +85,10 @@ export default function BookingPage() {
           OFFICIAL BOOKING &amp; INQUIRY
         </span>
         <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight mb-4 uppercase">
-          BOOK <span className="text-[#00E5FF]">DJ G-SPARK</span>
+          BOOK <span className="text-[#00E5FF]">Dj G-spark</span>
         </h1>
         <p className="text-sm sm:text-base text-[#8A8D93] leading-relaxed">
-          Book DJ G-Spark for weddings, concerts, club nights, and private events. Fill in the details below for instant quotation and WhatsApp response.
+          Book Dj G-spark for weddings, concerts, club nights, and private events. Fill in the details below for instant quotation and WhatsApp response.
         </p>
       </div>
 
@@ -108,7 +108,7 @@ export default function BookingPage() {
                   THANK YOU, {formData.name.toUpperCase()}!
                 </h2>
                 <p className="text-xs sm:text-sm text-[#AAAAAA] max-w-md mx-auto mt-2 leading-relaxed">
-                  Your booking details have been sent directly to DJ G-Spark's management team and recorded successfully.
+                  Your booking details have been sent directly to Dj G-spark's management team and recorded successfully.
                 </p>
                 <p className="text-xs text-emerald-400 font-mono mt-2">
                   ✓ Automated WhatsApp lead dispatched to {CLIENT_WHATSAPP_DISPLAY}
@@ -295,7 +295,7 @@ export default function BookingPage() {
                 INSTANT BOOKING HOTLINE
               </span>
               <a
-                href={`https://api.whatsapp.com/send?phone=${CLIENT_WHATSAPP_NUMBER}&text=${encodeURIComponent("Hello DJ G Spark Team, I would like to inquire about event booking availability.")}`}
+                href={`https://api.whatsapp.com/send?phone=${CLIENT_WHATSAPP_NUMBER}&text=${encodeURIComponent("Hello Dj G-spark Team, I would like to inquire about event booking availability.")}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-base font-bold text-white hover:text-[#25D366] transition-colors flex items-center gap-2"

@@ -1,7 +1,7 @@
 [
   {
     "id": "USR-001",
-    "name": "DJ G Spark Management",
+    "name": "Dj G-spark Management",
     "email": "admin@djgspark.com",
     "role": "Super Admin",
     "permissions": ["*"],

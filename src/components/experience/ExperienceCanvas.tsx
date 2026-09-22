@@ -46,13 +46,13 @@ export function ExperienceCanvas({ progress }: ExperienceCanvasProps) {
           {/* 3. Entrance Foyer: Physical standing vertical concert banners (Delhi, Mumbai, Goa, Dubai) */}
           <StandingBanners />
 
-          {/* 4. Corridor: Left wall framed festival photos + Right wall "About DJ G Spark" bio plaques */}
+          {/* 4. Corridor: Left wall framed festival photos + Right wall "About Dj G-spark" bio plaques */}
           <GalleryAndAboutWall />
 
           {/* 5. Stage Deck: Pioneer CDJ-3000s, DJM-V10 mixer, live VU meters & sweeping beams */}
           <DJBooth />
 
-          {/* 6. Performer Focus: DJ G Spark live performance silhouette with rim lighting */}
+          {/* 6. Performer Focus: Dj G-spark live performance silhouette with rim lighting */}
           <ArtistFocus />
 
           {/* 7. Stadium Climax: 40k crowd amphitheater, rotating halo truss, cryogenic spark jets */}
