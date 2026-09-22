@@ -11,12 +11,13 @@ interface WhatsAppFloatButtonProps {
 
 export function WhatsAppFloatButton({
   phoneNumber = "919540681934",
-  defaultMessage = "Hi Dj G-spark Team, I am visiting your official website and would like to inquire about concert passes and event booking.",
+  defaultMessage = "",
 }: WhatsAppFloatButtonProps) {
   const [showTooltip, setShowTooltip] = useState(true);
 
-  const encodedMessage = encodeURIComponent(defaultMessage);
-  const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedMessage}`;
+  const whatsappUrl = defaultMessage
+    ? `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(defaultMessage)}`
+    : `https://api.whatsapp.com/send?phone=${phoneNumber}`;
 
   return (
     <aside
