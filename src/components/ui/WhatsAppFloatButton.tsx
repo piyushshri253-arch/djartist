@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { WhatsAppIcon } from "@/components/ui/SocialIcons";
-import { X, Sparkles } from "lucide-react";
+import { X } from "lucide-react";
 
 interface WhatsAppFloatButtonProps {
   phoneNumber?: string;
@@ -54,16 +54,12 @@ export function WhatsAppFloatButton({
             </div>
 
             <div className="min-w-0 pr-1">
-              <div className="flex items-center gap-1.5 mb-0.5">
-                <span className="text-[10px] font-mono font-bold tracking-widest text-[#25D366] uppercase flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-[#25D366]" />
-                  <span>VIP CONCIERGE</span>
-                </span>
-                <span className="w-1.5 h-1.5 rounded-full bg-[#25D366]" />
-                <span className="text-[10px] text-slate-400 font-mono">ONLINE</span>
+              <div className="flex items-center gap-1.5 mb-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#25D366] animate-pulse" />
+                <span className="text-[10px] text-[#25D366] font-mono font-bold uppercase tracking-wider">ONLINE</span>
               </div>
               <p className="text-xs font-bold text-white leading-snug">
-                Need VIP Passes or Booking Info?
+                Check availability or book now
               </p>
               <p className="text-[11px] text-slate-400 mt-0.5 leading-tight">
                 Chat with our official team directly on WhatsApp.
