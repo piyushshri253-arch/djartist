@@ -10,9 +10,37 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Dj G-Spark | Feel The Spark. Enter The Sound.",
+  metadataBase: new URL("https://www.djgspark.com"),
+  title: "Dj G-Spark | Official Website | One of The Best DJ From Delhi (India)",
   description:
-    "Official 3D virtual concert tour and platform for international electronic music artist Dj G-Spark. High-octane arena tour, original releases, and live tour dates.",
+    "Official website of Dj G-Spark (Gaurav Singh) — Top open-format DJ and music producer from Delhi (India). Explore upcoming shows, music releases, event gallery, and live bookings.",
+  alternates: {
+    canonical: "https://www.djgspark.com",
+  },
+  openGraph: {
+    title: "Dj G-Spark | One of The Best DJ From Delhi (India)",
+    description:
+      "Official website of Dj G-Spark. Explore live tour dates, music releases, festival drops, and event booking.",
+    url: "https://www.djgspark.com",
+    siteName: "Dj G-Spark",
+    images: [
+      {
+        url: "/images/DJ-G-SPARK-Light.png",
+        width: 1200,
+        height: 630,
+        alt: "Dj G-Spark Official Logo",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Dj G-Spark | Official Website",
+    description:
+      "Official website of Dj G-Spark — Top open-format DJ and music producer from Delhi (India).",
+    images: ["/images/DJ-G-SPARK-Light.png"],
+  },
   icons: {
     icon: "/images/DJ-G-SPARK-Light.png",
     apple: "/images/DJ-G-SPARK-Light.png",

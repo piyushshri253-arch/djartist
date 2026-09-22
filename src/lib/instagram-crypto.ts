@@ -201,13 +201,19 @@ export function getMetaConfig(requestUrl?: string): {
     process.env.META_APP_SECRET ||
     "68cd244f9cbc4cf416158149b3e6f3d6";
 
-  let redirectUri =
-    process.env.INSTAGRAM_REDIRECT_URI ||
-    "https://djart.vercel.app/api/admin/social/instagram/callback";
+  let redirectUri = process.env.INSTAGRAM_REDIRECT_URI?.trim();
 
   if (!redirectUri && requestUrl) {
-    const urlObj = new URL(requestUrl);
-    redirectUri = `${urlObj.protocol}//${urlObj.host}/api/admin/social/instagram/callback`;
+    try {
+      const urlObj = new URL(requestUrl);
+      redirectUri = `${urlObj.protocol}//${urlObj.host}/api/admin/social/instagram/callback`;
+    } catch {
+      // ignore parsing error
+    }
+  }
+
+  if (!redirectUri) {
+    redirectUri = "https://www.djgspark.com/api/admin/social/instagram/callback";
   }
 
   return {
