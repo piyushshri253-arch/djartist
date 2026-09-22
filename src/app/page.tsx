@@ -50,7 +50,7 @@ const SOCIAL_PLATFORMS = [
     handle: "@djg-spark",
     stat: "18.5M+",
     metric: "TOTAL WATCH VIEWS",
-    subtext: "40K+ Subscribers • 4K HDR Live Sets & Official Tour Aftermovies",
+    subtext: "40K+ Subscribers • 4K HDR Live Sets & Official Shows Aftermovies",
     link: "https://youtube.com/@djg-spark",
     badge: "OFFICIAL CHANNEL",
     accent: "#FF0000",
@@ -76,7 +76,7 @@ const SOCIAL_PLATFORMS = [
     handle: "Dj G-spark",
     stat: "100k+",
     metric: "COMMUNITY REACH & UPDATES",
-    subtext: "Official Tour Announcements, Concert Photos & Live Updates",
+    subtext: "Official Shows Announcements, Events Photos & Live Updates",
     link: "https://www.facebook.com/share/1BxXiXLitH/",
     badge: "OFFICIAL PAGE",
     accent: "#1877F2",
@@ -1247,7 +1247,7 @@ export default function HomePage() {
             <div>
               <div className="inline-flex items-center gap-2 text-xs font-mono tracking-[0.24em] text-[#00B4D8] uppercase mb-3">
                 <Play className="w-3.5 h-3.5" />
-                <span>4K CINEMATIC RECORDINGS // CONCERT AFTERMOVIES</span>
+                <span>4K CINEMATIC RECORDINGS // EVENTS AFTERMOVIES</span>
               </div>
               <h2 className="font-heading font-black text-3xl sm:text-5xl tracking-[-0.02em] uppercase text-white">
                 LATEST <span className="text-[#00E5FF]">VIDEOS</span>
@@ -1258,7 +1258,7 @@ export default function HomePage() {
               onClick={() => setActiveVideoModal("/images/tour_09_arena_climax.mp4")}
               className="inline-flex items-center gap-2 text-xs font-heading font-bold tracking-[0.2em] uppercase text-[#929292] hover:text-[#00E5FF] transition-colors"
             >
-              <span>WATCH ARENA FINALE →</span>
+              <span>WATCH SHOWS FINALE →</span>
             </button>
           </div>
 
@@ -1321,7 +1321,7 @@ export default function HomePage() {
             <div>
               <div className="inline-flex items-center gap-2 text-xs font-mono tracking-[0.24em] text-[#00B4D8] uppercase mb-3">
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>TOUR PHOTOGRAPHY // LIVE ON STAGE</span>
+                <span>SHOWS PHOTOGRAPHY // LIVE ON STAGE</span>
               </div>
               <h2 className="font-heading font-black text-3xl sm:text-5xl tracking-[-0.02em] uppercase text-white">
                 PHOTO <span className="text-[#00E5FF]">GALLERY</span>
