@@ -22,8 +22,9 @@ export default function ReviewModal({ isOpen, onClose, onSubmitted }: ReviewModa
   const [name, setName] = useState("");
   const [role, setRole] = useState("Festival Attendee");
   const [customRole, setCustomRole] = useState("");
+  const [category, setCategory] = useState<"performance" | "punctuality" | "behaviour">("performance");
   const [organization, setOrganization] = useState("");
-  const [event, setEvent] = useState("Sunburn Goa Mainstage");
+  const [event, setEvent] = useState("Delhi Live Concert");
   const [customEvent, setCustomEvent] = useState("");
   const [rating, setRating] = useState(5);
   const [hoverRating, setHoverRating] = useState(0);
@@ -60,6 +61,7 @@ export default function ReviewModal({ isOpen, onClose, onSubmitted }: ReviewModa
         body: JSON.stringify({
           name: name.trim(),
           role: finalRole,
+          category,
           organization: organization.trim(),
           event: finalEvent,
           rating,
@@ -207,6 +209,33 @@ export default function ReviewModal({ isOpen, onClose, onSubmitted }: ReviewModa
               </div>
             </div>
 
+            {/* Category Selector (Matching Homepage Tabs) */}
+            <div className="mb-4">
+              <label className="block text-xs font-mono tracking-[0.16em] text-[#AAAAAA] uppercase mb-2">
+                REVIEW CATEGORY *
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { id: "performance", label: "Performance" },
+                  { id: "punctuality", label: "Punctuality" },
+                  { id: "behaviour", label: "Behaviour" },
+                ].map((cat) => (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => setCategory(cat.id as any)}
+                    className={`py-2 px-3 rounded-xl text-xs font-mono tracking-wider uppercase transition-all ${
+                      category === cat.id
+                        ? "bg-[#00E5FF] text-black font-bold shadow-[0_0_15px_rgba(0,229,255,0.4)]"
+                        : "bg-white/5 border border-white/10 text-white/70 hover:text-white"
+                    }`}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Inputs Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div>
@@ -262,29 +291,24 @@ export default function ReviewModal({ isOpen, onClose, onSubmitted }: ReviewModa
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div>
                 <label className="block text-xs font-mono tracking-[0.16em] text-[#AAAAAA] uppercase mb-1.5">
-                  EVENT / CONCERT ATTENDED
+                  EVENT / OCCASION ATTENDED
                 </label>
-                <select
+                <input
+                  type="text"
+                  placeholder="e.g. Delhi Wedding / Club Night / Concert"
                   value={event}
                   onChange={(e) => setEvent(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#141420] border border-white/15 focus:border-[#00E5FF] text-white text-sm focus:outline-none transition-colors"
-                >
-                  <option value="Sunburn Goa Mainstage">Sunburn Goa Mainstage</option>
-                  <option value="Coca-Cola Arena Dubai">Coca-Cola Arena Dubai</option>
-                  <option value="Tomorrowland Sunset Stage">Tomorrowland Sunset Stage</option>
-                  <option value="Spark Theory Delhi Arena">Spark Theory Delhi Arena</option>
-                  <option value="Mumbai Superdome Headline">Mumbai Superdome Headline</option>
-                  <option value="Other">Other Concert / Festival</option>
-                </select>
+                  className="w-full px-4 py-2.5 rounded-xl bg-[#141420] border border-white/15 focus:border-[#00E5FF] text-white text-sm placeholder-white/30 focus:outline-none transition-colors"
+                />
               </div>
 
               <div>
                 <label className="block text-xs font-mono tracking-[0.16em] text-[#AAAAAA] uppercase mb-1.5">
-                  CITY OR COMPANY (OPTIONAL)
+                  CITY OR VENUE (OPTIONAL)
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. New Delhi / Percept"
+                  placeholder="e.g. New Delhi / Aerocity"
                   value={organization}
                   onChange={(e) => setOrganization(e.target.value)}
                   className="w-full px-4 py-2.5 rounded-xl bg-[#141420] border border-white/15 focus:border-[#00E5FF] text-white text-sm placeholder-white/30 focus:outline-none transition-colors"

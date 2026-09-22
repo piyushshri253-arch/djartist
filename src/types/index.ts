@@ -117,7 +117,7 @@ export interface ReviewItem {
   quote: string;
   comment?: string;
   date: string;
-  category: "promoter" | "critic" | "fan" | "reader" | "attendee" | "all";
+  category: "promoter" | "critic" | "fan" | "reader" | "attendee" | "all" | "performance" | "punctuality" | "behaviour" | string;
   status: "pending" | "approved" | "rejected";
   createdAt: string;
   updatedAt?: string;

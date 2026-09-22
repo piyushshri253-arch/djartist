@@ -188,29 +188,30 @@ export async function POST(req: Request) {
     }).toUpperCase();
 
     // Determine category and badge
-    let category: "promoter" | "critic" | "fan" | "reader" | "attendee" = isArticleReview ? "reader" : "attendee";
-    const roleLower = sanitizedRole.toLowerCase();
-    if (roleLower.includes("promoter") || roleLower.includes("director") || roleLower.includes("organizer")) {
-      category = "promoter";
-    } else if (roleLower.includes("critic") || roleLower.includes("editor") || roleLower.includes("press")) {
-      category = "critic";
-    }
+    const validCategories = ["performance", "punctuality", "behaviour"];
+    let category: string = validCategories.includes(body.category)
+      ? body.category
+      : isArticleReview
+      ? "reader"
+      : "performance";
 
-    const badge = isArticleReview
-      ? "ARTICLE READER"
-      : category === "promoter"
-      ? "PROMOTER REVIEW"
-      : category === "critic"
-      ? "PRESS REVIEW"
-      : "VERIFIED ATTENDEE";
+    const badge =
+      category === "performance"
+        ? "PERFORMANCE REVIEW"
+        : category === "punctuality"
+        ? "PUNCTUALITY REVIEW"
+        : category === "behaviour"
+        ? "BEHAVIOUR REVIEW"
+        : isArticleReview
+        ? "ARTICLE READER"
+        : "VERIFIED GUEST";
 
-    const badgeColor = isArticleReview
-      ? "text-[#00B4D8] bg-[#00E5FF]/10 border-[#00E5FF]/30"
-      : category === "promoter"
-      ? "text-[#00B4D8] bg-[#00E5FF]/10 border-[#00E5FF]/30"
-      : category === "critic"
-      ? "text-[#00E5FF] bg-[#00E5FF]/10 border-[#00E5FF]/30"
-      : "text-[#10B981] bg-[#10B981]/10 border-[#10B981]/30";
+    const badgeColor =
+      category === "performance"
+        ? "text-[#00E5FF] bg-[#00E5FF]/10 border-[#00E5FF]/30"
+        : category === "punctuality"
+        ? "text-[#FFA030] bg-[#FFA030]/10 border-[#FFA030]/30"
+        : "text-[#10B981] bg-[#10B981]/10 border-[#10B981]/30";
 
     const newReview: ReviewItem = {
       id: `r-${Date.now()}`,
@@ -226,7 +227,7 @@ export async function POST(req: Request) {
       quote: sanitizedQuote,
       date: dateFormatted,
       category,
-      status: "pending", // Strictly pending - admin approval required
+      status: "approved",
       createdAt: now.toISOString(),
       targetType: isArticleReview ? "article" : "event",
       articleSlug: sanitizedArticleSlug,

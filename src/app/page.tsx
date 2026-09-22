@@ -38,6 +38,7 @@ import { TicketModal } from "@/components/ui/TicketModal";
 import { WhatsAppFloatButton } from "@/components/ui/WhatsAppFloatButton";
 import ReviewModal from "@/components/reviews/ReviewModal";
 import { ReviewItem } from "@/types";
+import { isEventPast } from "@/lib/eventsHelper";
 import rawPastEvents from "@/data/past-events.json";
 
 const INITIAL_HOMEPAGE_PAST_EVENTS = (rawPastEvents as any[]).slice(0, 4);
@@ -146,100 +147,6 @@ const UPCOMING_EVENTS = [
     status: "VIP FAST TRACK",
     poster: "/images/poster_dubai.jpg",
     ticketLink: "/booking",
-  },
-];
-
-// Artist Reviews & Industry Testimonials Data
-const ARTIST_REVIEWS = [
-  {
-    id: "r1",
-    name: "Karan Singh",
-    role: "Festival Director",
-    organization: "Percept Live • Sunburn Festival",
-    initials: "KS",
-    rating: 5,
-    badge: "FESTIVAL PROMOTER",
-    badgeColor: "text-[#00B4D8] bg-[#00E5FF]/10 border-[#00E5FF]/30",
-    event: "SUNBURN GOA MAINSTAGE",
-    quote:
-      "DJ G Spark's sunset headline set at Sunburn was legendary. 55,000 people moving in unison to his progressive drops and laser show. His crowd control, sound design, and live remixing are on par with the biggest global festival acts.",
-    date: "JANUARY 2026",
-    category: "promoter",
-  },
-  {
-    id: "r2",
-    name: "Liam Harrison",
-    role: "Senior Electronic Music Critic",
-    organization: "DJ Mag International (UK)",
-    initials: "LH",
-    rating: 5,
-    badge: "MUSIC PRESS",
-    badgeColor: "text-[#00E5FF] bg-[#00E5FF]/10 border-[#00E5FF]/30",
-    event: "DJ MAG WORLD RANKING REVIEW",
-    quote:
-      "Ranked among the most thrilling breakthrough arena headliners of 2026. G Spark doesn't just mix tracks; he constructs a colossal sonic cathedral of driving analog basslines, cinematic melodies, and synchronized light architecture.",
-    date: "FEBRUARY 2026",
-    category: "critic",
-  },
-  {
-    id: "r3",
-    name: "Tariq Al-Mansoor",
-    role: "Director of Live Entertainment",
-    organization: "Coca-Cola Arena Dubai",
-    initials: "TA",
-    rating: 5,
-    badge: "ARENA OPERATOR",
-    badgeColor: "text-[#00B4D8] bg-[#00E5FF]/10 border-[#00E5FF]/30",
-    event: "WORLD TOUR ARENA SPECTACLE",
-    quote:
-      "The acoustic precision and stadium production that G Spark delivered at Coca-Cola Arena set a new benchmark for electronic touring. 17,000 fans completely entranced from the opening ID to the final pyro blast. A true professional.",
-    date: "JANUARY 2026",
-    category: "promoter",
-  },
-  {
-    id: "r4",
-    name: "Ananya Sharma",
-    role: "Culture & Music Editor",
-    organization: "Rolling Stone Magazine",
-    initials: "AS",
-    rating: 5,
-    badge: "EDITORIAL REVIEW",
-    badgeColor: "text-[#00E5FF] bg-[#00E5FF]/10 border-[#00E5FF]/30",
-    event: "SPARK THEORY ALBUM TOUR",
-    quote:
-      "A masterclass in emotional buildup, tension release, and stadium euphoria. DJ G Spark is the rare producer whose live hybrid setup elevates raw festival power into pure art. One of the undisputed torchbearers of progressive electronic music.",
-    date: "DECEMBER 2025",
-    category: "critic",
-  },
-  {
-    id: "r5",
-    name: "Marc Van Der Bilt",
-    role: "Stage Operations Director",
-    organization: "Tomorrowland European Circuit",
-    initials: "MB",
-    rating: 5,
-    badge: "STAGE CURATOR",
-    badgeColor: "text-[#00B4D8] bg-[#00E5FF]/10 border-[#00E5FF]/30",
-    event: "TOMORROWLAND SUNSET ARENA",
-    quote:
-      "G Spark command of the 4-deck CDJ-3000 setup with custom analog modular synths brought an electric, unpredictable dynamism. The crowd was screaming for an encore even 15 minutes after curfew. Electrifying artist.",
-    date: "SEPTEMBER 2025",
-    category: "promoter",
-  },
-  {
-    id: "r6",
-    name: "Rohit Malhotra",
-    role: "Verified Superfan & Producer",
-    organization: "Attended 8 Tour Shows Across 3 Countries",
-    initials: "RM",
-    rating: 5,
-    badge: "VERIFIED FAN",
-    badgeColor: "text-[#10B981] bg-[#10B981]/10 border-[#10B981]/30",
-    event: "MUMBAI & DUBAI ARENA SHOWS",
-    quote:
-      "I've attended electronic concerts all over the world, but DJ G Spark's energy and track selection are completely unmatched. The unreleased edits he drops live give you chills. Best live concert experience of my life, hands down!",
-    date: "AUGUST 2026",
-    category: "fan",
   },
 ];
 
@@ -406,7 +313,7 @@ export default function HomePage() {
   const [galleryFilter, setGalleryFilter] = useState("all");
   const [reviewCategory, setReviewCategory] = useState("all");
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-  const [reviewsList, setReviewsList] = useState<ReviewItem[]>(ARTIST_REVIEWS as any);
+  const [reviewsList, setReviewsList] = useState<ReviewItem[]>([]);
   const [upcomingEvents, setUpcomingEvents] = useState<any[]>(UPCOMING_EVENTS);
   const [homepagePastEvents, setHomepagePastEvents] = useState<any[]>(INITIAL_HOMEPAGE_PAST_EVENTS);
   const [latestPosts, setLatestPosts] = useState<any[]>(LATEST_POSTS);
@@ -545,13 +452,40 @@ export default function HomePage() {
 
   const rawReels = instagramData.reels;
   const featuredReels = rawReels;
+  const liveUpcomingEvents = upcomingEvents.filter(
+    (ev) => !isEventPast(ev.date || ev.dateDisplay)
+  );
+  const totalShowsCount = 250 + (homepagePastEvents?.length || 0);
+  const averageRating =
+    reviewsList.length > 0
+      ? (
+          reviewsList.reduce((acc, r) => acc + (r.rating || 5), 0) /
+          reviewsList.length
+        ).toFixed(2)
+      : "5.00";
+
 
   return (
     <div className="bg-[#0B0C10] text-[#F5F6FA] min-h-screen overflow-x-hidden selection:bg-[#00E5FF] selection:text-black">
       {/* ============================================================ */}
       {/* 1. HERO VIDEO BANNER                                          */}
       {/* ============================================================ */}
-      <section className="relative w-full min-h-[92vh] sm:min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-16">
+
+      <section className="relative w-full min-h-[92vh] sm:min-h-screen flex items-center justify-center overflow-hidden pt-28 pb-16">
+        {/* Top Reach Marquee Ticker (Inspired by Reference Photo) */}
+        <div className="absolute top-0 left-0 right-0 z-20 w-full bg-[#10B981] text-black py-2 overflow-hidden whitespace-nowrap font-heading font-black text-xs sm:text-sm tracking-[0.2em] uppercase shadow-[0_0_20px_rgba(16,185,129,0.4)]">
+          <div className="flex w-max animate-marquee space-x-8">
+            <span>30 MILLION+ REACH • 150K+ FOLLOWERS • 3000+ WEDDINGS • 250+ SHOWS &amp; EVENTS • TOP WEDDING &amp; CLUB DJ</span>
+            <span>•</span>
+            <span>30 MILLION+ REACH • 150K+ FOLLOWERS • 3000+ WEDDINGS • 250+ SHOWS &amp; EVENTS • TOP WEDDING &amp; CLUB DJ</span>
+            <span>•</span>
+            <span>30 MILLION+ REACH • 150K+ FOLLOWERS • 3000+ WEDDINGS • 250+ SHOWS &amp; EVENTS • TOP WEDDING &amp; CLUB DJ</span>
+            <span>•</span>
+            <span>30 MILLION+ REACH • 150K+ FOLLOWERS • 3000+ WEDDINGS • 250+ SHOWS &amp; EVENTS • TOP WEDDING &amp; CLUB DJ</span>
+          </div>
+        </div>
+
+
         {/* Full-bleed background video */}
         <video
           ref={heroVideoRef}
@@ -581,20 +515,15 @@ export default function HomePage() {
             </span>
           </div> */}
 
-          {/* Main Hero Headline */}
-          <h1 className="font-heading font-black text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-[-0.03em] uppercase leading-[0.95] max-w-5xl mb-4 text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.9)]">
-            DJ G-Spark <br />
-           
-          </h1>
-           <span className="text-transparent  bg-clip-text bg-gradient-to-r from-[#00E5FF] via-[#FFA030] to-[#00B4D8] text-4sm">
-              One Of The Best DJ From Delhi (INDIA)
-            </span>
-            
-
-          {/* Tagline / Subtitle */}
-          {/* <p className="max-w-2xl text-sm sm:text-base md:text-lg text-[#CCCCCC] font-normal leading-relaxed mb-8 sm:mb-10 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
-            Pioneering the hybrid signature of progressive electronic melodies and driving stadium energy. Experience the international concert spectacle live across 4 continents.
-          </p> */}
+          {/* Main Hero Headline (Centered, matching reference image) */}
+          <div className="flex flex-col items-center text-center max-w-5xl mx-auto mb-6 sm:mb-8">
+            <h1 className="font-heading font-black text-5xl sm:text-7xl md:text-8xl lg:text-9xl tracking-[0.04em] sm:tracking-[0.08em] uppercase leading-none text-white drop-shadow-[0_8px_35px_rgba(0,0,0,0.95)]">
+              DJ G-SPARK
+            </h1>
+            <p className="mt-3 sm:mt-4 text-xs sm:text-base md:text-xl font-heading font-bold tracking-[0.2em] sm:tracking-[0.35em] text-white/95 uppercase drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)]">
+              ONE OF THE BEST DJ FROM DELHI (INDIA)
+            </p>
+          </div>
 
           {/* Interactive CTAs */}
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
@@ -665,242 +594,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============================================================ */}
-      {/* 2. UPCOMING EVENTS SECTION (#events)                          */}
-      {/* ============================================================ */}
-      <section id="events" className="relative py-24 sm:py-32 border-t border-white/[0.08] bg-[#0B0C10]">
-        <div className="max-w-[1400px] mx-auto px-6 sm:px-10">
-          {/* Section Header */}
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12 sm:mb-16">
-            <div>
-             
-              <h2 className="font-heading font-black text-3xl sm:text-5xl tracking-[-0.02em] uppercase text-white">
-                UPCOMING <span className="text-[#00E5FF]">EVENTS</span>
-              </h2>
-            </div>
-
-            <Link
-              href="/events"
-              className="inline-flex items-center gap-2 text-xs font-heading font-bold tracking-[0.2em] uppercase text-[#8A8D93] hover:text-[#00E5FF] transition-colors group"
-            >
-              <span>VIEW ALL TOUR DATES</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </div>
-
-          {/* Event Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {upcomingEvents.map((event) => {
-              const dateDisplay = event.dateDisplay || event.date || "";
-              const dateParts = dateDisplay.trim().split(" ");
-              const day = event.day || dateParts[0] || "15";
-              const month = event.month || dateParts[1] || "DEC";
-              const poster = event.poster || event.image || "/images/past_event_crowd.jpg";
-              const eventSlug = event.slug || event.id;
-              const detailsLink = `/events/${eventSlug}`;
-              const badge = event.badge || (event.region ? `${event.region.toUpperCase()} ARENA TOUR` : "WORLD TOUR 2026");
-              const doors = event.doors || event.time || "07:00 PM IST";
-              const showPrice = event.showPrice !== false;
-              const inrPrice = event.priceINR ? `₹ ${Number(String(event.priceINR).replace(/[^0-9]/g, "")).toLocaleString("en-IN")}` : "₹ 2,499";
-              const usdPrice = event.priceUSD ? `$${event.priceUSD}` : "$35";
-
-              return (
-                <div
-                  key={event.id}
-                  className="group relative bg-[#1F2833] border border-white/[0.08] hover:border-[#00E5FF]/50 rounded-lg overflow-hidden transition-all duration-300 hover:shadow-[0_10px_35px_rgba(0, 229, 255, 0.15)] flex flex-col"
-                >
-                  {/* Poster Thumbnail Container (Clickable) */}
-                  <Link href={detailsLink} className="block relative aspect-[3/4] w-full overflow-hidden bg-black">
-                    <img
-                      src={poster}
-                      alt={`${event.city} Tour Poster`}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#1F2833] via-transparent to-black/40" />
-
-                    {/* Date Badge */}
-                    <div className="absolute top-3.5 left-3.5 w-12 h-12 rounded-md bg-black/80 border border-[#00E5FF]/40 backdrop-blur-md flex flex-col items-center justify-center text-center">
-                      <span className="font-heading font-black text-sm text-[#00E5FF] leading-none">
-                        {day}
-                      </span>
-                      <span className="text-[9px] font-mono uppercase tracking-wider text-white/80 leading-tight">
-                        {month}
-                      </span>
-                    </div>
-
-                    {/* Status Pill */}
-                    <div className="absolute top-3.5 right-3.5 px-2.5 py-1 rounded bg-[#00E5FF]/90 text-black text-[9px] font-mono uppercase tracking-widest font-bold">
-                      {event.status || "ONSALE NOW"}
-                    </div>
-                  </Link>
-
-                  {/* Event Details */}
-                  <div className="p-5 flex flex-col flex-grow justify-between">
-                    <div>
-                      <span className="text-[10px] font-mono tracking-[0.2em] text-[#00B4D8] uppercase block mb-1">
-                        {badge}
-                      </span>
-                      <h3 className="font-heading font-bold text-xl uppercase text-white mb-2 group-hover:text-[#00E5FF] transition-colors">
-                        <Link href={detailsLink}>
-                          {event.city}, {event.country}
-                        </Link>
-                      </h3>
-                      <div className="space-y-1.5 text-xs text-[#929292] font-mono mb-3">
-                        <div className="flex items-center gap-2">
-                          <MapPin className="w-3.5 h-3.5 text-[#00E5FF]" />
-                          <span className="truncate">{event.venue}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Clock className="w-3.5 h-3.5 text-white/50" />
-                          <span>DOORS: {doors}</span>
-                        </div>
-                      </div>
-
-                      {/* Pricing Tag */}
-                      <div className="mb-4 pt-2 border-t border-white/5">
-                        {showPrice ? (
-                          <div className="flex items-baseline justify-between">
-                            <span className="text-[10px] uppercase font-mono text-[#777]">Passes:</span>
-                            <div className="font-mono text-xs font-bold text-white">
-                              {inrPrice} <span className="text-[#00B4D8] text-[11px]">/ {usdPrice}</span>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="flex items-baseline justify-between">
-                            <span className="text-[10px] uppercase font-mono text-[#777]">Passes:</span>
-                            <span className="font-mono text-xs font-bold text-[#00FF88]">Reservation Only</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="grid grid-cols-2 gap-2">
-                      <Link
-                        href={detailsLink}
-                        className="py-2.5 rounded bg-white/5 hover:bg-white/10 border border-white/10 text-white font-heading font-bold text-[11px] tracking-[0.14em] uppercase transition-all flex items-center justify-center gap-1"
-                      >
-                        <span>Details</span>
-                        <ArrowRight className="w-3 h-3 text-[#00E5FF]" />
-                      </Link>
-                      <button
-                        type="button"
-                        onClick={() => setSelectedTicketEvent(event)}
-                        className="py-2.5 rounded bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black font-heading font-bold text-[11px] tracking-[0.14em] uppercase transition-all flex items-center justify-center gap-1 hover:shadow-[0_0_20px_rgba(0, 229, 255, 0.5)]"
-                      >
-                        <Ticket className="w-3 h-3" />
-                        <span>Passes</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================================ */}
-      {/* 2.5 PAST EVENTS SECTION (#past-events)                       */}
-      {/* Dynamically loads completed past events from the unified DB */}
-      {/* ============================================================ */}
-      <section id="past-events" className="relative py-24 sm:py-32 border-t border-white/[0.08] bg-[#0B0C10]">
-        <div className="max-w-[1400px] mx-auto px-6 sm:px-10">
-          {/* Section Header */}
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12 sm:mb-16">
-            <div>
-              <div className="inline-flex items-center gap-2 text-xs font-mono tracking-[0.24em] text-[#00B4D8] uppercase mb-3">
-                <Calendar className="w-3.5 h-3.5" />
-                {/* <span>CONCERT ARCHIVES // COMPLETED ARENA & FESTIVAL SETS</span> */}
-              </div>
-              <h2 className="font-heading font-black text-3xl sm:text-5xl tracking-[-0.02em] uppercase text-white">
-                PAST <span className="text-[#00E5FF]">EVENTS</span>
-              </h2>
-              {/* <p className="text-sm text-[#8A8D93] max-w-xl mt-2">
-                Relive the electric energy, full tracklists, and fan moments from completed headline tour dates worldwide.
-              </p> */}
-            </div>
-
-            <Link
-              href="/past-events"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white/5 hover:bg-[#00E5FF] hover:text-black border border-white/10 text-xs font-heading font-bold tracking-[0.2em] uppercase text-white transition-all group"
-            >
-              <span>VIEW ALL PAST EVENTS</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </div>
-
-          {/* Past Event Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {homepagePastEvents.map((event) => {
-              const eventSlug = event.slug || event.id;
-              const detailsLink = `/past-events/${eventSlug}`;
-              const year = event.date ? event.date.split("-")[0] : event.year || "ARCHIVE";
-
-              return (
-                <div
-                  key={event.id}
-                  className="group relative bg-[#1F2833] border border-white/[0.08] hover:border-[#00E5FF]/50 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-[0_10px_35px_rgba(0, 229, 255, 0.15)] flex flex-col justify-between"
-                >
-                  <div>
-                    {/* Event Image */}
-                    <Link href={detailsLink} className="block relative aspect-[4/3] w-full overflow-hidden bg-black">
-                      <img
-                        src={event.image || "/images/past_event_sunset.jpg"}
-                        alt={event.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#1F2833] via-transparent to-black/30" />
-                      
-                      <span className="absolute top-3 left-3 px-2.5 py-1 rounded bg-black/80 backdrop-blur-md text-[9px] font-mono uppercase tracking-wider text-[#00B4D8] font-bold border border-white/10">
-                        {year} ARCHIVE
-                      </span>
-
-                      <span className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md text-[9px] font-mono text-[#00FF88] border border-white/10">
-                        COMPLETED
-                      </span>
-                    </Link>
-
-                    {/* Content */}
-                    <div className="p-5">
-                      <span className="text-[11px] font-mono text-[#00B4D8] font-bold block mb-1">
-                        {event.dateDisplay || event.date}
-                      </span>
-                      <h3 className="font-heading font-bold text-lg uppercase text-white mb-2 group-hover:text-[#00E5FF] transition-colors leading-snug">
-                        <Link href={detailsLink}>
-                          {event.title}
-                        </Link>
-                      </h3>
-                      <div className="flex items-center gap-1.5 text-xs text-[#8A8D93] font-mono mb-3">
-                        <MapPin className="w-3.5 h-3.5 text-[#00E5FF] shrink-0" />
-                        <span className="truncate">{event.venue}, {event.city}</span>
-                      </div>
-                      <p className="text-xs text-[#8A8D93] line-clamp-2 leading-relaxed">
-                        {event.description || event.excerpt || event.summary || "Massive headline performance featuring high-speed RGB lasers and custom live VIP edits."}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Footer View Event Button */}
-                  <div className="p-5 pt-0">
-                    <Link
-                      href={detailsLink}
-                      className="w-full py-2.5 rounded-lg bg-white/5 hover:bg-[#00E5FF] text-white hover:text-black font-heading font-bold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 border border-white/10 group-hover:border-[#00E5FF]"
-                    >
-                      <span>View Event</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </Link>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================================ */}
-      {/* 3. ABOUT DJ G SPARK SECTION (#about)                          */}
-      {/* ============================================================ */}
       <section id="about" className="relative py-24 sm:py-32 border-t border-white/[0.08] bg-[#0B0C10]">
         <div className="max-w-[1400px] mx-auto px-6 sm:px-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
@@ -991,9 +684,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============================================================ */}
-      {/* 4. VIRAL SOCIAL MILESTONE SECTION (#social)                   */}
-      {/* ============================================================ */}
       <section id="social" className="relative py-24 sm:py-32 border-t border-white/[0.08] bg-[#07070b] overflow-hidden">
         {/* Ambient Backlight Glows */}
         <div className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[450px] bg-[#00E5FF]/12 rounded-full blur-[140px] pointer-events-none" />
@@ -1227,10 +917,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============================================================ */}
-      {/* INSTAGRAM VIRAL REELS SECTION (#instagram)                   */}
-      {/* If connected: display real reels; if not: clean empty state  */}
-      {/* ============================================================ */}
       <section id="instagram" className="relative py-24 sm:py-32 border-t border-white/[0.08] bg-[#08080d] overflow-hidden">
         {/* Ambient Glows */}
         <div className="absolute top-1/4 -left-20 w-[500px] h-[500px] bg-[#E1306C]/10 rounded-full blur-[140px] pointer-events-none" />
@@ -1428,9 +1114,438 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============================================================ */}
-      {/* 5. ARTIST REVIEWS & INDUSTRY ACCLAIM (#reviews)              */}
-      {/* ============================================================ */}
+      <section id="events" className="relative py-24 sm:py-32 border-t border-white/[0.08] bg-[#0B0C10]">
+        <div className="max-w-[1400px] mx-auto px-6 sm:px-10">
+          {/* Section Header */}
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12 sm:mb-16">
+            <div>
+             
+              <h2 className="font-heading font-black text-3xl sm:text-5xl tracking-[-0.02em] uppercase text-white">
+                UPCOMING <span className="text-[#00E5FF]">EVENTS</span>
+              </h2>
+            </div>
+
+            <Link
+              href="/events"
+              className="inline-flex items-center gap-2 text-xs font-heading font-bold tracking-[0.2em] uppercase text-[#8A8D93] hover:text-[#00E5FF] transition-colors group"
+            >
+              <span>VIEW ALL TOUR DATES</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+
+          {/* Event Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {liveUpcomingEvents.map((event) => {
+              const dateDisplay = event.dateDisplay || event.date || "";
+              const dateParts = dateDisplay.trim().split(" ");
+              const day = event.day || dateParts[0] || "15";
+              const month = event.month || dateParts[1] || "DEC";
+              const poster = event.poster || event.image || "/images/past_event_crowd.jpg";
+              const eventSlug = event.slug || event.id;
+              const detailsLink = `/events/${eventSlug}`;
+              const badge = event.badge || (event.region ? `${event.region.toUpperCase()} ARENA TOUR` : "WORLD TOUR 2026");
+              const doors = event.doors || event.time || "07:00 PM IST";
+              const showPrice = event.showPrice !== false;
+              const inrPrice = event.priceINR ? `₹ ${Number(String(event.priceINR).replace(/[^0-9]/g, "")).toLocaleString("en-IN")}` : "₹ 2,499";
+              const usdPrice = event.priceUSD ? `$${event.priceUSD}` : "$35";
+
+              return (
+                <div
+                  key={event.id}
+                  className="group relative bg-[#1F2833] border border-white/[0.08] hover:border-[#00E5FF]/50 rounded-lg overflow-hidden transition-all duration-300 hover:shadow-[0_10px_35px_rgba(0, 229, 255, 0.15)] flex flex-col"
+                >
+                  {/* Poster Thumbnail Container (Clickable) */}
+                  <Link href={detailsLink} className="block relative aspect-[3/4] w-full overflow-hidden bg-black">
+                    <img
+                      src={poster}
+                      alt={`${event.city} Tour Poster`}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#1F2833] via-transparent to-black/40" />
+
+                    {/* Date Badge */}
+                    <div className="absolute top-3.5 left-3.5 w-12 h-12 rounded-md bg-black/80 border border-[#00E5FF]/40 backdrop-blur-md flex flex-col items-center justify-center text-center">
+                      <span className="font-heading font-black text-sm text-[#00E5FF] leading-none">
+                        {day}
+                      </span>
+                      <span className="text-[9px] font-mono uppercase tracking-wider text-white/80 leading-tight">
+                        {month}
+                      </span>
+                    </div>
+
+                    {/* Status Pill */}
+                    <div className="absolute top-3.5 right-3.5 px-2.5 py-1 rounded bg-[#00E5FF]/90 text-black text-[9px] font-mono uppercase tracking-widest font-bold">
+                      {event.status || "ONSALE NOW"}
+                    </div>
+                  </Link>
+
+                  {/* Event Details */}
+                  <div className="p-5 flex flex-col flex-grow justify-between">
+                    <div>
+                      <span className="text-[10px] font-mono tracking-[0.2em] text-[#00B4D8] uppercase block mb-1">
+                        {badge}
+                      </span>
+                      <h3 className="font-heading font-bold text-xl uppercase text-white mb-2 group-hover:text-[#00E5FF] transition-colors">
+                        <Link href={detailsLink}>
+                          {event.city}, {event.country}
+                        </Link>
+                      </h3>
+                      <div className="space-y-1.5 text-xs text-[#929292] font-mono mb-3">
+                        <div className="flex items-center gap-2">
+                          <MapPin className="w-3.5 h-3.5 text-[#00E5FF]" />
+                          <span className="truncate">{event.venue}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Clock className="w-3.5 h-3.5 text-white/50" />
+                          <span>DOORS: {doors}</span>
+                        </div>
+                      </div>
+
+                      {/* Pricing Tag */}
+                      <div className="mb-4 pt-2 border-t border-white/5">
+                        {showPrice ? (
+                          <div className="flex items-baseline justify-between">
+                            <span className="text-[10px] uppercase font-mono text-[#777]">Passes:</span>
+                            <div className="font-mono text-xs font-bold text-white">
+                              {inrPrice} <span className="text-[#00B4D8] text-[11px]">/ {usdPrice}</span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex items-baseline justify-between">
+                            <span className="text-[10px] uppercase font-mono text-[#777]">Passes:</span>
+                            <span className="font-mono text-xs font-bold text-[#00FF88]">Reservation Only</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="grid grid-cols-2 gap-2">
+                      <Link
+                        href={detailsLink}
+                        className="py-2.5 rounded bg-white/5 hover:bg-white/10 border border-white/10 text-white font-heading font-bold text-[11px] tracking-[0.14em] uppercase transition-all flex items-center justify-center gap-1"
+                      >
+                        <span>Details</span>
+                        <ArrowRight className="w-3 h-3 text-[#00E5FF]" />
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedTicketEvent(event)}
+                        className="py-2.5 rounded bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black font-heading font-bold text-[11px] tracking-[0.14em] uppercase transition-all flex items-center justify-center gap-1 hover:shadow-[0_0_20px_rgba(0, 229, 255, 0.5)]"
+                      >
+                        <Ticket className="w-3 h-3" />
+                        <span>Passes</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section id="past-events" className="relative py-24 sm:py-32 border-t border-white/[0.08] bg-[#0B0C10]">
+        <div className="max-w-[1400px] mx-auto px-6 sm:px-10">
+          {/* Section Header */}
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12 sm:mb-16">
+            <div>
+              <div className="inline-flex items-center gap-2 text-xs font-mono tracking-[0.24em] text-[#00B4D8] uppercase mb-3">
+                <Calendar className="w-3.5 h-3.5" />
+                {/* <span>CONCERT ARCHIVES // COMPLETED ARENA & FESTIVAL SETS</span> */}
+              </div>
+              <h2 className="font-heading font-black text-3xl sm:text-5xl tracking-[-0.02em] uppercase text-white">
+                PAST <span className="text-[#00E5FF]">EVENTS</span>
+              </h2>
+              {/* <p className="text-sm text-[#8A8D93] max-w-xl mt-2">
+                Relive the electric energy, full tracklists, and fan moments from completed headline tour dates worldwide.
+              </p> */}
+            </div>
+
+            <Link
+              href="/past-events"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white/5 hover:bg-[#00E5FF] hover:text-black border border-white/10 text-xs font-heading font-bold tracking-[0.2em] uppercase text-white transition-all group"
+            >
+              <span>VIEW ALL PAST EVENTS</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+
+          {/* Past Event Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {homepagePastEvents.map((event) => {
+              const eventSlug = event.slug || event.id;
+              const detailsLink = `/past-events/${eventSlug}`;
+              const year = event.date ? event.date.split("-")[0] : event.year || "ARCHIVE";
+
+              return (
+                <div
+                  key={event.id}
+                  className="group relative bg-[#1F2833] border border-white/[0.08] hover:border-[#00E5FF]/50 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-[0_10px_35px_rgba(0, 229, 255, 0.15)] flex flex-col justify-between"
+                >
+                  <div>
+                    {/* Event Image */}
+                    <Link href={detailsLink} className="block relative aspect-[4/3] w-full overflow-hidden bg-black">
+                      <img
+                        src={event.image || "/images/past_event_sunset.jpg"}
+                        alt={event.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#1F2833] via-transparent to-black/30" />
+                      
+                      <span className="absolute top-3 left-3 px-2.5 py-1 rounded bg-black/80 backdrop-blur-md text-[9px] font-mono uppercase tracking-wider text-[#00B4D8] font-bold border border-white/10">
+                        {year} ARCHIVE
+                      </span>
+
+                      <span className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md text-[9px] font-mono text-[#00FF88] border border-white/10">
+                        COMPLETED
+                      </span>
+                    </Link>
+
+                    {/* Content */}
+                    <div className="p-5">
+                      <span className="text-[11px] font-mono text-[#00B4D8] font-bold block mb-1">
+                        {event.dateDisplay || event.date}
+                      </span>
+                      <h3 className="font-heading font-bold text-lg uppercase text-white mb-2 group-hover:text-[#00E5FF] transition-colors leading-snug">
+                        <Link href={detailsLink}>
+                          {event.title}
+                        </Link>
+                      </h3>
+                      <div className="flex items-center gap-1.5 text-xs text-[#8A8D93] font-mono mb-3">
+                        <MapPin className="w-3.5 h-3.5 text-[#00E5FF] shrink-0" />
+                        <span className="truncate">{event.venue}, {event.city}</span>
+                      </div>
+                      <p className="text-xs text-[#8A8D93] line-clamp-2 leading-relaxed">
+                        {event.description || event.excerpt || event.summary || "Massive headline performance featuring high-speed RGB lasers and custom live VIP edits."}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Footer View Event Button */}
+                  <div className="p-5 pt-0">
+                    <Link
+                      href={detailsLink}
+                      className="w-full py-2.5 rounded-lg bg-white/5 hover:bg-[#00E5FF] text-white hover:text-black font-heading font-bold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 border border-white/10 group-hover:border-[#00E5FF]"
+                    >
+                      <span>View Event</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section id="videos" className="relative py-24 sm:py-32 border-t border-white/[0.08] bg-[#0B0C10]">
+        <div className="max-w-[1400px] mx-auto px-6 sm:px-10">
+          {/* Section Header */}
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12 sm:mb-16">
+            <div>
+              <div className="inline-flex items-center gap-2 text-xs font-mono tracking-[0.24em] text-[#00B4D8] uppercase mb-3">
+                <Play className="w-3.5 h-3.5" />
+                <span>4K CINEMATIC RECORDINGS // CONCERT AFTERMOVIES</span>
+              </div>
+              <h2 className="font-heading font-black text-3xl sm:text-5xl tracking-[-0.02em] uppercase text-white">
+                LATEST <span className="text-[#00E5FF]">VIDEOS</span>
+              </h2>
+            </div>
+
+            <button
+              onClick={() => setActiveVideoModal("/images/tour_09_arena_climax.mp4")}
+              className="inline-flex items-center gap-2 text-xs font-heading font-bold tracking-[0.2em] uppercase text-[#929292] hover:text-[#00E5FF] transition-colors"
+            >
+              <span>WATCH ARENA FINALE →</span>
+            </button>
+          </div>
+
+          {/* Videos Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {videoList.map((video) => (
+              <div
+                key={video.id}
+                onClick={() => setActiveVideoModal(video.videoSrc)}
+                className="group relative bg-[#0c0c10] border border-white/[0.08] hover:border-[#00E5FF]/50 rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-[0_10px_35px_rgba(0, 229, 255, 0.2)] flex flex-col"
+              >
+                {/* Video Thumbnail */}
+                <div className="relative aspect-video w-full overflow-hidden bg-black">
+                  <Image
+                    src={video.thumbnail}
+                    alt={video.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors" />
+
+                  {/* Play Icon Center */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-full bg-[#00E5FF] group-hover:scale-110 group-hover:bg-white text-black flex items-center justify-center shadow-[0_0_20px_rgba(0, 229, 255, 0.6)] transition-all">
+                      <Play className="w-5 h-5 fill-black ml-0.5" />
+                    </div>
+                  </div>
+
+                  {/* Duration Badge */}
+                  <div className="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded bg-black/80 text-white font-mono text-[10px] tracking-wider border border-white/10">
+                    {video.duration}
+                  </div>
+                </div>
+
+                {/* Video Info */}
+                <div className="p-4 flex-grow flex flex-col justify-between">
+                  <div>
+                    <span className="text-[10px] font-mono tracking-[0.2em] text-[#00B4D8] uppercase block mb-1">
+                      {video.tag}
+                    </span>
+                    <h4 className="font-heading font-bold text-sm uppercase text-white group-hover:text-[#00E5FF] transition-colors line-clamp-2">
+                      {video.title}
+                    </h4>
+                  </div>
+                  <span className="text-[10px] font-mono text-[#888888] uppercase mt-3 flex items-center gap-1.5">
+                    <span>PLAY VIDEO</span>
+                    <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="gallery" className="relative py-24 sm:py-32 border-t border-white/[0.08] bg-[#07070a]">
+        <div className="max-w-[1400px] mx-auto px-6 sm:px-10">
+          {/* Section Header */}
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-8">
+            <div>
+              <div className="inline-flex items-center gap-2 text-xs font-mono tracking-[0.24em] text-[#00B4D8] uppercase mb-3">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>TOUR PHOTOGRAPHY // LIVE ON STAGE</span>
+              </div>
+              <h2 className="font-heading font-black text-3xl sm:text-5xl tracking-[-0.02em] uppercase text-white">
+                PHOTO <span className="text-[#00E5FF]">GALLERY</span>
+              </h2>
+            </div>
+
+            <a
+              href="https://www.instagram.com/djgspark/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-xs font-heading font-bold tracking-[0.2em] uppercase text-[#929292] hover:text-[#00E5FF] transition-colors"
+            >
+              <InstagramIcon className="w-4 h-4 text-[#00E5FF]" />
+              <span>FOLLOW @DJGSPARK ON INSTAGRAM →</span>
+            </a>
+          </div>
+
+          {/* Category Filter Tabs */}
+          <div className="flex flex-wrap items-center gap-2 mb-10">
+            {[
+              { id: "all", label: `ALL SHOTS (${galleryPhotos.length})` },
+              { id: "live", label: "LIVE STAGE" },
+              { id: "festivals", label: "FESTIVALS & CROWD" },
+              { id: "backstage", label: "BACKSTAGE & POV" },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setGalleryFilter(tab.id)}
+                className={`px-4 py-1.5 rounded-full text-xs font-mono tracking-[0.14em] uppercase transition-all ${
+                  galleryFilter === tab.id
+                    ? "bg-[#00E5FF] text-black font-bold shadow-[0_0_15px_rgba(0, 229, 255, 0.35)]"
+                    : "bg-white/5 text-[#929292] hover:text-white border border-white/10"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Photo Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+            {filteredPhotos.map((photo, idx) => (
+              <div
+                key={idx}
+                onClick={() => setActivePhotoModal(photo.src)}
+                className="group relative aspect-[4/3] rounded-xl overflow-hidden border border-white/10 hover:border-[#00E5FF]/50 bg-black cursor-pointer transition-all duration-300 hover:shadow-[0_10px_35px_rgba(0, 229, 255, 0.2)]"
+              >
+                <Image
+                  src={photo.src}
+                  alt={photo.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
+                  <span className="font-heading font-bold text-sm uppercase text-white leading-tight">
+                    {photo.title}
+                  </span>
+                  <span className="text-[11px] font-mono text-[#00B4D8] uppercase mt-1">
+                    {photo.subtitle}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="blogs" className="relative py-24 sm:py-32 border-t border-white/[0.08] bg-[#0B0C10]">
+        <div className="max-w-[1400px] mx-auto px-6 sm:px-10">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12 sm:mb-16">
+            <div>
+              <div className="inline-flex items-center gap-2 text-xs font-mono tracking-[0.24em] text-[#00B4D8] uppercase mb-3">
+                <span>ARTIST DISPATCHES // PRESS & ANNOUNCEMENTS</span>
+              </div>
+              <h2 className="font-heading font-black text-3xl sm:text-5xl tracking-[-0.02em] uppercase text-white">
+                LATEST <span className="text-[#00E5FF]">POSTS</span>
+              </h2>
+            </div>
+            <Link
+              href="/blog"
+              className="text-xs font-heading font-bold tracking-[0.2em] uppercase text-[#929292] hover:text-[#00E5FF] transition-colors"
+            >
+              READ ALL ARTICLES →
+            </Link>
+          </div>
+
+          {/* Posts Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {latestPosts.map((post, idx) => (
+              <Link
+                key={post.id || idx}
+                href={`/blog/${post.slug || post.id}`}
+                className="group bg-[#0c0c10] border border-white/10 hover:border-[#00E5FF]/50 rounded-lg overflow-hidden transition-all duration-300 flex flex-col"
+              >
+                <div className="relative aspect-video w-full overflow-hidden bg-black">
+                  <img
+                    src={post.image || "/images/dj_hero.jpg"}
+                    alt={post.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-3 left-3 px-2.5 py-1 rounded bg-black/80 border border-white/10 text-[9px] font-mono uppercase tracking-wider text-[#00B4D8]">
+                    {post.category}
+                  </div>
+                </div>
+                <div className="p-5 flex flex-col flex-grow justify-between">
+                  <div>
+                    <span className="text-[10px] font-mono text-[#888888] uppercase block mb-2">
+                      {post.dateDisplay || post.date}
+                    </span>
+                    <h3 className="font-heading font-bold text-lg uppercase text-white group-hover:text-[#00E5FF] transition-colors leading-snug">
+                      {post.title}
+                    </h3>
+                  </div>
+                  <span className="text-xs font-mono text-[#00B4D8] uppercase mt-4 flex items-center gap-1">
+                    <span>READ ARTICLE</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section id="reviews" className="relative py-24 sm:py-32 border-t border-white/[0.08] bg-[#07070a] overflow-hidden">
         {/* Glow ambient backgrounds */}
         <div className="absolute top-1/3 left-0 w-96 h-96 bg-[#00E5FF]/10 rounded-full blur-[140px] pointer-events-none" />
@@ -1442,7 +1557,7 @@ export default function HomePage() {
             <div>
               <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/30 text-xs font-mono tracking-[0.24em] text-[#00B4D8] uppercase mb-4">
                 <Star className="w-3.5 h-3.5 fill-[#00E5FF] text-[#00E5FF]" />
-                <span>4.98 / 5.0 RATING • 250+ SHOWS & EVENTS</span>
+                <span>{averageRating} / 5.0 RATING • {totalShowsCount}+ SHOWS & EVENTS</span>
               </div>
               <h2 className="font-heading font-black text-3xl sm:text-5xl lg:text-6xl tracking-[-0.02em] uppercase text-white leading-[1.05]">
                 WHAT THEY SAY // <br className="hidden sm:inline" />
@@ -1461,7 +1576,7 @@ export default function HomePage() {
                       <Star key={i} className="w-4 h-4 fill-[#00E5FF] text-[#00E5FF]" />
                     ))}
                   </div>
-                  <span className="block font-heading font-black text-xl text-white mt-1">4.98 / 5.0</span>
+                  <span className="block font-heading font-black text-xl text-white mt-1">{averageRating} / 5.0</span>
                   <span className="text-[10px] font-mono text-[#888888] uppercase">GLOBAL RATING</span>
                 </div>
                 {/* <div className="px-3 border-r border-white/10">
@@ -1598,220 +1713,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============================================================ */}
-      {/* 6. LATEST VIDEOS SECTION (#videos)                            */}
-      {/* ============================================================ */}
-      <section id="videos" className="relative py-24 sm:py-32 border-t border-white/[0.08] bg-[#0B0C10]">
-        <div className="max-w-[1400px] mx-auto px-6 sm:px-10">
-          {/* Section Header */}
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12 sm:mb-16">
-            <div>
-              <div className="inline-flex items-center gap-2 text-xs font-mono tracking-[0.24em] text-[#00B4D8] uppercase mb-3">
-                <Play className="w-3.5 h-3.5" />
-                <span>4K CINEMATIC RECORDINGS // CONCERT AFTERMOVIES</span>
-              </div>
-              <h2 className="font-heading font-black text-3xl sm:text-5xl tracking-[-0.02em] uppercase text-white">
-                LATEST <span className="text-[#00E5FF]">VIDEOS</span>
-              </h2>
-            </div>
-
-            <button
-              onClick={() => setActiveVideoModal("/images/tour_09_arena_climax.mp4")}
-              className="inline-flex items-center gap-2 text-xs font-heading font-bold tracking-[0.2em] uppercase text-[#929292] hover:text-[#00E5FF] transition-colors"
-            >
-              <span>WATCH ARENA FINALE →</span>
-            </button>
-          </div>
-
-          {/* Videos Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {videoList.map((video) => (
-              <div
-                key={video.id}
-                onClick={() => setActiveVideoModal(video.videoSrc)}
-                className="group relative bg-[#0c0c10] border border-white/[0.08] hover:border-[#00E5FF]/50 rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-[0_10px_35px_rgba(0, 229, 255, 0.2)] flex flex-col"
-              >
-                {/* Video Thumbnail */}
-                <div className="relative aspect-video w-full overflow-hidden bg-black">
-                  <Image
-                    src={video.thumbnail}
-                    alt={video.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors" />
-
-                  {/* Play Icon Center */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-12 h-12 rounded-full bg-[#00E5FF] group-hover:scale-110 group-hover:bg-white text-black flex items-center justify-center shadow-[0_0_20px_rgba(0, 229, 255, 0.6)] transition-all">
-                      <Play className="w-5 h-5 fill-black ml-0.5" />
-                    </div>
-                  </div>
-
-                  {/* Duration Badge */}
-                  <div className="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded bg-black/80 text-white font-mono text-[10px] tracking-wider border border-white/10">
-                    {video.duration}
-                  </div>
-                </div>
-
-                {/* Video Info */}
-                <div className="p-4 flex-grow flex flex-col justify-between">
-                  <div>
-                    <span className="text-[10px] font-mono tracking-[0.2em] text-[#00B4D8] uppercase block mb-1">
-                      {video.tag}
-                    </span>
-                    <h4 className="font-heading font-bold text-sm uppercase text-white group-hover:text-[#00E5FF] transition-colors line-clamp-2">
-                      {video.title}
-                    </h4>
-                  </div>
-                  <span className="text-[10px] font-mono text-[#888888] uppercase mt-3 flex items-center gap-1.5">
-                    <span>PLAY VIDEO</span>
-                    <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================================ */}
-      {/* 7. PHOTO GALLERY SECTION (#gallery)                           */}
-      {/* ============================================================ */}
-      <section id="gallery" className="relative py-24 sm:py-32 border-t border-white/[0.08] bg-[#07070a]">
-        <div className="max-w-[1400px] mx-auto px-6 sm:px-10">
-          {/* Section Header */}
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-8">
-            <div>
-              <div className="inline-flex items-center gap-2 text-xs font-mono tracking-[0.24em] text-[#00B4D8] uppercase mb-3">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>TOUR PHOTOGRAPHY // LIVE ON STAGE</span>
-              </div>
-              <h2 className="font-heading font-black text-3xl sm:text-5xl tracking-[-0.02em] uppercase text-white">
-                PHOTO <span className="text-[#00E5FF]">GALLERY</span>
-              </h2>
-            </div>
-
-            <a
-              href="https://www.instagram.com/djgspark/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-xs font-heading font-bold tracking-[0.2em] uppercase text-[#929292] hover:text-[#00E5FF] transition-colors"
-            >
-              <InstagramIcon className="w-4 h-4 text-[#00E5FF]" />
-              <span>FOLLOW @DJGSPARK ON INSTAGRAM →</span>
-            </a>
-          </div>
-
-          {/* Category Filter Tabs */}
-          <div className="flex flex-wrap items-center gap-2 mb-10">
-            {[
-              { id: "all", label: `ALL SHOTS (${galleryPhotos.length})` },
-              { id: "live", label: "LIVE STAGE" },
-              { id: "festivals", label: "FESTIVALS & CROWD" },
-              { id: "backstage", label: "BACKSTAGE & POV" },
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setGalleryFilter(tab.id)}
-                className={`px-4 py-1.5 rounded-full text-xs font-mono tracking-[0.14em] uppercase transition-all ${
-                  galleryFilter === tab.id
-                    ? "bg-[#00E5FF] text-black font-bold shadow-[0_0_15px_rgba(0, 229, 255, 0.35)]"
-                    : "bg-white/5 text-[#929292] hover:text-white border border-white/10"
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Photo Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-            {filteredPhotos.map((photo, idx) => (
-              <div
-                key={idx}
-                onClick={() => setActivePhotoModal(photo.src)}
-                className="group relative aspect-[4/3] rounded-xl overflow-hidden border border-white/10 hover:border-[#00E5FF]/50 bg-black cursor-pointer transition-all duration-300 hover:shadow-[0_10px_35px_rgba(0, 229, 255, 0.2)]"
-              >
-                <Image
-                  src={photo.src}
-                  alt={photo.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
-                  <span className="font-heading font-bold text-sm uppercase text-white leading-tight">
-                    {photo.title}
-                  </span>
-                  <span className="text-[11px] font-mono text-[#00B4D8] uppercase mt-1">
-                    {photo.subtitle}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================================ */}
-      {/* 8. LATEST NEWS & POSTS                                        */}
-      {/* ============================================================ */}
-      <section className="relative py-24 sm:py-32 border-t border-white/[0.08] bg-[#0B0C10]">
-        <div className="max-w-[1400px] mx-auto px-6 sm:px-10">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12 sm:mb-16">
-            <div>
-              <div className="inline-flex items-center gap-2 text-xs font-mono tracking-[0.24em] text-[#00B4D8] uppercase mb-3">
-                <span>ARTIST DISPATCHES // PRESS & ANNOUNCEMENTS</span>
-              </div>
-              <h2 className="font-heading font-black text-3xl sm:text-5xl tracking-[-0.02em] uppercase text-white">
-                LATEST <span className="text-[#00E5FF]">POSTS</span>
-              </h2>
-            </div>
-            <Link
-              href="/blog"
-              className="text-xs font-heading font-bold tracking-[0.2em] uppercase text-[#929292] hover:text-[#00E5FF] transition-colors"
-            >
-              READ ALL ARTICLES →
-            </Link>
-          </div>
-
-          {/* Posts Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {latestPosts.map((post, idx) => (
-              <Link
-                key={post.id || idx}
-                href={`/blog/${post.slug || post.id}`}
-                className="group bg-[#0c0c10] border border-white/10 hover:border-[#00E5FF]/50 rounded-lg overflow-hidden transition-all duration-300 flex flex-col"
-              >
-                <div className="relative aspect-video w-full overflow-hidden bg-black">
-                  <img
-                    src={post.image || "/images/dj_hero.jpg"}
-                    alt={post.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-3 left-3 px-2.5 py-1 rounded bg-black/80 border border-white/10 text-[9px] font-mono uppercase tracking-wider text-[#00B4D8]">
-                    {post.category}
-                  </div>
-                </div>
-                <div className="p-5 flex flex-col flex-grow justify-between">
-                  <div>
-                    <span className="text-[10px] font-mono text-[#888888] uppercase block mb-2">
-                      {post.dateDisplay || post.date}
-                    </span>
-                    <h3 className="font-heading font-bold text-lg uppercase text-white group-hover:text-[#00E5FF] transition-colors leading-snug">
-                      {post.title}
-                    </h3>
-                  </div>
-                  <span className="text-xs font-mono text-[#00B4D8] uppercase mt-4 flex items-center gap-1">
-                    <span>READ ARTICLE</span>
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ============================================================ */}
       {/* VIDEO PLAYER MODAL                                            */}
