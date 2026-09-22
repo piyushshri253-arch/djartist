@@ -47,6 +47,11 @@ export default function BookingPage() {
     const waLink = `https://api.whatsapp.com/send?phone=${CLIENT_WHATSAPP_NUMBER}&text=${encodedText}`;
     setWhatsappUrl(waLink);
 
+    // Instantly launch WhatsApp directly with all fields pre-filled
+    if (typeof window !== "undefined") {
+      window.open(waLink, "_blank");
+    }
+
     try {
       await fetch("/api/leads", {
         method: "POST",
