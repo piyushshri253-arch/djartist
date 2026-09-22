@@ -471,9 +471,9 @@ export default function HomePage() {
       {/* 1. HERO VIDEO BANNER                                          */}
       {/* ============================================================ */}
 
-      <section className="relative w-full min-h-[95vh] sm:min-h-screen flex items-center justify-center overflow-hidden pt-28 sm:pt-32 pb-16">
+      <section className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden">
 
-        {/* Full-bleed background video with adjusted top focus and no clipping */}
+        {/* Full-bleed background video with centered focus */}
         <video
           ref={heroVideoRef}
           autoPlay
@@ -481,100 +481,114 @@ export default function HomePage() {
           muted
           playsInline
           preload="auto"
-          className="absolute inset-0 w-full h-full object-cover object-[center_top]"
+          className="absolute inset-0 w-full h-full object-cover object-center"
         >
           <source src="/images/C5083.MP4" type="video/mp4" />
           <source src="/images/c5083.mp4" type="video/mp4" />
           <source src="/images/tour_04_dj_performing.mp4" type="video/mp4" />
         </video>
 
-        {/* Balanced Cinematic Gradient Overlays (Clearer at top so video is fully visible) */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0B0C10]/40 via-transparent to-[#0B0C10]" />
-        <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#0B0C10]/40 to-[#0B0C10]" />
+        {/* Balanced Cinematic Gradient Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0B0C10]/60 via-black/30 to-[#0B0C10]" />
+        <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#0B0C10]/40 to-[#0B0C10]/90" />
 
-        {/* Hero Content Container */}
-        <div className="relative z-10 max-w-[1400px] mx-auto px-6 sm:px-10 text-center flex flex-col items-center">
-          {/* Live Status Badge */}
-          {/* <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-black/60 border border-[#00E5FF]/40 backdrop-blur-md mb-6 shadow-[0_0_20px_rgba(0, 229, 255, 0.25)]">
-            <span className="w-2 h-2 rounded-full bg-[#00E5FF] shadow-[0_0_10px_#00E5FF] animate-pulse" />
-            <span className="text-[11px] sm:text-xs font-mono tracking-[0.22em] text-[#00B4D8] uppercase font-semibold">
-              Dj G-Spark • WORLD TOUR 2026
-            </span>
-          </div> */}
-
-          {/* Main Hero Headline (Centered, matching reference image) */}
-          <div className="flex flex-col items-center text-center max-w-5xl mx-auto mb-6 sm:mb-8">
-            <h1 className="font-heading font-black text-5xl sm:text-7xl md:text-8xl lg:text-9xl tracking-[0.04em] sm:tracking-[0.08em] uppercase leading-none text-white drop-shadow-[0_8px_35px_rgba(0,0,0,0.95)]">
+        {/* Hero Content Container - Perfectly centered */}
+        <div className="relative z-10 max-w-[1400px] mx-auto px-6 sm:px-10 text-center flex flex-col items-center justify-center my-auto py-24 sm:py-32">
+          {/* Main Hero Headline */}
+          <div className="flex flex-col items-center text-center max-w-5xl mx-auto">
+            <h1 className="font-heading font-black text-5xl sm:text-7xl md:text-8xl lg:text-9xl tracking-[0.04em] sm:tracking-[0.08em] uppercase leading-none text-white drop-shadow-[0_10px_40px_rgba(0,0,0,0.95)]">
               Dj G-Spark
             </h1>
-            <p className="mt-3 sm:mt-4 text-xs sm:text-base md:text-xl font-heading font-bold tracking-[0.2em] sm:tracking-[0.35em] text-white/95 uppercase drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)]">
+            <p className="mt-4 sm:mt-5 text-sm sm:text-lg md:text-xl font-heading font-bold tracking-[0.22em] sm:tracking-[0.35em] text-[#00E5FF] uppercase drop-shadow-[0_4px_25px_rgba(0,229,255,0.4)]">
               ONE OF THE BEST DJ FROM DELHI (INDIA)
             </p>
           </div>
 
-          {/* Interactive CTAs */}
-          <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-            {/* Audio Anthem Play Button */}
-            {/* <button
-              onClick={togglePlay}
-              className="w-full sm:w-auto px-7 py-4 rounded-md bg-[#00E5FF] text-black font-heading font-bold text-xs tracking-[0.2em] uppercase hover:bg-white transition-all shadow-[0_0_30px_rgba(0, 229, 255, 0.5)] flex items-center justify-center gap-3 group"
+          {/* Action CTAs */}
+          <div className="flex flex-wrap items-center justify-center gap-4 mt-8 sm:mt-10">
+            <Link
+              href="/booking"
+              className="px-8 py-3.5 rounded-full bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-[#0B0C10] font-heading font-black text-xs sm:text-sm tracking-[0.16em] uppercase shadow-[0_0_25px_rgba(0,229,255,0.5)] hover:shadow-[0_0_35px_rgba(0,229,255,0.8)] hover:scale-105 transition-all"
             >
-              {isPlaying ? (
-                <>
-                  <Pause className="w-4 h-4 fill-black text-black" />
-                  <span>PAUSE ANTHEM</span>
-                </>
-              ) : (
-                <>
-                  <Play className="w-4 h-4 fill-black text-black" />
-                  <span>LISTEN TO ANTHEM</span>
-                </>
-              )}
-            </button> */}
-
-            {/* Upcoming Dates Button */}
-            {/* <a
-              href="#events"
-              className="w-full sm:w-auto px-7 py-4 rounded-md border border-white/20 bg-black/50 text-[#F5F6FA] font-heading font-bold text-xs tracking-[0.2em] uppercase hover:border-[#00E5FF] hover:text-[#00E5FF] transition-all backdrop-blur-md flex items-center justify-center gap-2"
+              BOOK Dj G-Spark
+            </Link>
+            <a
+              href="#about"
+              className="px-8 py-3.5 rounded-full bg-black/60 hover:bg-black/80 border border-white/25 hover:border-[#00E5FF] text-white font-heading font-bold text-xs sm:text-sm tracking-[0.16em] uppercase transition-all backdrop-blur-md hover:scale-105"
             >
-              <span>UPCOMING DATES</span>
-              <ArrowRight className="w-4 h-4" />
-            </a> */}
-
-            {/* Watch Aftermovie Button */}
-            {/* <button
-              onClick={() => setActiveVideoModal("/images/C5083.MP4")}
-              className="w-full sm:w-auto px-7 py-4 rounded-md border border-white/10 bg-white/5 text-[#CCCCCC] font-heading font-medium text-xs tracking-[0.2em] uppercase hover:text-white hover:border-white/30 transition-all backdrop-blur-md flex items-center justify-center gap-2"
-            >
-              <Sparkles className="w-4 h-4 text-[#FFA030]" />
-              <span>WATCH AFTERMOVIE</span>
-            </button> */}
+              EXPLORE SHOWS
+            </a>
           </div>
+        </div>
+      </section>
 
-          {/* Quick Metrics Bar */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-12 mt-14 pt-8 border-t border-white/10 w-full max-w-4xl">
-            <div>
-              <span className="font-heading font-black text-2xl sm:text-3xl text-white">10+</span>
-              <span className="block text-[10px] sm:text-xs font-mono tracking-[0.2em] text-[#888888] uppercase mt-1">
+      {/* ============================================================ */}
+      {/* 2. STATS & CAREER HIGHLIGHTS SECTION (BELOW HERO VIDEO)      */}
+      {/* ============================================================ */}
+      <section className="relative z-20 -mt-12 sm:-mt-16 max-w-[1300px] mx-auto px-4 sm:px-6">
+        <div className="rounded-2xl sm:rounded-3xl bg-gradient-to-b from-[#141622]/95 via-[#0F111A]/95 to-[#0B0C12]/98 border border-white/15 backdrop-blur-2xl shadow-[0_25px_60px_rgba(0,0,0,0.9),0_0_50px_rgba(0,229,255,0.12)] p-6 sm:p-10">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 divide-y sm:divide-y-0 sm:divide-x divide-white/10">
+            {/* Stat 1 */}
+            <div className="flex flex-col items-center text-center px-3 sm:px-4 pt-4 sm:pt-0">
+              <div className="w-10 h-10 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/20 flex items-center justify-center mb-3">
+                <Award className="w-5 h-5 text-[#00E5FF]" />
+              </div>
+              <span className="font-heading font-black text-4xl sm:text-5xl lg:text-6xl text-white tracking-tight drop-shadow-[0_0_20px_rgba(255,255,255,0.25)]">
+                10+
+              </span>
+              <span className="text-xs sm:text-sm font-mono font-bold tracking-[0.2em] text-[#00E5FF] uppercase mt-2">
                 Years Headlining
               </span>
+              <span className="text-[11px] text-white/50 mt-1 font-sans hidden sm:block">
+                Setting stages on fire since 2016
+              </span>
             </div>
-            <div>
-              <span className="font-heading font-black text-2xl sm:text-3xl text-[#00E5FF]">50K+</span>
-              <span className="block text-[10px] sm:text-xs font-mono tracking-[0.2em] text-[#888888] uppercase mt-1">
+
+            {/* Stat 2 */}
+            <div className="flex flex-col items-center text-center px-3 sm:px-4 pt-4 sm:pt-0">
+              <div className="w-10 h-10 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/20 flex items-center justify-center mb-3">
+                <Users className="w-5 h-5 text-[#00E5FF]" />
+              </div>
+              <span className="font-heading font-black text-4xl sm:text-5xl lg:text-6xl bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] bg-clip-text text-transparent tracking-tight drop-shadow-[0_0_25px_rgba(0,229,255,0.4)]">
+                50K+
+              </span>
+              <span className="text-xs sm:text-sm font-mono font-bold tracking-[0.2em] text-white uppercase mt-2">
                 Fans United
               </span>
-            </div>
-            <div>
-              <span className="font-heading font-black text-2xl sm:text-3xl text-white">20M+</span>
-              <span className="block text-[10px] sm:text-xs font-mono tracking-[0.2em] text-[#888888] uppercase mt-1">
-                Streams Worldwide
+              <span className="text-[11px] text-white/50 mt-1 font-sans hidden sm:block">
+                Electrifying festival & club crowds
               </span>
             </div>
-            <div>
-              <span className="font-heading font-black text-2xl sm:text-3xl text-[#00E5FF]">04</span>
-              <span className="block text-[10px] sm:text-xs font-mono tracking-[0.2em] text-[#888888] uppercase mt-1">
+
+            {/* Stat 3 */}
+            <div className="flex flex-col items-center text-center px-3 sm:px-4 pt-4 sm:pt-0">
+              <div className="w-10 h-10 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/20 flex items-center justify-center mb-3">
+                <Radio className="w-5 h-5 text-[#00E5FF]" />
+              </div>
+              <span className="font-heading font-black text-4xl sm:text-5xl lg:text-6xl text-white tracking-tight drop-shadow-[0_0_20px_rgba(255,255,255,0.25)]">
+                20M+
+              </span>
+              <span className="text-xs sm:text-sm font-mono font-bold tracking-[0.2em] text-[#00E5FF] uppercase mt-2">
+                Streams Worldwide
+              </span>
+              <span className="text-[11px] text-white/50 mt-1 font-sans hidden sm:block">
+                Across YouTube, Spotify & SoundCloud
+              </span>
+            </div>
+
+            {/* Stat 4 */}
+            <div className="flex flex-col items-center text-center px-3 sm:px-4 pt-4 sm:pt-0">
+              <div className="w-10 h-10 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/20 flex items-center justify-center mb-3">
+                <Sparkles className="w-5 h-5 text-[#00E5FF]" />
+              </div>
+              <span className="font-heading font-black text-4xl sm:text-5xl lg:text-6xl bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] bg-clip-text text-transparent tracking-tight drop-shadow-[0_0_25px_rgba(0,229,255,0.4)]">
+                04
+              </span>
+              <span className="text-xs sm:text-sm font-mono font-bold tracking-[0.2em] text-white uppercase mt-2">
                 Countries Toured
+              </span>
+              <span className="text-[11px] text-white/50 mt-1 font-sans hidden sm:block">
+                Global shows & headline festivals
               </span>
             </div>
           </div>
