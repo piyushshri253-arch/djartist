@@ -953,70 +953,54 @@ export default function HomePage() {
 
             {/* Selected Reels Grid (4 Cards) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {featuredReels.slice(0, 4).map((reel: any, idx: number) => (
-                <a
-                  key={reel.id || idx}
-                  href={reel.permalink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group relative bg-[#0c0c12] border border-white/[0.08] hover:border-[#E1306C]/60 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_15px_45px_rgba(225,48,108,0.25)] flex flex-col cursor-pointer"
-                >
-                  {/* Vertical Video Poster */}
-                  <div className="relative aspect-[9/16] w-full overflow-hidden bg-black">
-                    <img
-                      src={reel.thumbnailUrl || "/images/past_event_crowd.jpg"}
-                      alt={reel.caption || "Instagram Reel"}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/50 group-hover:via-black/10 transition-colors" />
+              {featuredReels.slice(0, 4).map((reel: any, idx: number) => {
+                const shortcode =
+                  reel.instagramMediaId ||
+                  reel.permalink?.match(/(?:reels?|p|tv|share\/reel)\/([A-Za-z0-9_-]+)/i)?.[1] ||
+                  "";
+                const embedUrl = shortcode ? `https://www.instagram.com/reel/${shortcode}/embed/` : "";
 
-                    {/* Top Row: Tag & Viral Views Badge */}
-                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2 z-10">
-                      <span className="px-2.5 py-1 rounded bg-black/80 border border-white/10 text-[9px] font-mono uppercase tracking-wider text-[#00B4D8] font-bold flex items-center gap-1">
-                        <InstagramIcon className="w-2.5 h-2.5 text-[#E1306C]" />
-                        <span>REEL</span>
-                      </span>
-                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/80 border border-[#22c55e]/40 text-[10px] font-mono font-bold text-[#22c55e] shadow-[0_0_15px_rgba(34,197,94,0.3)]">
-                        <Eye className="w-3 h-3" />
-                        <span>{reel.viewsDisplay || "Viral"}</span>
-                      </div>
+                return (
+                  <div
+                    key={reel.id || idx}
+                    className="group relative bg-[#0c0c12] border border-white/[0.08] hover:border-[#E1306C]/60 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_15px_45px_rgba(225,48,108,0.25)] flex flex-col"
+                  >
+                    {/* Direct Instagram Reel Embed without any separate cover photo */}
+                    <div className="relative aspect-[9/16] w-full bg-black overflow-hidden flex items-center justify-center min-h-[460px] sm:min-h-[500px]">
+                      {embedUrl ? (
+                        <iframe
+                          src={embedUrl}
+                          className="w-full h-full border-0 absolute inset-0"
+                          scrolling="no"
+                          allowTransparency={true}
+                          allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                        />
+                      ) : (
+                        <div className="text-center p-4">
+                          <InstagramIcon className="w-10 h-10 text-[#E1306C] mx-auto mb-2" />
+                          <span className="text-xs text-white/60 font-mono">Instagram Reel</span>
+                        </div>
+                      )}
                     </div>
 
-                    {/* Center Play Button with Instagram Gradient Glow */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white flex items-center justify-center shadow-[0_0_30px_rgba(225,48,108,0.6)] group-hover:scale-110 transition-transform">
-                        <Play className="w-6 h-6 fill-white ml-1" />
-                      </div>
-                    </div>
-
-                    {/* Bottom Likes & Reel Badge */}
-                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs z-10">
-                      <div className="flex items-center gap-1 text-white/90 font-mono text-[11px] bg-black/60 px-2.5 py-1 rounded-md backdrop-blur-sm">
-                        <Heart className="w-3.5 h-3.5 text-[#ff3366] fill-[#ff3366]" />
-                        <span>{reel.likesCount ? Number(reel.likesCount).toLocaleString() : "Trending"}</span>
-                      </div>
-                      <span className="text-[10px] font-mono text-white/70 uppercase">
-                        INSTAGRAM
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Caption & Instagram Link */}
-                  <div className="p-4 flex flex-col flex-grow justify-between bg-[#1F2833]">
-                    <h4 className="font-heading font-bold text-xs uppercase text-white line-clamp-2 leading-snug group-hover:text-[#00B4D8] transition-colors">
-                      {reel.caption}
-                    </h4>
-
-                    <div className="mt-3 pt-3 border-t border-white/[0.06] text-[11px] font-mono text-[#AAAAAA] group-hover:text-[#E1306C] flex items-center justify-between transition-colors">
-                      <span className="flex items-center gap-1.5 font-semibold">
-                        <InstagramIcon className="w-3.5 h-3.5 text-[#E1306C]" />
-                        <span>Watch on Instagram</span>
-                      </span>
-                      <ExternalLink className="w-3 h-3" />
+                    {/* Bottom Watch on Instagram Bar */}
+                    <div className="p-3 bg-[#1F2833] border-t border-white/[0.06] flex items-center justify-between">
+                      <a
+                        href={reel.permalink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-mono text-[#AAAAAA] hover:text-[#E1306C] flex items-center justify-between w-full font-semibold transition-colors"
+                      >
+                        <span className="flex items-center gap-1.5">
+                          <InstagramIcon className="w-3.5 h-3.5 text-[#E1306C]" />
+                          <span>Watch on Instagram</span>
+                        </span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
                     </div>
                   </div>
-                </a>
-              ))}
+                );
+              })}
             </div>
 
             {/* Bottom View More CTA */}
