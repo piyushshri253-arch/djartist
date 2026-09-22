@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { Zap, Download, Award, Music, Globe, CheckCircle } from "lucide-react";
+import { Download, Sparkles, CheckCircle, Flame } from "lucide-react";
 
 export default function AboutPage() {
   const [downloadToast, setDownloadToast] = useState(false);
@@ -16,101 +17,112 @@ export default function AboutPage() {
     <main className="min-h-screen pt-32 pb-24 px-6 sm:px-10 max-w-[1400px] mx-auto">
       {/* Hero */}
       <div className="text-center max-w-3xl mx-auto mb-16">
-        <span className="text-xs font-bold tracking-[0.24em] text-[#00B4D8] uppercase block mb-3">
-          ARTIST BIOGRAPHY & TECH RIDER
-        </span>
-        <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight mb-4">
-          THE ARCHITECT OF <span className="text-[#00E5FF]">SOUND</span>
+        <div className="inline-flex items-center gap-2 text-xs font-mono tracking-[0.24em] text-[#00B4D8] uppercase mb-3">
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>ARTIST PROFILE // ORIGINS & SOUND</span>
+        </div>
+        <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight uppercase mb-4">
+          BEHIND THE BEATS <br className="hidden sm:block" />
+          <span className="text-[#00E5FF]">DJ G-SPARK</span>
         </h1>
-        <p className="text-sm sm:text-base text-[#8A8D93] leading-relaxed">
-          DJ G SPARK is an international electronic music phenomenon, blending cinematic grandeur, hypnotic melodic techno, and relentless stadium basslines.
+        <p className="text-sm sm:text-base text-[#8A8D93] leading-relaxed max-w-2xl mx-auto">
+          DJ G Spark is a dynamic and high-energy DJ known for bringing explosive beats and seamless transitions to the dance floor.
         </p>
       </div>
 
       {/* Narrative & Photo Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-24">
-        <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-black/60 shadow-ambient group">
-          <img
-            src="/images/dj_hero.jpg"
-            alt="DJ G SPARK"
-            className="w-full h-[540px] object-cover group-hover:scale-105 transition-transform duration-700"
-          />
-          <div className="absolute bottom-6 left-6 right-6 p-4 rounded-xl bg-black/80 backdrop-blur-md border border-white/10 flex items-center justify-between">
-            <div>
-              <span className="text-xs font-bold text-[#00B4D8] block">RANKED #14</span>
-              <span className="text-xs text-[#8A8D93]">Top 100 Global Electronic Innovators</span>
-            </div>
-            <Award className="w-6 h-6 text-[#00B4D8]" />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center mb-24">
+        {/* Left: Artist Photo with glowing rim */}
+        <div className="lg:col-span-5 relative">
+          <div className="relative aspect-[4/5] rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_50px_rgba(0,229,255,0.18)] bg-black/60">
+            <Image
+              src="/images/gallery_eep09781.jpg"
+              alt="DJ G-SPARK Live Portrait"
+              fill
+              className="object-cover object-top"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0B0C10] via-transparent to-transparent opacity-80" />
+          </div>
+
+          {/* Floating Stat Card */}
+          <div className="absolute -bottom-6 -right-4 sm:right-6 px-6 py-4 rounded-xl bg-[#1F2833]/95 border border-[#00E5FF]/40 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
+            <span className="text-[10px] font-mono tracking-[0.2em] text-[#00B4D8] uppercase block">
+              OFFICIAL ARTIST
+            </span>
+            <span className="font-heading font-black text-xl sm:text-2xl text-white">
+              DJ G-SPARK
+            </span>
           </div>
         </div>
 
-        <div className="space-y-6">
-          <span className="text-xs font-bold tracking-[0.2em] text-[#00B4D8] uppercase block">
-            ORIGINS & ARTISTIC VISION
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-            Forged In The Underground, Master Of The Stadium
+        {/* Right: Biography & Accolades */}
+        <div className="lg:col-span-7 space-y-6">
+          <div className="inline-flex items-center gap-2 text-xs font-mono tracking-[0.2em] text-[#00B4D8] uppercase">
+            <Flame className="w-4 h-4 text-[#00E5FF]" />
+            <span>DELHI-BASED OPEN-FORMAT DJ & MUSIC PRODUCER</span>
+          </div>
+
+          <h2 className="font-heading font-black text-3xl sm:text-5xl tracking-[-0.02em] uppercase text-white">
+            Behind the beats<br />
+            <span className="text-[#00E5FF]">Dj G-Spark</span>
           </h2>
-          <p className="text-base text-[#d0d0d8] leading-relaxed">
-            Hailing from New Delhi and commanding festival mainstages across Europe, Asia, and the Americas, <strong>DJ G SPARK</strong> has redefined what a modern electronic live performance can be.
-          </p>
-          <p className="text-sm text-[#8A8D93] leading-relaxed">
-            Rather than relying on generic club formulas, G Spark approaches every performance as an architectural installation. Each set is a calibrated emotional trajectory, constructed live using custom analog synthesizers, tactile rotary mixers, and responsive 360-degree LED visual scapes.
-          </p>
-          <p className="text-sm text-[#8A8D93] leading-relaxed">
-            With over 180 million global streams, headline appearances at Tomorrowland, Sunburn, and Ultra, and support from titans like Tale of Us, Eric Prydz, and Martin Garrix, G Spark continues to push electronic music into uncharted cinematic territories.
+
+          <p className="text-sm sm:text-base text-[#929292] leading-relaxed">
+            DJ G Spark is a dynamic and high-energy DJ known for bringing explosive beats and seamless transitions to the dance floor.
           </p>
 
-          <div className="grid grid-cols-3 gap-4 pt-4 border-t border-white/10">
-            <div>
-              <span className="text-2xl sm:text-3xl font-black text-white font-sans block">180M+</span>
-              <span className="text-[10px] tracking-widest text-[#8A8D93] uppercase">Streams</span>
-            </div>
-            <div>
-              <span className="text-2xl sm:text-3xl font-black text-white font-sans block">42</span>
-              <span className="text-[10px] tracking-widest text-[#8A8D93] uppercase">Countries</span>
-            </div>
-            <div>
-              <span className="text-2xl sm:text-3xl font-black text-white font-sans block">#14</span>
-              <span className="text-[10px] tracking-widest text-[#8A8D93] uppercase">DJ Mag Top 100</span>
-            </div>
+          <p className="text-sm sm:text-base text-[#929292] leading-relaxed">
+            DJ G-Spark (Gaurav Singh) is a popular Delhi-based open-format DJ and music producer widely recognized for his high-energy performances at weddings, corporate gigs, and large-scale parties across India. Specialising in vibrant, non-stop dance mixes, he seamlessly blends multiple genres to keep the dance floor packed.
+          </p>
+
+          {/* Key Details & Expertise */}
+          <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/10 space-y-4">
+            <h3 className="font-heading font-black text-xl sm:text-2xl tracking-[-0.02em] uppercase text-white">
+              Key Details & Expertise
+            </h3>
+            <ul className="space-y-3 text-sm">
+              <li className="text-[#CCCCCC]">
+                <strong className="text-[#00E5FF]">Genres: </strong>
+                Bollywood, Punjabi/Bhangra, Commercial, Retro, Electronic Dance Music (EDM), Bollytech, Bollyafro, Melodic Techno.
+              </li>
+              <li className="text-[#CCCCCC]">
+                <strong className="text-[#00E5FF]">Specialities: </strong>
+                Sangeet ceremonies, cocktail parties, wedding receptions, destination weddings, and concerts.
+              </li>
+              <li className="text-[#CCCCCC]">
+                <strong className="text-[#00E5FF]">Performance Style: </strong>
+                High-energy open-format mixing tailored closely to the crowd’s vibe and personal preferences.
+              </li>
+            </ul>
           </div>
-        </div>
-      </div>
 
-      {/* Chronological Timeline */}
-      <div className="mb-24">
-        <div className="text-center max-w-xl mx-auto mb-16">
-          <span className="text-xs font-bold tracking-[0.2em] text-[#00B4D8] uppercase block mb-2">
-            CAREER MILESTONES
-          </span>
-          <h3 className="text-3xl font-extrabold text-white tracking-tight">
-            THE EVOLUTIONARY TRAJECTORY
-          </h3>
-        </div>
+          {/* Sonic Philosophy Callout */}
+          <blockquote className="p-5 sm:p-6 rounded-lg bg-[#0c0c10] border-l-4 border-[#00E5FF]">
+            <p className="text-sm sm:text-base italic text-[#F5F6FA] font-medium leading-relaxed">
+              &quot;Music is not just heard — it is felt. When the drop hits at 128 BPM, forty thousand strangers breathe as one unified frequency. That is the spark.&quot;
+            </p>
+            <cite className="block text-xs font-mono tracking-[0.2em] text-[#00B4D8] uppercase mt-3 not-italic">
+              — DJ G SPARK
+            </cite>
+          </blockquote>
 
-        <div className="space-y-6 max-w-3xl mx-auto">
-          {[
-            { year: "2018", title: "Underground Genesis", desc: "Pioneered underground warehouse raves in industrial Delhi with analog melodic techno." },
-            { year: "2021", title: "Global Breakthrough Single", desc: "Signed to Armada Music with debut anthem 'Velocity 9' (30M+ streams, BBC Radio 1 rotation)." },
-            { year: "2023", title: "First Arena World Tour", desc: "Sold out 14 arena dates across Dubai, London, Amsterdam, and Tokyo with the custom Spark Genesis gantry." },
-            { year: "2024", title: "Tomorrowland Mainstage", desc: "Delivered sunset prime-time set for 70,000 festival-goers in Boom, Belgium." },
-            { year: "2025", title: "DJ Mag Top 100 #14", desc: "Recognized as one of electronic music's most influential live innovators; headlined Sunburn Goa to 55,000 fans." },
-            { year: "2026", title: "The Spark Theory Era", desc: "Launch of sophomore LP Spark Theory and the 360-degree holographic stadium world tour." },
-          ].map((item, i) => (
-            <div
-              key={item.year}
-              className="glass-card p-6 rounded-2xl border border-white/10 flex items-start gap-6"
+          {/* Action Buttons */}
+          <div className="flex flex-wrap items-center gap-4 pt-2">
+            <Link
+              href="/booking"
+              className="px-7 py-3.5 rounded bg-[#00E5FF] text-black font-heading font-bold text-xs tracking-[0.2em] uppercase hover:bg-white transition-all shadow-[0_0_20px_rgba(0,229,255,0.4)]"
             >
-              <span className="font-mono text-xl font-bold text-[#00E5FF] min-w-[60px]">
-                {item.year}
-              </span>
-              <div>
-                <h4 className="text-base font-bold text-white mb-1">{item.title}</h4>
-                <p className="text-xs text-[#8A8D93] leading-relaxed">{item.desc}</p>
-              </div>
-            </div>
-          ))}
+              BOOK DJ G-SPARK
+            </Link>
+            <button
+              onClick={handleDownloadEPK}
+              className="px-7 py-3.5 rounded border border-white/20 hover:border-[#00E5FF] text-white hover:text-[#00E5FF] font-heading font-bold text-xs tracking-[0.2em] uppercase transition-all flex items-center gap-2"
+            >
+              <Download className="w-3.5 h-3.5" />
+              PRESS KIT & TECH RIDER
+            </button>
+          </div>
         </div>
       </div>
 
@@ -124,7 +136,7 @@ export default function AboutPage() {
             OFFICIAL TECHNICAL RIDER
           </h3>
           <p className="text-xs text-[#8A8D93] mt-2">
-            Mandatory promoter specifications for festival & arena touring dates.
+            Mandatory promoter specifications for weddings, corporate galas & concerts.
           </p>
         </div>
 
@@ -133,37 +145,37 @@ export default function AboutPage() {
             {
               category: "DJ Console Setup",
               items: [
-                "4x Pioneer CDJ-3000 Turntables (Latest firmware, LAN link)",
-                "1x Pioneer DJM-V10 6-Channel Mixer or Allen & Heath Xone:96",
-                "2x Genelec 8351B or d&b M2 Stereo Booth Monitors",
-                "Isolated grounded power supply with zero hum",
+                "Pioneer CDJ-3000 / CDJ-2000NXS2 Turntables",
+                "Pioneer DJM-900NXS2 or DJM-V10 Mixer",
+                "High-performance stereo booth monitors with dedicated gain control",
+                "Isolated grounded power supply with surge protection",
               ],
             },
             {
               category: "Front of House (FOH) Audio",
               items: [
-                "L-Acoustics K1/K2 or d&b audiotechnik GSL Line Array",
-                "End-fire cardioid sub array delivering 28Hz - 80Hz",
-                "Minimum SPL capability: 110 dBA continuous / 125 dBA peak",
-                "Dedicated FOH sound engineer provided by touring team",
+                "Pro Line Array / Concert PA system matching venue capacity",
+                "High-output subwoofers tuned for punchy bass & clear highs",
+                "Balanced wireless microphone system (Shure / Sennheiser)",
+                "On-site sound technician for soundcheck & live support",
               ],
             },
             {
-              category: "Visual & Laser Sync",
+              category: "Lighting & Visuals",
               items: [
-                "SMPTE LTC XLR feed + Art-Net / OSC Cat6 network line",
-                "Curved LED pitch: min P3.9 outdoor or P2.6 indoor",
-                "Minimum 12x cryogenic CO2 jet cannons with DMX triggers",
-                "Licensed technicians for Class IV 40W RGB laser rigs",
+                "DMX-controlled intelligent moving heads & wash lights",
+                "LED video wall display with visual synchronization",
+                "Haze / Geyser fog machine (subject to venue permissions)",
+                "Stage spot lighting focused on the DJ console",
               ],
             },
             {
-              category: "Hospitality & Security",
+              category: "Hospitality & Venue Support",
               items: [
-                "Private, climate-controlled green room with en-suite restroom",
-                "Dedicated artist liaison & 24/7 backstage security perimeter",
-                "Airport VIP tarmac meet & greet and executive transport",
-                "Organic catering, electrolyte waters, fresh fruit",
+                "Dedicated green room or changing area before showtime",
+                "Stage / console setup ready at least 90 minutes prior to event start",
+                "Refreshments, mineral water, and hospitality arrangements",
+                "Secure backstage or console perimeter",
               ],
             },
           ].map((sec) => (
@@ -201,7 +213,7 @@ export default function AboutPage() {
           onClick={handleDownloadEPK}
           className="px-8 py-3.5 rounded-full bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black font-bold text-xs tracking-wider uppercase hover:shadow-spark transition-all"
         >
-          Download Press Kit (142MB ZIP)
+          Download Press Kit (ZIP)
         </button>
       </div>
 
