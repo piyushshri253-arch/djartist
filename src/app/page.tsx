@@ -492,8 +492,8 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#0B0C10]/40 via-transparent to-[#0B0C10]" />
         <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#0B0C10]/40 to-[#0B0C10]" />
 
-        {/* Hero Content Container - Perfectly centered */}
-        <div className="relative z-10 max-w-[1400px] mx-auto px-6 sm:px-10 text-center flex flex-col items-center justify-center">
+        {/* Hero Content Container - Shifted down to give breathing room to the video above */}
+        <div className="relative z-10 max-w-[1400px] mx-auto px-6 sm:px-10 text-center flex flex-col items-center justify-center pt-20 sm:pt-28 lg:pt-32 pb-10 sm:pb-14">
           {/* Main Hero Headline */}
           <div className="flex flex-col items-center text-center max-w-5xl mx-auto">
             <h1 className="font-heading font-black text-5xl sm:text-7xl md:text-8xl lg:text-9xl tracking-[0.04em] sm:tracking-[0.08em] uppercase leading-none text-white drop-shadow-[0_8px_35px_rgba(0,0,0,0.95)]">
