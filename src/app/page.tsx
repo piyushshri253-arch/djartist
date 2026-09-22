@@ -503,15 +503,9 @@ export default function HomePage() {
               ONE OF THE BEST DJ FROM DELHI (INDIA)
             </p>
           </div>
-        </div>
-      </section>
 
-      {/* ============================================================ */}
-      {/* 2. STATS BAR (BELOW HERO VIDEO - ORIGINAL DESIGN RESTORED)   */}
-      {/* ============================================================ */}
-      <section className="relative z-10 w-full bg-[#0B0C10] border-b border-white/10 py-10 sm:py-12">
-        <div className="max-w-4xl mx-auto px-6 sm:px-10">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-12 text-center">
+          {/* Quick Metrics Bar - Just below ONE OF THE BEST DJ FROM DELHI (INDIA) */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-12 mt-10 sm:mt-14 pt-6 sm:pt-8 border-t border-white/15 w-full max-w-4xl mx-auto text-center">
             <div>
               <span className="font-heading font-black text-2xl sm:text-3xl text-white">10+</span>
               <span className="block text-[10px] sm:text-xs font-mono tracking-[0.2em] text-[#888888] uppercase mt-1">
