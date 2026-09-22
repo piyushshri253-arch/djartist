@@ -369,11 +369,11 @@ export function InstagramIntegrationModule({
                   <Film className="w-4 h-4 text-[#00E5FF]" />
                 </div>
                 <input
-                  type="url"
+                  type="text"
                   required
                   value={inputUrl}
                   onChange={(e) => setInputUrl(e.target.value)}
-                  placeholder="Paste Instagram link: https://www.instagram.com/reel/C8r2G6xSN7u/"
+                  placeholder="Paste Instagram Reel link or embed code (e.g. https://www.instagram.com/reel/... or <iframe>)"
                   className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-[#0B0C10] border border-white/15 text-white text-xs sm:text-sm font-mono focus:outline-none focus:border-[#00E5FF] transition-all tracking-wide"
                 />
               </div>
@@ -476,17 +476,11 @@ export function InstagramIntegrationModule({
               >
                 <div
                   onClick={() => setPreviewReel(reel)}
-                  className="relative w-14 h-20 rounded-xl overflow-hidden bg-black flex-shrink-0 cursor-pointer"
-                  title="Click to preview"
+                  className="relative w-14 h-20 rounded-xl overflow-hidden bg-gradient-to-br from-[#833ab4]/20 via-[#fd1d1d]/20 to-[#fcb045]/20 border border-white/15 flex-shrink-0 cursor-pointer flex flex-col items-center justify-center group hover:border-[#00E5FF] transition-all"
+                  title="Click to preview Reel"
                 >
-                  <img
-                    src={reel.thumbnailUrl || "/images/dj_hero.jpg"}
-                    alt={reel.caption}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                    <Play className="w-4 h-4 text-white fill-white" />
-                  </div>
+                  <Film className="w-5 h-5 text-[#00E5FF] group-hover:scale-110 transition-transform" />
+                  <span className="text-[8px] font-mono text-white/70 mt-1 uppercase font-bold">REEL</span>
                 </div>
 
                 <div className="flex-1 min-w-0">
@@ -652,67 +646,54 @@ export function InstagramIntegrationModule({
                       : "border-white/10 hover:border-white/25"
                   }`}
                 >
-                  {/* Vertical 9:16 Video Poster */}
-                  <div className="relative aspect-[9/16] w-full bg-black overflow-hidden">
-                    <img
-                      src={reel.thumbnailUrl || "/images/dj_hero.jpg"}
-                      alt={reel.caption}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/50 group-hover:via-black/10 transition-colors" />
+                  {/* Card Header with Badges & Actions */}
+                  <div className="p-3 bg-black/60 border-b border-white/10 flex items-center justify-between gap-2">
+                    <span className="px-2.5 py-1 rounded bg-black/80 border border-white/15 text-[9px] font-mono uppercase tracking-wider text-[#00E5FF] font-bold flex items-center gap-1">
+                      <Film className="w-3 h-3" />
+                      <span>REEL</span>
+                    </span>
 
-                    {/* Top Badges */}
-                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2 z-10">
-                      <span className="px-2.5 py-1 rounded bg-black/80 backdrop-blur-md border border-white/15 text-[9px] font-mono uppercase tracking-wider text-[#00E5FF] font-bold flex items-center gap-1">
-                        <Film className="w-3 h-3" />
-                        <span>REEL</span>
-                      </span>
+                    <div className="flex items-center gap-1.5">
+                      <a
+                        href={reel.permalink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-1.5 rounded-full bg-black/80 hover:bg-black text-white hover:text-[#00E5FF] transition-colors"
+                        title="Open on Instagram"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
 
-                      <div className="flex items-center gap-1.5">
-                        <a
-                          href={reel.permalink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-1.5 rounded-full bg-black/80 hover:bg-black text-white hover:text-[#00E5FF] transition-colors"
-                          title="Open on Instagram"
-                        >
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
-
-                        <button
-                          type="button"
-                          disabled={actionInProgressId === reel.id}
-                          onClick={() => handleDeleteReel(reel.id)}
-                          className="p-1.5 rounded-full bg-black/80 hover:bg-rose-600 text-white/70 hover:text-white transition-colors cursor-pointer"
-                          title="Delete from Library"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Play Button Overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center">
                       <button
                         type="button"
-                        onClick={() => setPreviewReel(reel)}
-                        className="w-12 h-12 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center border border-white/20 transition-transform hover:scale-110 cursor-pointer shadow-lg"
-                        title="Preview Reel"
+                        disabled={actionInProgressId === reel.id}
+                        onClick={() => handleDeleteReel(reel.id)}
+                        className="p-1.5 rounded-full bg-black/80 hover:bg-rose-600 text-white/70 hover:text-white transition-colors cursor-pointer"
+                        title="Delete from Library"
                       >
-                        <Play className="w-5 h-5 fill-white text-white ml-0.5" />
+                        <Trash2 className="w-3 h-3" />
                       </button>
                     </div>
-
-                    {/* Ribbon If Live */}
-                    {isLive && (
-                      <div className="absolute bottom-3 left-3 right-3 z-10">
-                        <span className="w-full py-1.5 rounded-lg bg-emerald-500 text-black font-mono text-[10px] font-black uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-lg">
-                          <Check className="w-3.5 h-3.5 stroke-[3]" />
-                          <span>LIVE ON WEBSITE</span>
-                        </span>
-                      </div>
-                    )}
                   </div>
+
+                  {/* Native Instagram Embed Reel Player - NO COVER PHOTO */}
+                  <div className="relative aspect-[9/16] w-full min-h-[460px] bg-black">
+                    <iframe
+                      src={`https://www.instagram.com/reel/${reel.instagramMediaId}/embed/`}
+                      className="w-full h-full border-0 absolute inset-0"
+                      scrolling="no"
+                      allowTransparency={true}
+                      allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                    />
+                  </div>
+
+                  {/* Ribbon If Live */}
+                  {isLive && (
+                    <div className="px-3 py-1.5 bg-emerald-500/20 border-y border-emerald-500/30 flex items-center justify-center gap-1.5 text-emerald-400 font-mono text-[10px] font-bold uppercase">
+                      <Check className="w-3 h-3 stroke-[3]" />
+                      <span>LIVE ON WEBSITE</span>
+                    </div>
+                  )}
 
                   {/* Body & Actions */}
                   <div className="p-4 flex flex-col justify-between flex-grow space-y-3 bg-[#1F2833]">
@@ -800,16 +781,11 @@ export function InstagramIntegrationModule({
                         <td className="p-4">
                           <div
                             onClick={() => setPreviewReel(reel)}
-                            className="relative w-12 h-16 rounded-lg overflow-hidden bg-black border border-white/15 cursor-pointer group shadow-md flex-shrink-0"
+                            className="relative w-12 h-16 rounded-lg overflow-hidden bg-gradient-to-br from-[#833ab4]/20 via-[#fd1d1d]/20 to-[#fcb045]/20 border border-white/15 cursor-pointer group shadow-md flex flex-col items-center justify-center hover:border-[#00E5FF] transition-all flex-shrink-0"
+                            title="Click to preview Reel"
                           >
-                            <img
-                              src={reel.thumbnailUrl || "/images/dj_hero.jpg"}
-                              alt={reel.caption}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                            />
-                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                              <Play className="w-3.5 h-3.5 text-white fill-white" />
-                            </div>
+                            <Film className="w-4 h-4 text-[#00E5FF] group-hover:scale-110 transition-transform" />
+                            <span className="text-[7px] font-mono text-white/70 mt-0.5 uppercase font-bold">REEL</span>
                           </div>
                         </td>
 
@@ -895,23 +871,14 @@ export function InstagramIntegrationModule({
               <X className="w-5 h-5" />
             </button>
 
-            <div className="relative aspect-[9/16] w-full max-h-[440px] rounded-xl overflow-hidden bg-black mx-auto border border-white/10 shadow-lg">
-              <img
-                src={previewReel.thumbnailUrl || "/images/dj_hero.jpg"}
-                alt={previewReel.caption}
-                className="w-full h-full object-cover"
+            <div className="relative aspect-[9/16] w-full max-h-[500px] h-[500px] rounded-xl overflow-hidden bg-black mx-auto border border-white/10 shadow-lg">
+              <iframe
+                src={`https://www.instagram.com/reel/${previewReel.instagramMediaId}/embed/`}
+                className="w-full h-full border-0 absolute inset-0"
+                scrolling="no"
+                allowTransparency={true}
+                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40 flex items-center justify-center">
-                <a
-                  href={previewReel.permalink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white flex items-center justify-center shadow-2xl hover:scale-110 transition-transform"
-                  title="Watch on Instagram"
-                >
-                  <Play className="w-6 h-6 fill-white text-white translate-x-0.5" />
-                </a>
-              </div>
             </div>
 
             <div className="space-y-2">

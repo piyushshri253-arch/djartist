@@ -3,6 +3,26 @@ import { getAuthenticatedAdmin } from "@/lib/auth";
 import { readInstagramDb, writeInstagramDb } from "@/lib/instagram-crypto";
 import { InstagramReel } from "@/types";
 
+function extractInstagramShortcode(input: string): string | null {
+  if (!input || typeof input !== "string") return null;
+  const str = input.trim();
+
+  // 1. Check for iframe or blockquote embed code
+  const embedMatch = str.match(
+    /(?:permalink|src)=["']https?:\/\/(?:www\.)?instagram\.com\/(?:reels?|p|tv)\/([A-Za-z0-9_-]+)/i
+  );
+  if (embedMatch) return embedMatch[1];
+
+  // 2. Check for standard URL
+  const urlMatch = str.match(/(?:reels?|p|tv|share\/reel)\/([A-Za-z0-9_-]+)/i);
+  if (urlMatch) return urlMatch[1];
+
+  // 3. Raw shortcode (alphanumeric, 5-30 chars)
+  if (/^[A-Za-z0-9_-]{5,30}$/.test(str)) return str;
+
+  return null;
+}
+
 export async function POST(request: Request) {
   try {
     const admin = await getAuthenticatedAdmin();
@@ -11,37 +31,31 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const reelUrl = (body.url || "").trim();
+    const rawInput = (body.url || body.embedCode || body.shortcode || "").trim();
     const customCaption = (body.caption || "").trim();
 
-    if (!reelUrl) {
+    if (!rawInput) {
       return NextResponse.json(
-        { error: "Please enter a valid Instagram Reel URL." },
+        { error: "Please enter an Instagram Reel link or embed code." },
         { status: 400 }
       );
     }
 
-    // Extract shortcode from standard Instagram formats (reels, reel, p, tv, share/reel)
-    const match = reelUrl.match(/(?:reels?|p|tv|share\/reel)\/([A-Za-z0-9_-]+)/i);
-    const shortcode = match ? match[1] : `reel-${Date.now()}`;
-    const cleanPermalink = reelUrl.startsWith("http")
-      ? reelUrl.split("?")[0].replace(/\/+$/, "") + "/"
-      : `https://www.instagram.com/reel/${shortcode}/`;
+    const shortcode = extractInstagramShortcode(rawInput);
+    if (!shortcode) {
+      return NextResponse.json(
+        {
+          error:
+            "Invalid Instagram link or embed code. Please paste a link like https://www.instagram.com/reel/... or an embed code.",
+        },
+        { status: 400 }
+      );
+    }
 
     const db = await readInstagramDb();
     const now = new Date().toISOString();
     const username = db.connection.username || "djgspark";
-
-    // Dynamic rotation of concert/stage thumbnails if no custom thumbnail is provided
-    const fallbackPosters = [
-      "/images/past_event_crowd.jpg",
-      "/images/gallery_stage_lasers.jpg",
-      "/images/gallery_dj_decks_pov.jpg",
-      "/images/world_tour_stage.jpg",
-      "/images/dj_hero.jpg",
-    ];
-    const defaultThumbnail =
-      fallbackPosters[db.reels.length % fallbackPosters.length];
+    const canonicalUrl = `https://www.instagram.com/reel/${shortcode}/`;
 
     // Check if already exists in library
     const existingIndex = db.reels.findIndex(
@@ -56,8 +70,8 @@ export async function POST(request: Request) {
       instagramMediaId: shortcode,
       username,
       caption: customCaption || `Instagram Reel // @${username}`,
-      thumbnailUrl: body.thumbnailUrl || defaultThumbnail,
-      permalink: cleanPermalink,
+      thumbnailUrl: "", // No dummy cover photo
+      permalink: canonicalUrl,
       mediaType: "REEL",
       publishedAt: now,
       viewsDisplay: "Featured",
@@ -70,17 +84,19 @@ export async function POST(request: Request) {
     if (existingIndex >= 0) {
       db.reels[existingIndex] = {
         ...db.reels[existingIndex],
+        instagramMediaId: shortcode,
         caption: customCaption || db.reels[existingIndex].caption,
-        thumbnailUrl: body.thumbnailUrl || db.reels[existingIndex].thumbnailUrl,
-        permalink: `https://www.instagram.com/reel/${shortcode}/`,
+        permalink: canonicalUrl,
         updatedAt: now,
       };
+      if (shouldBeVisible && !db.selectedReelIds.includes(db.reels[existingIndex].id)) {
+        db.selectedReelIds.push(db.reels[existingIndex].id);
+      }
     } else {
       db.reels.unshift(newReel);
-    }
-
-    if (shouldBeVisible && !db.selectedReelIds.includes(newReel.id)) {
-      db.selectedReelIds.push(newReel.id);
+      if (shouldBeVisible && !db.selectedReelIds.includes(newReel.id)) {
+        db.selectedReelIds.push(newReel.id);
+      }
     }
 
     // Auto-enable Instagram section on website
@@ -95,15 +111,15 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: `Reel added successfully to website showcase!`,
-      reel: newReel,
+      message: `Reel added successfully!`,
+      reel: existingIndex >= 0 ? db.reels[existingIndex] : newReel,
       reels: db.reels,
       selectedReelIds: db.selectedReelIds,
     });
   } catch (error: any) {
-    console.error("Add reel error:", error);
+    console.error("Error adding reel:", error);
     return NextResponse.json(
-      { error: error.message || "Failed to add Instagram reel." },
+      { error: error.message || "Failed to add reel" },
       { status: 500 }
     );
   }
