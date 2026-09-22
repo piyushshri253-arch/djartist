@@ -21,14 +21,14 @@ export function Header() {
 
   const navLinks = [
     { label: "HOME", href: "/" },
-    { label: "UPCOMING EVENTS", href: "/events" },
-    { label: "PAST EVENTS", href: "/past-events" },
     { label: "ABOUT", href: "/#about" },
     { label: "SOCIAL", href: "/#social" },
-    { label: "REVIEWS", href: "/#reviews" },
+    { label: "UPCOMING EVENTS", href: "/#events" },
+    { label: "PAST EVENTS", href: "/#past-events" },
     { label: "VIDEOS", href: "/#videos" },
     { label: "GALLERY", href: "/#gallery" },
-    { label: "BLOG", href: "/blog" },
+    { label: "BLOGS", href: "/#blogs" },
+    { label: "REVIEWS", href: "/#reviews" },
   ];
 
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ShieldCheck, Send, CheckCircle2, ExternalLink } from "lucide-react";
+import { ShieldCheck, Send, CheckCircle2, MessageSquare, ExternalLink, Calendar, MapPin, User, Mail, Phone } from "lucide-react";
 
 const CLIENT_WHATSAPP_NUMBER = "919540681934";
 const CLIENT_WHATSAPP_DISPLAY = "+91 95406 81934";
@@ -11,11 +11,9 @@ export default function BookingPage() {
     name: "",
     email: "",
     phone: "",
-    eventType: "Stadium / Arena Headline",
-    eventDate: "",
-    location: "",
-    guestCount: "15,000 - 30,000",
-    budget: "$100,000 - $250,000",
+    city: "",
+    place: "",
+    date: "",
     message: "",
   });
 
@@ -25,20 +23,18 @@ export default function BookingPage() {
 
   const formatProposalWhatsAppMessage = () => {
     const lines = [
-      "🔥 *DJ G SPARK — TOUR BOOKING PROPOSAL* 🔥",
+      "🔥 *NEW DJ G SPARK BOOKING INQUIRY* 🔥",
       "━━━━━━━━━━━━━━━━━━━━━",
-      `🏢 *Agency / Contact:* ${formData.name.trim()}`,
-      `✉️ *Email:* ${formData.email.trim()}`,
-      `📱 *Direct Phone / WhatsApp:* ${formData.phone.trim()}`,
-      `📍 *Location:* ${formData.location.trim()}`,
-      `🎪 *Event Type:* ${formData.eventType}`,
-      `📅 *Target Date:* ${formData.eventDate}`,
-      `👥 *Attendance:* ${formData.guestCount}`,
-      `💰 *Budget Range:* ${formData.budget}`,
-      `📝 *Notes & Specifications:* ${formData.message.trim() || "None"}`,
+      `👤 *Full Name:* ${formData.name.trim()}`,
+      `📱 *Phone / WhatsApp:* ${formData.phone.trim()}`,
+      formData.email.trim() ? `✉️ *Email ID:* ${formData.email.trim()}` : "",
+      `📍 *City:* ${formData.city.trim()}`,
+      `🎪 *Place / Venue:* ${formData.place.trim()}`,
+      `📅 *Date:* ${formData.date}`,
+      formData.message.trim() ? `📝 *Message:* ${formData.message.trim()}` : "",
       "━━━━━━━━━━━━━━━━━━━━━",
-      "⚡ *Direct Promoter Inquiry from DJ G Spark Official Website*",
-    ];
+      "⚡ *Direct Inquiry from DJ G Spark Official Website*",
+    ].filter(Boolean);
     return lines.join("\n");
   };
 
@@ -56,21 +52,20 @@ export default function BookingPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          type: "promoter_proposal",
+          type: "booking_inquiry",
           name: formData.name,
           email: formData.email,
           phone: formData.phone,
-          location: formData.location,
-          eventType: formData.eventType,
-          eventDate: formData.eventDate,
-          budget: formData.budget,
+          eventCity: formData.city,
+          location: formData.place,
+          eventDate: formData.date,
+          notes: formData.message,
           quantity: 1,
-          totalPrice: 0,
-          notes: `Attendance: ${formData.guestCount} | Notes: ${formData.message}`,
+          totalPrice: "On Request",
         }),
       });
     } catch (err) {
-      console.error("Failed to save booking proposal lead", err);
+      console.error("Failed to save booking inquiry lead", err);
     } finally {
       setIsSubmitting(false);
       setIsSubmitted(true);
@@ -82,13 +77,13 @@ export default function BookingPage() {
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto mb-16">
         <span className="text-xs font-bold tracking-[0.24em] text-[#00B4D8] uppercase block mb-3">
-          GLOBAL TOUR BOOKING
+          OFFICIAL BOOKING &amp; INQUIRY
         </span>
-        <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight mb-4">
-          REPRESENTATION & <span className="text-[#00E5FF]">BOOKINGS</span>
+        <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight mb-4 uppercase">
+          BOOK <span className="text-[#00E5FF]">DJ G-SPARK</span>
         </h1>
         <p className="text-sm sm:text-base text-[#8A8D93] leading-relaxed">
-          DJ G SPARK is currently reviewing exclusive headline offers for the 2026/2027 World Tour. Please submit your detailed promoter proposal below.
+          Book DJ G-Spark for weddings, concerts, club nights, and private events. Fill in the details below for instant quotation and WhatsApp response.
         </p>
       </div>
 
@@ -96,26 +91,38 @@ export default function BookingPage() {
         {/* Booking Form (2 cols) */}
         <div className="lg:col-span-2 glass-card p-8 sm:p-12 rounded-3xl border border-white/10">
           {isSubmitted ? (
-            <div className="py-12 text-center space-y-5">
+            <div className="py-12 text-center space-y-6">
               <div className="w-16 h-16 rounded-full bg-emerald-500/15 border-2 border-emerald-500 flex items-center justify-center text-emerald-400 mx-auto shadow-[0_0_30px_rgba(16,185,129,0.3)]">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
               <div>
                 <span className="px-3.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-[10px] font-mono tracking-widest text-emerald-400 uppercase font-bold inline-block mb-2">
-                  PROPOSAL TRANSMITTED
+                  INQUIRY TRANSMITTED
                 </span>
                 <h2 className="text-2xl sm:text-3xl font-heading font-black text-white uppercase tracking-tight">
-                  THANK YOU!
+                  THANK YOU, {formData.name.toUpperCase()}!
                 </h2>
                 <p className="text-xs sm:text-sm text-[#AAAAAA] max-w-md mx-auto mt-2 leading-relaxed">
-                  Thank you, <strong className="text-white">{formData.name}</strong>. Your tour booking proposal has been submitted to artist management and automatically registered in our executive routing database.
+                  Your booking details have been sent directly to DJ G-Spark's management team and recorded successfully.
                 </p>
-                <p className="text-[11px] text-emerald-400/90 font-mono mt-1">
-                  ✓ Automated WhatsApp lead dispatched • Management will review and respond
+                <p className="text-xs text-emerald-400 font-mono mt-2">
+                  ✓ Automated WhatsApp lead dispatched to {CLIENT_WHATSAPP_DISPLAY}
                 </p>
               </div>
 
-              <div className="pt-4 flex flex-col items-center justify-center gap-3">
+              <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+                {whatsappUrl && (
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-auto px-8 py-4 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_25px_rgba(37,211,102,0.4)] flex items-center justify-center gap-2"
+                  >
+                    <MessageSquare className="w-4 h-4 fill-white" />
+                    <span>CHAT ON WHATSAPP NOW</span>
+                  </a>
+                )}
+
                 <button
                   onClick={() => {
                     setIsSubmitted(false);
@@ -123,80 +130,66 @@ export default function BookingPage() {
                       name: "",
                       email: "",
                       phone: "",
-                      eventType: "Stadium / Arena Headline",
-                      eventDate: "",
-                      location: "",
-                      guestCount: "15,000 - 30,000",
-                      budget: "$100,000 - $250,000",
+                      city: "",
+                      place: "",
+                      date: "",
                       message: "",
                     });
                   }}
-                  className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] hover:brightness-110 text-black font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_25px_rgba(0, 229, 255, 0.35)] cursor-pointer"
+                  className="w-full sm:w-auto px-7 py-4 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase tracking-wider transition-all cursor-pointer"
                 >
-                  Submit Another Proposal
+                  Submit Another Inquiry
                 </button>
-
-                {whatsappUrl && (
-                  <a
-                    href={whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[11px] font-mono text-[#888888] hover:text-[#25D366] transition-colors inline-flex items-center gap-1.5"
-                  >
-                    <span>Need priority promoter clearance? Chat on WhatsApp</span>
-                    <span>&rarr;</span>
-                  </a>
-                )}
               </div>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="border-b border-white/10 pb-4 mb-6 flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-bold text-white">Promoter & Event Proposal</h3>
-                  <p className="text-xs text-[#8A8D93]">Please fill out all confirmed venue and budget specifications.</p>
+                  <h3 className="text-lg font-bold text-white uppercase">Event Booking Inquiry</h3>
+                  <p className="text-xs text-[#8A8D93]">Fill out the 7 simple fields below for instant booking clearance.</p>
                 </div>
                 <div className="hidden sm:flex items-center gap-1.5 text-[10px] font-mono text-[#25D366] bg-[#25D366]/10 px-2.5 py-1 rounded-full border border-[#25D366]/30">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#25D366] animate-pulse" />
-                  <span>WhatsApp Connected: {CLIENT_WHATSAPP_DISPLAY}</span>
+                  <span>WhatsApp: {CLIENT_WHATSAPP_DISPLAY}</span>
                 </div>
               </div>
 
-              {/* Row 1: Name & Email */}
+              {/* 1. Full Name & 2. Email ID */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label className="text-xs font-semibold uppercase tracking-wider text-[#F5F6FA] block mb-2">
-                    Contact / Agency Name *
+                    Full Name *
                   </label>
                   <input
                     type="text"
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="e.g. Live Nation / Insomniac"
+                    placeholder="e.g. Rahul Sharma"
                     className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#00E5FF] transition-colors"
                   />
                 </div>
                 <div>
                   <label className="text-xs font-semibold uppercase tracking-wider text-[#F5F6FA] block mb-2">
-                    Official Email *
+                    Email ID *
                   </label>
                   <input
                     type="email"
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="promoter@agency.com"
+                    placeholder="name@example.com"
                     className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#00E5FF] transition-colors"
                   />
                 </div>
               </div>
 
-              {/* Row 2: Phone & Location */}
+              {/* 3. Phone No & 4. City */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label className="text-xs font-semibold uppercase tracking-wider text-[#F5F6FA] block mb-2">
-                    Direct Phone / WhatsApp *
+                    Phone No / WhatsApp *
                   </label>
                   <input
                     type="tel"
@@ -209,94 +202,58 @@ export default function BookingPage() {
                 </div>
                 <div>
                   <label className="text-xs font-semibold uppercase tracking-wider text-[#F5F6FA] block mb-2">
-                    Venue City & Country *
+                    City *
                   </label>
                   <input
                     type="text"
                     required
-                    value={formData.location}
-                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                    placeholder="e.g. Dubai, United Arab Emirates"
+                    value={formData.city}
+                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                    placeholder="e.g. Delhi / Gurgaon / Jaipur"
                     className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#00E5FF] transition-colors"
                   />
                 </div>
               </div>
 
-              {/* Row 3: Event Type & Date */}
+              {/* 5. Place / Venue & 6. Date */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label className="text-xs font-semibold uppercase tracking-wider text-[#F5F6FA] block mb-2">
-                    Event Type *
+                    Place / Venue *
                   </label>
-                  <select
-                    value={formData.eventType}
-                    onChange={(e) => setFormData({ ...formData, eventType: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-[#121216] border border-white/10 text-white text-sm focus:outline-none focus:border-[#00E5FF] transition-colors"
-                  >
-                    <option>Stadium / Arena Headline</option>
-                    <option>Major Music Festival Mainstage</option>
-                    <option>Nightclub Residency Showcase</option>
-                    <option>Exclusive Corporate / Private Event</option>
-                  </select>
+                  <input
+                    type="text"
+                    required
+                    value={formData.place}
+                    onChange={(e) => setFormData({ ...formData, place: e.target.value })}
+                    placeholder="e.g. The Leela Palace / Farmhouse / Club"
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#00E5FF] transition-colors"
+                  />
                 </div>
                 <div>
                   <label className="text-xs font-semibold uppercase tracking-wider text-[#F5F6FA] block mb-2">
-                    Target Event Date *
+                    Event Date *
                   </label>
                   <input
                     type="date"
                     required
-                    value={formData.eventDate}
-                    onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#00E5FF] transition-colors"
+                    value={formData.date}
+                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl bg-[#121216] border border-white/10 text-white text-sm focus:outline-none focus:border-[#00E5FF] transition-colors"
                   />
                 </div>
               </div>
 
-              {/* Row 4: Capacity & Budget */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                  <label className="text-xs font-semibold uppercase tracking-wider text-[#F5F6FA] block mb-2">
-                    Anticipated Attendance *
-                  </label>
-                  <select
-                    value={formData.guestCount}
-                    onChange={(e) => setFormData({ ...formData, guestCount: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-[#121216] border border-white/10 text-white text-sm focus:outline-none focus:border-[#00E5FF] transition-colors"
-                  >
-                    <option>Under 5,000</option>
-                    <option>5,000 - 15,000</option>
-                    <option>15,000 - 30,000</option>
-                    <option>30,000+ (Stadium)</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="text-xs font-semibold uppercase tracking-wider text-[#F5F6FA] block mb-2">
-                    Proposed Artist Fee Range (USD) *
-                  </label>
-                  <select
-                    value={formData.budget}
-                    onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-[#121216] border border-white/10 text-white text-sm focus:outline-none focus:border-[#00E5FF] transition-colors"
-                  >
-                    <option>$35,000 - $75,000 (Club / Regional)</option>
-                    <option>$75,000 - $150,000 (Standard Arena)</option>
-                    <option>$150,000 - $300,000 (Major Festival)</option>
-                    <option>$300,000+ (Stadium 360 Production)</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Message */}
+              {/* 7. Message */}
               <div>
                 <label className="text-xs font-semibold uppercase tracking-wider text-[#F5F6FA] block mb-2">
-                  Event Theme & Additional Notes
+                  Message / Special Requirements
                 </label>
                 <textarea
                   rows={4}
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  placeholder="Provide co-headliners, ticketing timeline, venue holds, or special production requests..."
+                  placeholder="Tell us about your event type (Wedding, Sangeet, Cocktail, Birthday, Concert) or any special requests..."
                   className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#00E5FF] transition-colors"
                 />
               </div>
@@ -306,10 +263,10 @@ export default function BookingPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black font-bold text-xs tracking-[0.14em] uppercase hover:shadow-spark transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="w-full sm:w-auto px-9 py-4 rounded-full bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black font-black text-xs tracking-[0.14em] uppercase hover:shadow-[0_0_30px_rgba(0,229,255,0.6)] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   <Send className="w-4 h-4" />
-                  <span>{isSubmitting ? "TRANSMITTING..." : "SUBMIT BOOKING PROPOSAL"}</span>
+                  <span>{isSubmitting ? "TRANSMITTING..." : "SUBMIT & SEND LEAD"}</span>
                 </button>
 
                 <div className="flex items-center gap-2 text-xs text-[#8A8D93]">
@@ -321,7 +278,7 @@ export default function BookingPage() {
           )}
         </div>
 
-        {/* Sidebar: Agency Directory & Guidelines */}
+        {/* Sidebar: Direct Artist WhatsApp & Contact */}
         <div className="space-y-8">
           <div className="glass-card p-6 rounded-2xl border border-white/10 space-y-6">
             <h4 className="text-sm font-bold text-white uppercase tracking-wider">
@@ -330,10 +287,10 @@ export default function BookingPage() {
 
             <div className="p-4 rounded-xl bg-[#25D366]/10 border border-[#25D366]/30 space-y-2">
               <span className="text-[10px] font-mono uppercase tracking-wider text-[#25D366] block font-bold">
-                INSTANT PROMOTER HOTLINE
+                INSTANT BOOKING HOTLINE
               </span>
               <a
-                href={`https://api.whatsapp.com/send?phone=${CLIENT_WHATSAPP_NUMBER}&text=${encodeURIComponent("Hello DJ G Spark Team, I am an event promoter looking to discuss headline tour availability.")}`}
+                href={`https://api.whatsapp.com/send?phone=${CLIENT_WHATSAPP_NUMBER}&text=${encodeURIComponent("Hello DJ G Spark Team, I would like to inquire about event booking availability.")}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-base font-bold text-white hover:text-[#25D366] transition-colors flex items-center gap-2"
@@ -342,32 +299,22 @@ export default function BookingPage() {
                 <ExternalLink className="w-4 h-4 text-[#25D366]" />
               </a>
               <p className="text-[11px] text-[#888888]">
-                Direct agency hotline for stadium, festival & arena inquiries.
+                Direct hotline for weddings, club nights, concerts &amp; private party bookings.
               </p>
             </div>
 
             <div className="space-y-4 text-xs text-[#8A8D93]">
               <div>
-                <strong className="text-white block">Address:</strong>
-                <p>Dwarka New Delhi (India)</p>
-                <p className="text-[#00B4D8]">djgspark98@gmail.com</p>
+                <strong className="text-white block">Location:</strong>
+                <p>Dwarka, New Delhi (India)</p>
+                <p className="text-[#00B4D8] mt-1">djgspark98@gmail.com</p>
               </div>
-             
-             
+              <div className="pt-3 border-t border-white/10">
+                <strong className="text-white block mb-1">Genres:</strong>
+                <p>Bollywood, Punjabi, Commercial, Retro, EDM, Bollytech, Melodic Techno.</p>
+              </div>
             </div>
           </div>
-
-          {/* <div className="glass-card p-6 rounded-2xl border border-white/10 space-y-3">
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">
-              Promoter Guidelines
-            </h4>
-            <ul className="text-xs text-[#8A8D93] space-y-2">
-              <li>• Offers must have confirmed venue holds.</li>
-              <li>• 100km radius clause applies for 45 days prior.</li>
-              <li>• 50% deposit required upon contract signature.</li>
-              <li>• Dedicated artist security required backstage.</li>
-            </ul>
-          </div> */}
         </div>
       </div>
     </main>
