@@ -1,10 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Mail, X as CloseIcon } from "lucide-react";
 import { FacebookIcon, InstagramIcon, YouTubeIcon } from "@/components/ui/SocialIcons";
 
 export function Footer() {
+  const [showTechRiderPhoto, setShowTechRiderPhoto] = useState(false);
   return (
     <footer className="relative bg-[#0B0C10] border-t border-white/10 pt-20 pb-12 z-20 overflow-hidden">
       {/* Background Subtle Neon Cyan Glow */}
@@ -53,6 +56,14 @@ export function Footer() {
 Dj G-Spark, A dj who is best in multi-genres like Bollywood, Punjabi, Commercial, Retro, Edm, etc....
             </p>
             <div className="flex items-center gap-4 pt-2 text-[#8A8D93]">
+              <a
+                href="mailto:djgspark98@gmail.com"
+                className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-[#F5F6FA]/80 hover:text-[#00E5FF] transition-colors"
+                aria-label="Email Dj G-Spark"
+                title="Email: djgspark98@gmail.com"
+              >
+                <Mail className="w-4 h-4" />
+              </a>
               <a
                 href="https://www.facebook.com/share/1BxXiXLitH/"
                 target="_blank"
@@ -130,7 +141,13 @@ Dj G-Spark, A dj who is best in multi-genres like Bollywood, Punjabi, Commercial
         <div className="flex flex-col sm:flex-row items-center justify-between pt-8 text-xs text-[#8A8D93] gap-4">
           <p>© 2026 Dj G-Spark. All Rights Reserved. Engineered for Ultra-High Fidelity.</p>
           <div className="flex items-center gap-6">
-            <Link href="/about" className="hover:text-[#F5F6FA] transition-colors">Tech-Rider</Link>
+            <button
+              type="button"
+              onClick={() => setShowTechRiderPhoto(true)}
+              className="hover:text-[#00E5FF] transition-colors cursor-pointer"
+            >
+              Tech-Rider
+            </button>
             <span>•</span>
             <Link href="/booking" className="hover:text-[#F5F6FA] transition-colors">Booking</Link>
             <span>•</span>
@@ -140,6 +157,40 @@ Dj G-Spark, A dj who is best in multi-genres like Bollywood, Punjabi, Commercial
           </div>
         </div>
       </div>
+
+      {/* Tech Rider Photo Lightbox */}
+      {showTechRiderPhoto && (
+        <div
+          className="fixed inset-0 z-[120] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200"
+          onClick={() => setShowTechRiderPhoto(false)}
+        >
+          <div
+            className="relative max-w-4xl max-h-[90vh] bg-[#141620] border border-white/20 rounded-2xl overflow-hidden shadow-2xl p-3 sm:p-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-3 mb-2 border-b border-white/10">
+              <span className="text-xs font-mono font-bold tracking-wider text-[#00E5FF] uppercase">
+                Dj G-Spark • Official Stage Setup & Tech Rider
+              </span>
+              <button
+                type="button"
+                onClick={() => setShowTechRiderPhoto(false)}
+                className="p-1.5 rounded-full bg-white/10 text-white/80 hover:text-white hover:bg-white/20 transition-all cursor-pointer"
+                aria-label="Close"
+              >
+                <CloseIcon className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="relative w-full max-h-[75vh] flex items-center justify-center overflow-hidden rounded-xl bg-black">
+              <img
+                src="/images/dj_performing.jpg"
+                alt="Dj G-Spark Stage Setup & Tech Rider"
+                className="w-full h-auto max-h-[75vh] object-contain rounded-xl"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </footer>
   );
 }

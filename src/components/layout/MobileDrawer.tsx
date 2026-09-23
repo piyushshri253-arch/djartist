@@ -17,7 +17,7 @@ export function MobileDrawer({ isOpen, onClose, links }: MobileDrawerProps) {
   if (!isOpen) return null;
 
   const extraLinks = [
-    { label: "CONTACT", href: "/contact" },
+    { label: "BOOKING", href: "/booking" },
   ];
 
   return (
