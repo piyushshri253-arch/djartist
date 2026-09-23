@@ -160,12 +160,30 @@ export default function AdminDashboardPage() {
   });
   const [previewVideoUrl, setPreviewVideoUrl] = useState<string | null>(null);
 
+  // Blog Management States
+  const [isBlogModalOpen, setIsBlogModalOpen] = useState(false);
+  const [editingBlog, setEditingBlog] = useState<any | null>(null);
+  const [isSavingBlog, setIsSavingBlog] = useState(false);
+  const [blogForm, setBlogForm] = useState({
+    title: "",
+    slug: "",
+    category: "MUSIC PRODUCTION",
+    excerpt: "",
+    content: "",
+    image: "/images/dj_hero.jpg",
+    author: "Dj G-Spark",
+    authorRole: "Artist & Headliner",
+    readTime: "5 MIN READ",
+  });
+
   // Dedicated Event Editor states (NO popup/modal)
   const [editingEvent, setEditingEvent] = useState<EventData | null>(null);
   const [isSavingEvent, setIsSavingEvent] = useState(false);
   const [eventForm, setEventForm] = useState({
     title: "",
     slug: "",
+    eventType: "Arena Concert",
+    artist: "Dj G-Spark",
     city: "",
     country: "INDIA",
     region: "india",
@@ -177,9 +195,9 @@ export default function AdminDashboardPage() {
     doors: "18:00 IST",
     capacity: "25,000",
     status: "SELLING FAST",
-    priceINR: "2,499",
-    priceUSD: "35",
-    showPrice: true,
+    priceINR: "",
+    priceUSD: "",
+    showPrice: false,
     isPublished: true,
     image: "/images/past_event_crowd.jpg",
     description: "",
@@ -535,6 +553,8 @@ export default function AdminDashboardPage() {
     setEventForm({
       title: "",
       slug: "",
+      eventType: isPastOrigin ? "Festival" : "Arena Concert",
+      artist: "Dj G-Spark (Headliner)",
       city: "",
       country: "INDIA",
       region: "india",
@@ -546,9 +566,9 @@ export default function AdminDashboardPage() {
       doors: "18:00 IST",
       capacity: isPastOrigin ? "45,000 Attendance" : "25,000",
       status: isPastOrigin ? "COMPLETED" : "SELLING FAST",
-      priceINR: "2,499",
-      priceUSD: "35",
-      showPrice: !isPastOrigin,
+      priceINR: "",
+      priceUSD: "",
+      showPrice: false,
       isPublished: true,
       image: "/images/past_event_crowd.jpg",
       description: "",
@@ -564,6 +584,8 @@ export default function AdminDashboardPage() {
     setEventForm({
       title: ev.title || "",
       slug: ev.slug || "",
+      eventType: (ev as any).eventType || "Arena Concert",
+      artist: (ev as any).artist || "Dj G-Spark (Headliner)",
       city: ev.city || "",
       country: ev.country || "INDIA",
       region: ev.region || "india",
@@ -575,9 +597,9 @@ export default function AdminDashboardPage() {
       doors: ev.doors || "18:00 IST",
       capacity: ev.capacity || "25,000",
       status: ev.status || (isEventPast(ev.date) ? "COMPLETED" : "SELLING FAST"),
-      priceINR: String(ev.priceINR || "2499"),
-      priceUSD: String(ev.priceUSD || "35"),
-      showPrice: ev.showPrice !== false,
+      priceINR: String(ev.priceINR || ""),
+      priceUSD: String(ev.priceUSD || ""),
+      showPrice: false,
       isPublished: ev.isPublished !== false,
       image: ev.image || "/images/past_event_crowd.jpg",
       description: ev.description || "",
@@ -765,6 +787,96 @@ export default function AdminDashboardPage() {
       showToast("success", "Video removed from showcase.");
     } catch (err: any) {
       showToast("error", err.message || "Failed to delete video");
+    }
+  };
+
+  // Blog Management Actions
+  const openCreateBlog = () => {
+    setEditingBlog(null);
+    setBlogForm({
+      title: "",
+      slug: "",
+      category: "MUSIC PRODUCTION",
+      excerpt: "",
+      content: "",
+      image: "/images/dj_hero.jpg",
+      author: "Dj G-Spark",
+      authorRole: "Artist & Headliner",
+      readTime: "5 MIN READ",
+    });
+    setIsBlogModalOpen(true);
+  };
+
+  const openEditBlog = (blog: any) => {
+    setEditingBlog(blog);
+    setBlogForm({
+      title: blog.title || "",
+      slug: blog.slug || "",
+      category: blog.category || "MUSIC PRODUCTION",
+      excerpt: blog.excerpt || "",
+      content: blog.content || "",
+      image: blog.image || "/images/dj_hero.jpg",
+      author: blog.author || "Dj G-Spark",
+      authorRole: blog.authorRole || "Artist & Headliner",
+      readTime: blog.readTime || "5 MIN READ",
+    });
+    setIsBlogModalOpen(true);
+  };
+
+  const handleSaveBlog = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!blogForm.title.trim() || !blogForm.content.trim()) {
+      showToast("error", "Please provide Title and Content for the article.");
+      return;
+    }
+
+    setIsSavingBlog(true);
+    try {
+      const payload = {
+        ...blogForm,
+        id: editingBlog?.id,
+        slug:
+          blogForm.slug.trim() ||
+          blogForm.title
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-+|-+$/g, ""),
+      };
+
+      const method = editingBlog ? "PUT" : "POST";
+      const res = await fetch("/api/admin/blogs", {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to save blog post");
+
+      showToast("success", `Article ${editingBlog ? "updated" : "published"} successfully!`);
+      setIsBlogModalOpen(false);
+      await fetchData();
+    } catch (err: any) {
+      showToast("error", err.message || "Failed to save blog");
+    } finally {
+      setIsSavingBlog(false);
+    }
+  };
+
+  const handleDeleteBlog = async (id: string, title?: string) => {
+    if (!window.confirm(`Are you sure you want to permanently delete "${title || "this article"}"?`)) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/admin/blogs?id=${id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to delete article");
+
+      setBlogs((prev) => prev.filter((b) => b.id !== id));
+      showToast("success", "Article removed successfully.");
+    } catch (err: any) {
+      showToast("error", err.message || "Failed to delete article");
     }
   };
 
@@ -2086,6 +2198,41 @@ export default function AdminDashboardPage() {
                     />
                   </div>
 
+                  {/* Event Type & Artist Row */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs font-bold text-slate-700 block mb-1">
+                        Event Type <span className="text-rose-500">*</span>
+                      </label>
+                      <select
+                        value={eventForm.eventType}
+                        onChange={(e) => setEventForm({ ...eventForm, eventType: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-semibold focus:outline-none focus:border-amber-500 cursor-pointer"
+                      >
+                        <option value="Arena Concert">Arena Concert</option>
+                        <option value="Club Show">Club Show</option>
+                        <option value="Wedding & Private Show">Wedding & Private Show</option>
+                        <option value="Music Festival">Music Festival</option>
+                        <option value="Corporate Summit">Corporate Summit</option>
+                        <option value="College Fest">College Fest</option>
+                        <option value="Special Showcase">Special Showcase</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-slate-700 block mb-1">
+                        Artist / Headliner
+                      </label>
+                      <input
+                        type="text"
+                        value={eventForm.artist}
+                        onChange={(e) => setEventForm({ ...eventForm, artist: e.target.value })}
+                        placeholder="e.g. Dj G-Spark"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-semibold focus:outline-none focus:border-amber-500"
+                      />
+                    </div>
+                  </div>
+
                   {/* Slug with Auto-generate Button */}
                   <div>
                     <div className="flex items-center justify-between mb-1">
@@ -2411,65 +2558,7 @@ export default function AdminDashboardPage() {
                   )}
                 </div>
 
-                {/* Card 5: Passes & Pricing Policy */}
-                <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 space-y-4">
-                  <div className="pb-3 border-b border-slate-100">
-                    <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                      <Ticket className="w-4 h-4 text-amber-500" />
-                      <span>5. Commercial & Pricing</span>
-                    </h3>
-                    <p className="text-[11px] text-slate-500">Ticket tiers and public pricing visibility.</p>
-                  </div>
-
-                  {/* Show Price Checkbox */}
-                  <label className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100/60 transition-colors">
-                    <input
-                      type="checkbox"
-                      checked={eventForm.showPrice}
-                      onChange={(e) => setEventForm({ ...eventForm, showPrice: e.target.checked })}
-                      className="w-4 h-4 rounded text-amber-600 focus:ring-amber-500 mt-0.5 cursor-pointer"
-                    />
-                    <div>
-                      <span className="text-xs font-bold text-slate-900 block">
-                        Display Public Pricing
-                      </span>
-                      <span className="text-[11px] text-slate-500 block leading-tight mt-0.5">
-                        If turned off, users see "Passes by Reservation / VIP RSVP" with WhatsApp booking.
-                      </span>
-                    </div>
-                  </label>
-
-                  {eventForm.showPrice && (
-                    <div className="grid grid-cols-2 gap-3 pt-2">
-                      <div>
-                        <label className="text-xs font-bold text-slate-700 block mb-1">
-                          Price INR (₹)
-                        </label>
-                        <input
-                          type="text"
-                          value={eventForm.priceINR}
-                          onChange={(e) => setEventForm({ ...eventForm, priceINR: e.target.value })}
-                          placeholder="2,499"
-                          className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-mono focus:outline-none focus:border-amber-500"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-xs font-bold text-slate-700 block mb-1">
-                          Price USD ($)
-                        </label>
-                        <input
-                          type="text"
-                          value={eventForm.priceUSD}
-                          onChange={(e) => setEventForm({ ...eventForm, priceUSD: e.target.value })}
-                          placeholder="35"
-                          className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-mono focus:outline-none focus:border-amber-500"
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Card 6: Publication Controls & Actions */}
+                {/* Card 5: Publication Controls & Actions */}
                 <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 space-y-4">
                   <div className="pb-3 border-b border-slate-100">
                     <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
@@ -3133,44 +3222,289 @@ export default function AdminDashboardPage() {
         {/* ============================================================ */}
         {activeTab === "blogs" && (
           <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 space-y-6">
-            <div className="flex items-center justify-between pb-6 border-b border-slate-100">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
               <div>
                 <h2 className="text-xl font-bold text-slate-900">Articles & Tour Announcements</h2>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Manage long-form editorial pieces and festival announcements.
+                  Publish editorial articles, music insights, and tour dispatches directly to the website.
                 </p>
               </div>
 
-              <div className="text-xs font-bold text-slate-500">
-                {blogs.length} Published Articles
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-lg">
+                  {blogs.length} Articles
+                </span>
+                <button
+                  type="button"
+                  onClick={openCreateBlog}
+                  className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-2 shadow-xs transition-colors cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Create Article</span>
+                </button>
               </div>
             </div>
 
-            <div className="divide-y divide-slate-100">
-              {blogs.map((b) => (
-                <div key={b.id || b.slug} className="py-4 flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="relative w-16 h-12 rounded-lg overflow-hidden bg-slate-100 shrink-0 border border-slate-200">
-                      <img src={b.image || "/images/past_event_crowd.jpg"} alt={b.title} className="w-full h-full object-cover" />
+            {blogs.length === 0 ? (
+              <div className="text-center py-12 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                <FileText className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+                <h3 className="text-sm font-bold text-slate-700">No Articles Published Yet</h3>
+                <p className="text-xs text-slate-400 mt-1 mb-4">
+                  Create your first editorial story or tour announcement to show on the website.
+                </p>
+                <button
+                  type="button"
+                  onClick={openCreateBlog}
+                  className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs inline-flex items-center gap-2 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Create First Article</span>
+                </button>
+              </div>
+            ) : (
+              <div className="divide-y divide-slate-100">
+                {blogs.map((b) => (
+                  <div key={b.id || b.slug} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50/50 p-2 rounded-xl transition-colors">
+                    <div className="flex items-center gap-4 min-w-0">
+                      <div className="relative w-20 h-14 rounded-lg overflow-hidden bg-slate-100 shrink-0 border border-slate-200">
+                        <img
+                          src={b.image || "/images/past_event_crowd.jpg"}
+                          alt={b.title}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = "/images/past_event_crowd.jpg";
+                          }}
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <span className="font-bold text-sm text-slate-900 block truncate">{b.title}</span>
+                        <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-500 mt-0.5">
+                          <span className="px-2 py-0.5 rounded bg-slate-100 font-semibold text-slate-700">
+                            {b.category || "MUSIC"}
+                          </span>
+                          <span>•</span>
+                          <span>{b.dateDisplay || b.date || "Recent"}</span>
+                          <span>•</span>
+                          <span>{b.readTime || "5 MIN READ"}</span>
+                          <span>•</span>
+                          <span className="text-slate-400">by {b.author || "Dj G-Spark"}</span>
+                        </div>
+                        {b.excerpt && (
+                          <p className="text-xs text-slate-400 line-clamp-1 mt-1">{b.excerpt}</p>
+                        )}
+                      </div>
                     </div>
-                    <div>
-                      <span className="font-bold text-sm text-slate-900 block">{b.title}</span>
-                      <span className="text-[11px] text-slate-400">
-                        {b.category || "FESTIVAL NEWS"} • {b.date || "Recent"}
-                      </span>
+
+                    <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
+                      <Link
+                        href={`/blog/${b.slug || b.id}`}
+                        target="_blank"
+                        className="p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+                        title="View Article Live"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => openEditBlog(b)}
+                        className="p-2 rounded-lg text-slate-500 hover:text-amber-600 hover:bg-amber-50 transition-colors"
+                        title="Edit Article"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteBlog(b.id, b.title)}
+                        className="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                        title="Delete Article"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
                   </div>
+                ))}
+              </div>
+            )}
 
-                  <Link
-                    href={`/blog/${b.slug}`}
-                    target="_blank"
-                    className="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                  </Link>
+            {/* Create / Edit Blog Modal */}
+            {isBlogModalOpen && (
+              <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+                <div className="bg-white rounded-2xl border border-slate-200 max-w-2xl w-full p-6 space-y-5 my-8 shadow-2xl">
+                  <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-900">
+                        {editingBlog ? "Edit Article" : "Create New Article / Blog Post"}
+                      </h3>
+                      <p className="text-xs text-slate-500">
+                        {editingBlog ? "Modify article content and save changes." : "Write and publish a new story to the website."}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setIsBlogModalOpen(false)}
+                      className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  <form onSubmit={handleSaveBlog} className="space-y-4">
+                    {/* Title */}
+                    <div>
+                      <label className="text-xs font-bold text-slate-700 block mb-1">
+                        Article Title <span className="text-rose-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={blogForm.title}
+                        onChange={(e) => setBlogForm({ ...blogForm, title: e.target.value })}
+                        placeholder="e.g. Behind The Decks: Crafting The Sound of 2026"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-semibold focus:outline-none focus:border-amber-500"
+                      />
+                    </div>
+
+                    {/* Slug & Category */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <div className="flex items-center justify-between mb-1">
+                          <label className="text-xs font-bold text-slate-700">URL Slug</label>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (blogForm.title) {
+                                const generated = blogForm.title
+                                  .toLowerCase()
+                                  .replace(/[^a-z0-9]+/g, "-")
+                                  .replace(/^-+|-+$/g, "");
+                                setBlogForm({ ...blogForm, slug: generated });
+                              }
+                            }}
+                            className="text-[11px] font-semibold text-amber-600 hover:text-amber-700 cursor-pointer"
+                          >
+                            Auto-generate
+                          </button>
+                        </div>
+                        <input
+                          type="text"
+                          value={blogForm.slug}
+                          onChange={(e) => setBlogForm({ ...blogForm, slug: e.target.value })}
+                          placeholder="behind-the-decks-2026"
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-mono focus:outline-none focus:border-amber-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-700 block mb-1">Category</label>
+                        <select
+                          value={blogForm.category}
+                          onChange={(e) => setBlogForm({ ...blogForm, category: e.target.value })}
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-semibold focus:outline-none focus:border-amber-500 cursor-pointer"
+                        >
+                          <option value="MUSIC PRODUCTION">MUSIC PRODUCTION</option>
+                          <option value="TOUR DIARIES">TOUR DIARIES</option>
+                          <option value="BEHIND THE SCENES">BEHIND THE SCENES</option>
+                          <option value="FESTIVAL CULTURE">FESTIVAL CULTURE</option>
+                          <option value="ANNOUNCEMENTS">ANNOUNCEMENTS</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Author & Read Time */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-xs font-bold text-slate-700 block mb-1">Author Name</label>
+                        <input
+                          type="text"
+                          value={blogForm.author}
+                          onChange={(e) => setBlogForm({ ...blogForm, author: e.target.value })}
+                          placeholder="Dj G-Spark"
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:border-amber-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-700 block mb-1">Read Time</label>
+                        <input
+                          type="text"
+                          value={blogForm.readTime}
+                          onChange={(e) => setBlogForm({ ...blogForm, readTime: e.target.value })}
+                          placeholder="e.g. 5 MIN READ"
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:border-amber-500"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Cover Image Uploader */}
+                    <div>
+                      <ImageUploader
+                        label="Article Cover Image"
+                        value={blogForm.image}
+                        onChange={(url) => setBlogForm({ ...blogForm, image: url })}
+                      />
+                    </div>
+
+                    {/* Excerpt */}
+                    <div>
+                      <label className="text-xs font-bold text-slate-700 block mb-1">
+                        Short Excerpt / Teaser <span className="text-rose-500">*</span>
+                      </label>
+                      <textarea
+                        rows={2}
+                        required
+                        value={blogForm.excerpt}
+                        onChange={(e) => setBlogForm({ ...blogForm, excerpt: e.target.value })}
+                        placeholder="Brief 1-2 sentence preview shown on the main blog grid..."
+                        className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs leading-relaxed focus:outline-none focus:border-amber-500"
+                      />
+                    </div>
+
+                    {/* Full Content */}
+                    <div>
+                      <label className="text-xs font-bold text-slate-700 block mb-1">
+                        Full Article Content / Narrative <span className="text-rose-500">*</span>
+                      </label>
+                      <textarea
+                        rows={8}
+                        required
+                        value={blogForm.content}
+                        onChange={(e) => setBlogForm({ ...blogForm, content: e.target.value })}
+                        placeholder="Write your complete article writeup here. Separate paragraphs with empty lines..."
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs leading-relaxed focus:outline-none focus:border-amber-500 font-sans"
+                      />
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+                      <button
+                        type="button"
+                        onClick={() => setIsBlogModalOpen(false)}
+                        className="px-4 py-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={isSavingBlog}
+                        className="px-6 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-2 shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
+                      >
+                        {isSavingBlog ? (
+                          <>
+                            <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                            <span>Publishing...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Check className="w-4 h-4" />
+                            <span>{editingBlog ? "Save Changes" : "Publish Article Live"}</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </form>
                 </div>
-              ))}
-            </div>
+              </div>
+            )}
           </div>
         )}
 

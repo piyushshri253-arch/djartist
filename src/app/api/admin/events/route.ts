@@ -6,6 +6,8 @@ export interface EventData {
   id: string;
   slug: string;
   title: string;
+  eventType?: string;
+  artist?: string;
   city: string;
   country: string;
   region: string;
@@ -15,10 +17,10 @@ export interface EventData {
   dateDisplay: string;
   time: string;
   doors?: string;
-  capacity: string;
+  capacity?: string;
   status: string;
   statusClass?: string;
-  priceFrom: string;
+  priceFrom?: string;
   priceINR?: string | number;
   priceUSD?: string | number;
   showPrice?: boolean;
@@ -53,6 +55,8 @@ export async function POST(request: Request) {
     const body = await request.json();
     const {
       title,
+      eventType,
+      artist,
       city,
       country,
       region,
@@ -105,7 +109,7 @@ export async function POST(request: Request) {
       } else if (priceUSD) {
         resolvedPriceFrom = `$ ${String(priceUSD).replace(/[^0-9,]/g, "")}`;
       } else {
-        resolvedPriceFrom = "₹ 2,499";
+        resolvedPriceFrom = "By VIP Reservation";
       }
     }
 
@@ -113,6 +117,8 @@ export async function POST(request: Request) {
       id: `EV-${city.toUpperCase().replace(/[^A-Z0-9]+/g, "-")}-${Date.now().toString().slice(-4)}`,
       slug,
       title,
+      eventType: eventType || "Arena Concert",
+      artist: artist || "Dj G-Spark",
       city,
       country: country || "INDIA",
       region: region || "india",
@@ -126,9 +132,9 @@ export async function POST(request: Request) {
       status: status || "SELLING FAST",
       statusClass,
       priceFrom: resolvedPriceFrom,
-      priceINR: priceINR || "2,499",
-      priceUSD: priceUSD || "45",
-      showPrice: showPrice !== undefined ? Boolean(showPrice) : true,
+      priceINR: priceINR || "",
+      priceUSD: priceUSD || "",
+      showPrice: showPrice !== undefined ? Boolean(showPrice) : false,
       isPublished: isPublished !== undefined ? Boolean(isPublished) : true,
       currency: currency || "BOTH",
       image: image || "/images/past_event_crowd.jpg",
@@ -138,11 +144,12 @@ export async function POST(request: Request) {
         ? lineup
         : typeof lineup === "string"
         ? lineup.split(",").map((s) => s.trim())
-        : ["Dj G-Spark (Headline Extended Set)"],
+        : [artist || "Dj G-Spark (Headliner Extended Set)"],
       ticketCategories: Array.isArray(ticketCategories) ? ticketCategories : undefined,
     };
 
-    events.push(newEvent);
+    // Prepend new event so it shows immediately at the top of the events list
+    events.unshift(newEvent);
     await writeJsonFile("events.json", events);
 
     return NextResponse.json({ success: true, event: newEvent }, { status: 201 });
@@ -192,6 +199,8 @@ export async function PUT(request: Request) {
     events[index] = {
       ...current,
       title: body.title ?? current.title,
+      eventType: body.eventType ?? current.eventType ?? "Arena Concert",
+      artist: body.artist ?? current.artist ?? "Dj G-Spark",
       slug: body.slug ?? current.slug,
       city: body.city ?? current.city,
       country: body.country ?? current.country,

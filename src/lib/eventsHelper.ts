@@ -9,7 +9,18 @@
 export function isEventPast(dateStr: string): boolean {
   if (!dateStr) return false;
   try {
-    const target = new Date(dateStr.includes("T") ? dateStr : `${dateStr}T23:59:59`);
+    let target: Date;
+    if (dateStr.includes("T")) {
+      target = new Date(dateStr);
+    } else if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr.trim())) {
+      target = new Date(`${dateStr.trim()}T23:59:59`);
+    } else {
+      target = new Date(dateStr);
+      if (!isNaN(target.getTime()) && !dateStr.includes(":")) {
+        target.setHours(23, 59, 59, 999);
+      }
+    }
+
     if (isNaN(target.getTime())) return false;
     return target.getTime() < Date.now();
   } catch {

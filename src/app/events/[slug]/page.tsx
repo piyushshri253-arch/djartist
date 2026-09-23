@@ -3,16 +3,15 @@
 import { useState, useEffect, use } from "react";
 import Link from "next/link";
 import rawEvents from "@/data/events.json";
-import { TicketModal } from "@/components/ui/TicketModal";
 import { EventReviewSection } from "@/components/events/EventReviewSection";
-import { MapPin, Calendar, Users, Clock, ShieldCheck, ArrowLeft, Ticket } from "lucide-react";
+import { MapPin, Calendar, Clock, ShieldCheck, ArrowLeft, MessageCircle, Phone, Sparkles } from "lucide-react";
 
 export default function EventSinglePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const initialEvents = rawEvents as any[];
-  const initialEvent = initialEvents.find((e) => e.slug === slug || e.id === slug) || initialEvents[0];
+  const initialEvent = initialEvents.find((e) => e.slug === slug || e.id === slug) || null;
   const [event, setEvent] = useState<any>(initialEvent);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(!initialEvent);
 
   useEffect(() => {
     fetch("/api/events", { cache: "no-store" })
@@ -25,8 +24,33 @@ export default function EventSinglePage({ params }: { params: Promise<{ slug: st
           }
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, [slug]);
+
+  if (loading && !event) {
+    return (
+      <main className="min-h-screen pt-40 pb-24 text-center px-6">
+        <div className="inline-block w-8 h-8 border-2 border-[#00E5FF] border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-sm font-mono text-[#8A8D93]">Loading event profile...</p>
+      </main>
+    );
+  }
+
+  if (!event) {
+    return (
+      <main className="min-h-screen pt-40 pb-24 text-center px-6 max-w-xl mx-auto">
+        <h1 className="text-3xl font-extrabold text-white mb-4">Event Not Found</h1>
+        <p className="text-sm text-[#8A8D93] mb-8">The requested tour date could not be found or has concluded.</p>
+        <Link
+          href="/events"
+          className="px-6 py-3 rounded-full bg-[#00E5FF] text-black text-xs font-bold uppercase tracking-wider hover:bg-white transition-colors"
+        >
+          View All Tour Dates
+        </Link>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen pt-28 pb-24">
@@ -134,79 +158,81 @@ export default function EventSinglePage({ params }: { params: Promise<{ slug: st
           {/* Sidebar */}
           <div className="space-y-8">
             <div className="glass-card p-6 rounded-2xl border border-white/10">
-              <span className="text-xs font-bold tracking-wider text-[#00B4D8] uppercase block mb-1">
-                Official Ticketing
-              </span>
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-xs font-bold tracking-wider text-[#00B4D8] uppercase">
+                  VIP Concierge
+                </span>
+                <span className="px-2.5 py-0.5 rounded-full bg-[#00FF88]/20 text-[10px] font-bold text-[#00FF88] uppercase border border-[#00FF88]/30">
+                  {event.status || "EXCLUSIVE RSVP"}
+                </span>
+              </div>
 
-              <div className="space-y-4 mb-6">
-                {event.showPrice !== false ? (
-                  <div>
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#8A8D93] block mb-1">
-                      Tier 1 Starting Price
-                    </span>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-3xl font-black text-white font-mono">
-                        {event.priceINR
-                          ? `₹ ${Number(String(event.priceINR).replace(/[^0-9]/g, "")).toLocaleString("en-IN")}`
-                          : "₹ 2,499"}
-                      </span>
-                      <span className="text-sm font-bold text-[#00B4D8] font-mono">
-                        / ${event.priceUSD || 35} USD
-                      </span>
-                    </div>
-                    <span className="text-[11px] text-[#888888] block mt-1">
-                      Exclusive of applicable GST & booking fee
-                    </span>
+              <div className="space-y-3 mb-6">
+                <div>
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-[#8A8D93] block mb-1">
+                    Headliner
+                  </span>
+                  <div className="text-xl font-black text-white font-mono">
+                    {event.artist || "Dj G-Spark"}
                   </div>
-                ) : (
+                </div>
+
+                {event.eventType && (
                   <div>
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#8A8D93] block mb-1">
-                      Admission Policy
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#8A8D93] block mb-0.5">
+                      Event Category
                     </span>
-                    <div className="text-xl font-bold text-[#00FF88] font-mono">
-                      Passes by Reservation
-                    </div>
-                    <span className="text-[11px] text-[#888888] block mt-1">
-                      Submit pass request below to receive concierge allocation & live seat selection.
+                    <span className="text-xs font-bold text-[#00E5FF] uppercase">
+                      {event.eventType}
                     </span>
                   </div>
                 )}
+
+                <div>
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-[#8A8D93] block mb-0.5">
+                    Admission Policy
+                  </span>
+                  <p className="text-xs text-[#888888] leading-relaxed">
+                    Direct VIP table reservations, guestlist allocations, and backstage accreditation via private concierge.
+                  </p>
+                </div>
               </div>
 
-              {/* Tiers List */}
+              {/* VIP Benefits */}
               <div className="space-y-2 mb-6 pt-4 border-t border-white/10">
-                <div className="flex items-center justify-between text-xs py-1">
-                  <span className="text-white font-medium">General Admission (Arena Floor)</span>
-                  <span className="text-[#00FF88] font-mono">Available</span>
+                <div className="flex items-center gap-2 text-xs text-white">
+                  <ShieldCheck className="w-4 h-4 text-[#00FF88] shrink-0" />
+                  <span>Exclusive VIP Backstage & Lounge Access</span>
                 </div>
-                <div className="flex items-center justify-between text-xs py-1">
-                  <span className="text-white font-medium">VIP Elevated Lounge</span>
-                  <span className="text-[#00B4D8] font-mono">Filling Fast</span>
+                <div className="flex items-center gap-2 text-xs text-white">
+                  <Sparkles className="w-4 h-4 text-[#00B4D8] shrink-0" />
+                  <span>Dedicated Hospitality & Concierge Host</span>
                 </div>
-                <div className="flex items-center justify-between text-xs py-1">
-                  <span className="text-white font-medium">Spark Ultra Backstage Table</span>
-                  <span className="text-[#00E5FF] font-mono">Inquiry Only</span>
-                </div>
-              </div>
-
-              <div className="space-y-3 mb-6 text-xs text-[#8A8D93]">
-                <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-[#00FF88]" />
-                  <span>100% Guaranteed Official RFID Barcode</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Ticket className="w-4 h-4 text-[#00B4D8]" />
-                  <span>Instant Mobile Ticket & Entry Pass Delivery</span>
+                <div className="flex items-center gap-2 text-xs text-white">
+                  <Clock className="w-4 h-4 text-[#00E5FF] shrink-0" />
+                  <span>Priority Fast-Track Entry</span>
                 </div>
               </div>
 
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black font-bold text-xs tracking-[0.14em] uppercase hover:shadow-spark transition-all flex items-center justify-center gap-2"
-              >
-                <Ticket className="w-4 h-4" />
-                <span>{event.showPrice !== false ? "Book Passes Now" : "Request Pass Access"}</span>
-              </button>
+              {/* Action Buttons */}
+              <div className="space-y-3">
+                <a
+                  href={`https://wa.me/919540681934?text=${encodeURIComponent(`Hi Dj G-Spark, I would like to reserve VIP passes / RSVP for ${event.title} in ${event.city} on ${event.dateDisplay}.`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black font-bold text-xs tracking-[0.14em] uppercase hover:shadow-spark transition-all flex items-center justify-center gap-2"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  <span>Reserve VIP Access on WhatsApp</span>
+                </a>
+                <a
+                  href="tel:+919540681934"
+                  className="w-full py-3 rounded-full border border-white/15 hover:border-white text-white font-bold text-xs tracking-[0.14em] uppercase transition-all flex items-center justify-center gap-2"
+                >
+                  <Phone className="w-3.5 h-3.5 text-[#00E5FF]" />
+                  <span>Call Concierge (+91 9540681934)</span>
+                </a>
+              </div>
             </div>
 
             <div className="glass-card p-6 rounded-2xl border border-white/10 space-y-4">
@@ -231,18 +257,6 @@ export default function EventSinglePage({ params }: { params: Promise<{ slug: st
           eventTitle={event.title}
         />
       </section>
-
-      {/* Ticket Modal */}
-      <TicketModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        eventTitle={event.title}
-        eventCity={event.city}
-        eventDate={event.dateDisplay}
-        priceINR={event.priceINR || 2499}
-        priceUSD={event.priceUSD || 35}
-        showPrice={event.showPrice !== false}
-      />
     </main>
   );
 }

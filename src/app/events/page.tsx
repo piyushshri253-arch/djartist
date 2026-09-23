@@ -3,17 +3,22 @@
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import rawEvents from "@/data/events.json";
-import { TicketModal } from "@/components/ui/TicketModal";
-import { MapPin, Calendar, Users, Ticket, ArrowRight, Search, Sparkles, Filter } from "lucide-react";
+import { isEventPast } from "@/lib/eventsHelper";
+import { MapPin, Calendar, Users, ArrowRight, Search, Sparkles, Filter, MessageCircle } from "lucide-react";
 
 export default function EventsPage() {
-  const [events, setEvents] = useState<any[]>(rawEvents as any[]);
+  const initialUpcoming = useMemo(() => {
+    return (rawEvents as any[]).filter(
+      (ev) => ev.isPublished !== false && !isEventPast(ev.date || ev.dateDisplay)
+    );
+  }, []);
+
+  const [events, setEvents] = useState<any[]>(initialUpcoming);
   const [filter, setFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedEvent, setSelectedEvent] = useState<any | null>(null);
 
   useEffect(() => {
-    fetch("/api/events", { cache: "no-store" })
+    fetch("/api/events?type=upcoming", { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
@@ -107,7 +112,7 @@ export default function EventsPage() {
       {/* Events Results Count */}
       <div className="flex items-center justify-between text-xs font-mono text-[#888888] border-b border-white/10 pb-4 mb-8">
         <span>SHOWING {filteredEvents.length} TOUR DATES</span>
-        <span>PRICES IN INR (₹) & USD ($)</span>
+        <span>VIP PASS RESERVATION & CONCIERGE</span>
       </div>
 
       {/* Events Grid */}
@@ -128,10 +133,6 @@ export default function EventsPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredEvents.map((ev) => {
-            const showPrice = ev.showPrice !== false;
-            const inrFormatted = ev.priceINR ? `₹ ${Number(String(ev.priceINR).replace(/[^0-9]/g, "")).toLocaleString("en-IN")}` : "₹ 2,499";
-            const usdFormatted = ev.priceUSD ? `$${ev.priceUSD}` : "$35";
-
             return (
               <article
                 key={ev.id}
@@ -196,24 +197,12 @@ export default function EventsPage() {
                   {/* Card Footer */}
                   <div className="flex items-center justify-between pt-4 border-t border-white/10">
                     <div>
-                      {showPrice ? (
-                        <>
-                          <span className="text-[10px] uppercase tracking-wider text-[#8A8D93] block font-mono">
-                            Passes Starting At
-                          </span>
-                          <div className="flex items-baseline gap-1.5">
-                            <span className="text-base font-bold text-white font-mono">{inrFormatted}</span>
-                            <span className="text-xs text-[#00B4D8] font-mono">/ {usdFormatted}</span>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <span className="text-[10px] uppercase tracking-wider text-[#8A8D93] block font-mono">
-                            Pass Access
-                          </span>
-                          <span className="text-xs font-bold text-[#00FF88] font-mono">By Reservation</span>
-                        </>
-                      )}
+                      <span className="text-[10px] uppercase tracking-wider text-[#8A8D93] block font-mono">
+                        Headliner
+                      </span>
+                      <span className="text-xs font-bold text-white font-mono truncate block max-w-[130px]">
+                        {ev.artist || "Dj G-Spark"}
+                      </span>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -223,13 +212,15 @@ export default function EventsPage() {
                       >
                         Details
                       </Link>
-                      <button
-                        onClick={() => setSelectedEvent(ev)}
-                        className="px-4 py-2 rounded-full bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black text-xs font-bold tracking-wider uppercase hover:shadow-spark transition-all flex items-center gap-1"
+                      <a
+                        href={`https://wa.me/919540681934?text=${encodeURIComponent(`Hi Dj G-Spark, I would like to reserve VIP passes / RSVP for ${ev.title || ev.city} on ${ev.dateDisplay}.`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-2 rounded-full bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black text-xs font-bold tracking-wider uppercase hover:shadow-spark transition-all flex items-center gap-1.5"
                       >
-                        <Ticket className="w-3 h-3" />
-                        <span>Book</span>
-                      </button>
+                        <MessageCircle className="w-3.5 h-3.5" />
+                        <span>VIP RSVP</span>
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -237,20 +228,6 @@ export default function EventsPage() {
             );
           })}
         </div>
-      )}
-
-      {/* Ticket Modal */}
-      {selectedEvent && (
-        <TicketModal
-          isOpen={true}
-          onClose={() => setSelectedEvent(null)}
-          eventTitle={selectedEvent.title}
-          eventCity={selectedEvent.city}
-          eventDate={selectedEvent.dateDisplay}
-          priceINR={selectedEvent.priceINR || 2499}
-          priceUSD={selectedEvent.priceUSD || 35}
-          showPrice={selectedEvent.showPrice !== false}
-        />
       )}
     </main>
   );

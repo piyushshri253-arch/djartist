@@ -43,10 +43,11 @@ function XIcon({ className = "w-4 h-4" }: { className?: string }) {
 export default function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const initialPosts = rawBlog as unknown as BlogPostItem[];
-  const initialPost = initialPosts.find((p) => p.slug === slug || p.id === slug) || initialPosts[0];
+  const initialPost = initialPosts.find((p) => p.slug === slug || p.id === slug) || null;
   
   const [allPosts, setAllPosts] = useState<BlogPostItem[]>(initialPosts);
-  const [post, setPost] = useState<BlogPostItem>(initialPost);
+  const [post, setPost] = useState<BlogPostItem | null>(initialPost);
+  const [loading, setLoading] = useState(!initialPost);
   const [copied, setCopied] = useState(false);
   const [fontSize, setFontSize] = useState<"normal" | "large" | "xl">("normal");
   const [sparksCount, setSparksCount] = useState(128);
@@ -69,7 +70,8 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
           }
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, [slug]);
 
   // Track scroll progress
@@ -87,6 +89,9 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
 
   // Compute Previous and Next Articles
   const { prevPost, nextPost, relatedPosts } = useMemo(() => {
+    if (!post) {
+      return { prevPost: allPosts[0] || null, nextPost: allPosts[1] || null, relatedPosts: allPosts.slice(0, 3) };
+    }
     const currentIndex = allPosts.findIndex((p) => p.id === post.id || p.slug === post.slug);
     const prev = currentIndex > 0 ? allPosts[currentIndex - 1] : allPosts[allPosts.length - 1];
     const next = currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : allPosts[0];
@@ -117,7 +122,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
   // Share to WhatsApp
   const shareWhatsApp = () => {
     if (typeof window !== "undefined") {
-      const text = encodeURIComponent(`Check out "${post.title}" by Dj G-Spark:\n${window.location.href}`);
+      const text = encodeURIComponent(`Check out "${post?.title || "Article"}" by Dj G-Spark:\n${window.location.href}`);
       window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
     }
   };
@@ -125,7 +130,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
   // Share to Twitter/X
   const shareTwitter = () => {
     if (typeof window !== "undefined") {
-      const text = encodeURIComponent(`"${post.title}" by @DJGSpark #ElectronicMusic #ArenaTour`);
+      const text = encodeURIComponent(`"${post?.title || "Article"}" by @DJGSpark #ElectronicMusic #ArenaTour`);
       window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(window.location.href)}`, "_blank");
     }
   };
@@ -152,6 +157,30 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
     large: "text-lg sm:text-xl leading-[1.85]",
     xl: "text-xl sm:text-2xl leading-[1.9]",
   }[fontSize];
+
+  if (loading && !post) {
+    return (
+      <main className="min-h-screen pt-40 pb-24 text-center px-6">
+        <div className="inline-block w-8 h-8 border-2 border-[#00E5FF] border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-sm font-mono text-[#8A8D93]">Loading article...</p>
+      </main>
+    );
+  }
+
+  if (!post) {
+    return (
+      <main className="min-h-screen pt-40 pb-24 text-center px-6 max-w-xl mx-auto">
+        <h1 className="text-3xl font-extrabold text-white mb-4">Article Not Found</h1>
+        <p className="text-sm text-[#8A8D93] mb-8">The requested editorial could not be found or has been moved.</p>
+        <Link
+          href="/blog"
+          className="px-6 py-3 rounded-full bg-[#00E5FF] text-black text-xs font-bold uppercase tracking-wider hover:bg-white transition-colors"
+        >
+          View All Articles
+        </Link>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-[#0B0C10] text-[#F5F6FA] relative selection:bg-[#00E5FF] selection:text-black">

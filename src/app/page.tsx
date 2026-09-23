@@ -34,13 +34,16 @@ import {
   YouTubeIcon,
   FacebookIcon,
 } from "@/components/ui/SocialIcons";
-import { TicketModal } from "@/components/ui/TicketModal";
 import { WhatsAppFloatButton } from "@/components/ui/WhatsAppFloatButton";
 import ReviewModal from "@/components/reviews/ReviewModal";
 import { ReviewItem } from "@/types";
 import { isEventPast } from "@/lib/eventsHelper";
+import rawEvents from "@/data/events.json";
 import rawPastEvents from "@/data/past-events.json";
 
+const INITIAL_HOMEPAGE_UPCOMING_EVENTS = (rawEvents as any[])
+  .filter((ev) => ev.isPublished !== false && !isEventPast(ev.date || ev.dateDisplay))
+  .slice(0, 8);
 const INITIAL_HOMEPAGE_PAST_EVENTS = (rawPastEvents as any[]).slice(0, 4);
 
 // Social Media Platforms Reach Data (Official Verified Platforms Only)
@@ -314,10 +317,9 @@ export default function HomePage() {
   const [reviewCategory, setReviewCategory] = useState("all");
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [reviewsList, setReviewsList] = useState<ReviewItem[]>([]);
-  const [upcomingEvents, setUpcomingEvents] = useState<any[]>(UPCOMING_EVENTS);
+  const [upcomingEvents, setUpcomingEvents] = useState<any[]>(INITIAL_HOMEPAGE_UPCOMING_EVENTS);
   const [homepagePastEvents, setHomepagePastEvents] = useState<any[]>(INITIAL_HOMEPAGE_PAST_EVENTS);
   const [latestPosts, setLatestPosts] = useState<any[]>(LATEST_POSTS);
-  const [selectedTicketEvent, setSelectedTicketEvent] = useState<any | null>(null);
   const [siteSettings, setSiteSettings] = useState<any | null>(null);
   const [publicInstagram, setPublicInstagram] = useState<{
     enabled: boolean;
@@ -440,7 +442,7 @@ export default function HomePage() {
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
-          setUpcomingEvents(data.slice(0, 4));
+          setUpcomingEvents(data.slice(0, 8));
         }
       })
       .catch(() => {});
@@ -1146,21 +1148,10 @@ export default function HomePage() {
                         </div>
                       </div>
 
-                      {/* Pricing Tag */}
-                      <div className="mb-4 pt-2 border-t border-white/5">
-                        {showPrice ? (
-                          <div className="flex items-baseline justify-between">
-                            <span className="text-[10px] uppercase font-mono text-[#777]">Passes:</span>
-                            <div className="font-mono text-xs font-bold text-white">
-                              {inrPrice} <span className="text-[#00B4D8] text-[11px]">/ {usdPrice}</span>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="flex items-baseline justify-between">
-                            <span className="text-[10px] uppercase font-mono text-[#777]">Passes:</span>
-                            <span className="font-mono text-xs font-bold text-[#00FF88]">Reservation Only</span>
-                          </div>
-                        )}
+                      {/* Event Type & Headliner */}
+                      <div className="mb-4 pt-2 border-t border-white/5 flex items-center justify-between text-[11px] font-mono">
+                        <span className="text-[#8A8D93] uppercase">Artist:</span>
+                        <span className="font-bold text-[#00E5FF] truncate max-w-[140px]">{event.artist || "Dj G-Spark"}</span>
                       </div>
                     </div>
 
@@ -1173,14 +1164,15 @@ export default function HomePage() {
                         <span>Details</span>
                         <ArrowRight className="w-3 h-3 text-[#00E5FF]" />
                       </Link>
-                      <button
-                        type="button"
-                        onClick={() => setSelectedTicketEvent(event)}
+                      <a
+                        href={`https://wa.me/919540681934?text=${encodeURIComponent(`Hi Dj G-Spark, I would like to reserve VIP passes / RSVP for ${event.title || event.city} on ${dateDisplay}.`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="py-2.5 rounded bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black font-heading font-bold text-[11px] tracking-[0.14em] uppercase transition-all flex items-center justify-center gap-1 hover:shadow-[0_0_20px_rgba(0, 229, 255, 0.5)]"
                       >
-                        <Ticket className="w-3 h-3" />
-                        <span>Passes</span>
-                      </button>
+                        <MessageCircle className="w-3.5 h-3.5" />
+                        <span>VIP RSVP</span>
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -1721,19 +1713,6 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      )}
-      {/* Ticket Modal */}
-      {selectedTicketEvent && (
-        <TicketModal
-          isOpen={true}
-          onClose={() => setSelectedTicketEvent(null)}
-          eventTitle={selectedTicketEvent.title || `${selectedTicketEvent.city} Arena Tour`}
-          eventCity={selectedTicketEvent.city}
-          eventDate={selectedTicketEvent.dateDisplay || selectedTicketEvent.date || "DEC 2026"}
-          priceINR={selectedTicketEvent.priceINR || 2499}
-          priceUSD={selectedTicketEvent.priceUSD || 35}
-          showPrice={selectedTicketEvent.showPrice !== false}
-        />
       )}
       {/* Review Submission Modal */}
       <ReviewModal
