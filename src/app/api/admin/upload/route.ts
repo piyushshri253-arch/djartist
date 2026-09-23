@@ -44,10 +44,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Prepare target directory: public/uploads
-    const uploadsDir = path.join(process.cwd(), "public", "uploads");
-    await mkdir(uploadsDir, { recursive: true });
-
     // Sanitize file name
     const originalName = file.name || "image.jpg";
     const extension = path.extname(originalName) || ".jpg";
@@ -58,14 +54,24 @@ export async function POST(request: Request) {
       .slice(0, 40);
 
     const fileName = `spark_${Date.now()}_${baseName}${extension}`;
-    const filePath = path.join(uploadsDir, fileName);
 
-    // Convert file to Buffer and save
+    // Convert file to Buffer
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    await writeFile(filePath, buffer);
 
-    const publicUrl = `/uploads/${fileName}`;
+    let publicUrl = `/uploads/${fileName}`;
+
+    // Try saving to public/uploads (works locally and on standard servers)
+    try {
+      const uploadsDir = path.join(process.cwd(), "public", "uploads");
+      await mkdir(uploadsDir, { recursive: true });
+      const filePath = path.join(uploadsDir, fileName);
+      await writeFile(filePath, buffer);
+    } catch (fsErr) {
+      // On read-only serverless platforms like Vercel, fallback to base64 data URL
+      console.warn("Filesystem write restricted, using base64 data URL fallback:", fsErr);
+      publicUrl = `data:${file.type};base64,${buffer.toString("base64")}`;
+    }
 
     return NextResponse.json(
       {

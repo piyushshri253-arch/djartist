@@ -509,6 +509,24 @@ export default function AdminDashboardPage() {
     }
   };
 
+  // Lead Deletion Action
+  const handleDeleteLead = async (id: string, name?: string) => {
+    if (!window.confirm(`Are you sure you want to delete lead from "${name || "Client"}"?`)) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/admin/leads?id=${id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to delete lead");
+
+      setLeads((prev) => prev.filter((l) => l.id !== id));
+      showToast("success", "Lead removed successfully.");
+    } catch (err: any) {
+      showToast("error", err.message || "Failed to delete lead");
+    }
+  };
+
   // Dedicated Full-Page Event Editor openers (NO popup/modal)
   const openCreateEvent = (origin: "events" | "past-events" | "overview" = "events") => {
     setEditingEvent(null);
@@ -2854,6 +2872,14 @@ export default function AdminDashboardPage() {
                               >
                                 <Phone className="w-3.5 h-3.5" />
                               </a>
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteLead(lead.id, lead.name)}
+                                className="p-2 rounded-lg bg-slate-100 text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                                title="Delete Lead"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
                             </div>
                           </td>
                         </tr>
