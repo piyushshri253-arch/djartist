@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -345,6 +345,72 @@ export default function HomePage() {
   const heroVideoRef = useRef<HTMLVideoElement>(null);
   const reelVideoRef = useRef<HTMLVideoElement>(null);
 
+  // Typewriter animation state for Hero Headline & Subtitle
+  const [typedTitle, setTypedTitle] = useState("");
+  const [isTitleDone, setIsTitleDone] = useState(false);
+  const [typedSubtitle, setTypedSubtitle] = useState("");
+  const [subtitleIndex, setSubtitleIndex] = useState(0);
+  const [isDeletingSubtitle, setIsDeletingSubtitle] = useState(false);
+
+  const heroSubtitles = useMemo(
+    () => [
+      "ONE OF THE BEST DJ FROM DELHI (INDIA)",
+      "WEDDINGS | CORPORATES | CONCERTS",
+      "ONE OF THE BEST DJ FROM DELHI (INDIA)",
+    ],
+    []
+  );
+
+  // 1. Typewriter on load for "Dj G-Spark"
+  useEffect(() => {
+    const fullTitle = "Dj G-Spark";
+    let charIndex = 0;
+    setTypedTitle("");
+    setIsTitleDone(false);
+
+    const titleInterval = setInterval(() => {
+      charIndex++;
+      setTypedTitle(fullTitle.slice(0, charIndex));
+      if (charIndex >= fullTitle.length) {
+        clearInterval(titleInterval);
+        setIsTitleDone(true);
+      }
+    }, 65);
+
+    return () => clearInterval(titleInterval);
+  }, []);
+
+  // 2. Typewriter loop for Subtitle (activates once title finishes typing)
+  useEffect(() => {
+    if (!isTitleDone) return;
+
+    const currentPhrase = heroSubtitles[subtitleIndex % heroSubtitles.length];
+    let timer: NodeJS.Timeout;
+
+    if (!isDeletingSubtitle) {
+      if (typedSubtitle.length < currentPhrase.length) {
+        timer = setTimeout(() => {
+          setTypedSubtitle(currentPhrase.slice(0, typedSubtitle.length + 1));
+        }, 45);
+      } else {
+        timer = setTimeout(() => {
+          setIsDeletingSubtitle(true);
+        }, 2800);
+      }
+    } else {
+      if (typedSubtitle.length > 0) {
+        timer = setTimeout(() => {
+          setTypedSubtitle(currentPhrase.slice(0, typedSubtitle.length - 1));
+        }, 25);
+      } else {
+        setIsDeletingSubtitle(false);
+        setSubtitleIndex((prev) => (prev + 1) % heroSubtitles.length);
+      }
+    }
+
+    return () => clearTimeout(timer);
+  }, [isTitleDone, typedSubtitle, isDeletingSubtitle, subtitleIndex, heroSubtitles]);
+
   const filteredPhotos = galleryPhotos.filter(
     (photo) => galleryFilter === "all" || photo.category === galleryFilter
   );
@@ -496,11 +562,25 @@ export default function HomePage() {
         <div className="relative z-10 max-w-[1400px] mx-auto px-6 sm:px-10 text-center flex flex-col items-center justify-center pt-20 sm:pt-28 lg:pt-32 pb-10 sm:pb-14">
           {/* Main Hero Headline */}
           <div className="flex flex-col items-center text-center max-w-5xl mx-auto">
-            <h1 className="font-heading font-black text-5xl sm:text-7xl md:text-8xl lg:text-9xl tracking-[0.04em] sm:tracking-[0.08em] uppercase leading-none text-white drop-shadow-[0_8px_35px_rgba(0,0,0,0.95)]">
-              Dj G-Spark
+            <h1
+              aria-label="Dj G-Spark"
+              className="font-heading font-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl tracking-[0.04em] sm:tracking-[0.08em] uppercase leading-none text-white drop-shadow-[0_8px_35px_rgba(0,0,0,0.95)] min-h-[1.15em] flex items-center justify-center"
+            >
+              <span className="bg-gradient-to-r from-white via-white to-white/90 bg-clip-text text-transparent">
+                {typedTitle || "Dj G-Spark"}
+              </span>
+              {!isTitleDone && (
+                <span className="inline-block w-[3px] h-[0.8em] bg-[#00E5FF] ml-1.5 align-middle animate-pulse shadow-[0_0_12px_#00E5FF]" />
+              )}
             </h1>
-            <p className="mt-4 sm:mt-5 text-xs sm:text-base md:text-xl font-heading font-bold tracking-[0.2em] sm:tracking-[0.35em] text-white/95 uppercase drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)]">
-              ONE OF THE BEST DJ FROM DELHI (INDIA)
+            <p
+              aria-label="ONE OF THE BEST DJ FROM DELHI (INDIA)"
+              className="mt-3 sm:mt-4 text-[11px] sm:text-xs md:text-sm lg:text-base font-heading font-bold tracking-[0.16em] sm:tracking-[0.26em] text-white/95 uppercase drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)] min-h-[1.75em] flex items-center justify-center text-center"
+            >
+              <span className="tracking-[0.16em] sm:tracking-[0.26em]">
+                {typedSubtitle || (isTitleDone ? "" : "ONE OF THE BEST DJ FROM DELHI (INDIA)")}
+              </span>
+              <span className="inline-block w-[2px] h-[0.85em] bg-[#00E5FF] ml-1.5 align-middle animate-pulse shadow-[0_0_10px_#00E5FF]" />
             </p>
           </div>
 
