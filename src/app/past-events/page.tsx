@@ -402,6 +402,15 @@ export default function PastEventsPage() {
                 {/* Event Information */}
                 <div className="p-6 flex-1 flex flex-col justify-between">
                   <div>
+                    <div className="flex flex-wrap items-center gap-2 mb-3">
+                      <span className="px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500/20 to-amber-600/20 text-[10px] font-extrabold tracking-wider text-amber-400 uppercase border border-amber-500/30">
+                        {ev.eventType || "ARENA CONCERT"}
+                      </span>
+                      <span className="text-[10px] font-mono text-[#00E5FF] font-bold">
+                        Artist: {ev.artist || "Dj G-Spark"}
+                      </span>
+                    </div>
+
                     <div className="flex items-center gap-2 text-xs text-[#8A8D93] mb-3">
                       <MapPin className="w-3.5 h-3.5 text-[#00B4D8] shrink-0" />
                       <span className="truncate">

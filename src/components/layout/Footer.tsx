@@ -116,11 +116,11 @@ Dj G-Spark, A dj who is best in multi-genres like Bollywood, Punjabi, Commercial
               Tour Destinations
             </h4>
             <ul className="space-y-2.5 text-xs tracking-[0.1em] text-[#8A8D93]">
-              <li><Link href="/events/delhi-live-set-2026" className="hover:text-[#F5F6FA] transition-colors">NEW DELHI • JLN STADIUM</Link></li>
-              <li><Link href="/events/mumbai-dome-live-2026" className="hover:text-[#F5F6FA] transition-colors">MUMBAI • NSCI DOME</Link></li>
-              <li><Link href="/events/goa-sunburn-nye-2026" className="hover:text-[#F5F6FA] transition-colors">GOA • VAGATOR MAINSTAGE</Link></li>
-              <li><Link href="/events/dubai-arena-experience-2026" className="hover:text-[#F5F6FA] transition-colors">DUBAI • COCA-COLA ARENA</Link></li>
-              <li><Link href="/events/tokyo-shibuya-sound-2026" className="hover:text-[#F5F6FA] transition-colors">TOKYO • WOMB STAGE</Link></li>
+              <li><Link href="/events" className="hover:text-[#F5F6FA] transition-colors">NEW DELHI • JLN STADIUM & NCR</Link></li>
+              <li><Link href="/events" className="hover:text-[#F5F6FA] transition-colors">GOA • BEACH FESTIVALS & WEDDINGS</Link></li>
+              <li><Link href="/events" className="hover:text-[#F5F6FA] transition-colors">MUMBAI • DOME SHOWS & SANGEET</Link></li>
+              <li><Link href="/booking" className="hover:text-[#F5F6FA] transition-colors">JAIPUR & UDAIPUR • ROYAL WEDDINGS</Link></li>
+              <li><Link href="/booking" className="hover:text-[#F5F6FA] transition-colors">CHANDIGARH & PUNJAB • GRAND SANGEET</Link></li>
             </ul>
           </div>
 

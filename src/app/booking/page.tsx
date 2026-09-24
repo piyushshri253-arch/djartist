@@ -184,7 +184,7 @@ export default function BookingPage() {
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="name@example.com"
+                    placeholder="yourname@gmail.com"
                     className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#00E5FF] transition-colors"
                   />
                 </div>

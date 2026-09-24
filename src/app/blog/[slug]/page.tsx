@@ -305,7 +305,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
             {/* Telemetry Tag */}
             <div className="hidden md:flex items-center gap-2 text-[11px] text-[#7A4CFF] font-mono">
               <Radio className="w-3.5 h-3.5" />
-              <span>HQ // AMSTERDAM LAB</span>
+              <span>HQ // NEW DELHI STUDIO</span>
             </div>
           </div>
         </header>
@@ -665,7 +665,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
                   Experience The Stadium Show Live
                 </h4>
                 <p className="text-xs text-[#8A8D93] leading-relaxed mb-5">
-                  Grab VIP stage passes, private tables, and guestlist reservations for upcoming concerts in Mumbai, Delhi, Amsterdam, and Dubai.
+                  Grab VIP stage passes, private tables, and guestlist reservations for upcoming concerts and luxury events in Delhi NCR, Goa, Mumbai, and Jaipur.
                 </p>
 
                 <a

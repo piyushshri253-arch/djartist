@@ -4192,7 +4192,7 @@ export default function AdminDashboardPage() {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Tomorrowland Sunset Mainstage 2026"
+                  placeholder="e.g. Delhi NCR Mega Arena Sangeet & Concert Climax"
                   value={videoForm.title}
                   onChange={(e) => setVideoForm({ ...videoForm, title: e.target.value })}
                   className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:border-amber-500"

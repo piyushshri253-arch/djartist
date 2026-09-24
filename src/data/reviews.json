@@ -1,23 +1,20 @@
 [
   {
     "id": "r-1789712241692",
-    "name": "Alex Vance",
-    "userEmail": "alex@example.com",
-    "role": "Concert Attendee",
-    "initials": "AV",
+    "name": "Vikram & Ananya Malhotra",
+    "userEmail": "vikram.malhotra@gmail.com",
+    "role": "Wedding Client (Sangeet)",
+    "initials": "VM",
     "rating": 5,
-    "badge": "VERIFIED ATTENDEE",
+    "badge": "VERIFIED WEDDING HOST",
     "badgeColor": "text-[#10B981] bg-[#10B981]/10 border-[#10B981]/30",
-    "event": "Sunburn Beach Arena Goa 2025",
-    "quote": "Unreal production and track selection! Best festival set in Goa.",
-    "date": "SEP 18, 2026",
+    "event": "Grand Wedding Sangeet Night, Delhi NCR",
+    "quote": "Dj G-Spark set the dance floor on fire! From vintage Bollywood hits to high-voltage Punjabi beats, our guests didn't leave the floor until 4 AM. Truly the best DJ from Delhi!",
+    "date": "SEP 2026",
     "category": "performance",
     "status": "approved",
     "createdAt": "2026-09-18T06:17:21.688Z",
-    "targetType": "event",
-    "eventId": "PAST-GOA-2025",
-    "eventSlug": "sunburn-goa-beach-2025",
-    "eventTitle": "Sunburn Beach Arena Goa 2025"
+    "targetType": "event"
   },
   {
     "id": "r-1789708759211",

@@ -60,7 +60,7 @@ export function GalleryAndAboutWall() {
           <pointLight color="#FFE0B0" intensity={2.5} distance={6} position={[0, 2.2, 1.2]} />
         </group>
 
-        {/* Exhibit 2: Tomorrowland Sunset Anthem (Z: 7) */}
+        {/* Exhibit 2: Goa Sunburn Sunset Anthem (Z: 7) */}
         <group position={[0, 0, 7]} rotation={[0, Math.PI / 2, 0]}>
           <mesh castShadow>
             <boxGeometry args={[4.8, 3.2, 0.14]} />
@@ -88,7 +88,7 @@ export function GalleryAndAboutWall() {
               letterSpacing={0.22}
               material-toneMapped={false}
             >
-              TOMORROWLAND MAINSTAGE // SUNSET ARENA EUPHORIA
+              GOA SUNBURN BEACH // SUNSET ARENA EUPHORIA
             </Text>
           </group>
           <pointLight color="#FFE0B0" intensity={2.5} distance={6} position={[0, 2.2, 1.2]} />

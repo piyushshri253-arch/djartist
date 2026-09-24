@@ -3,15 +3,17 @@
     "id": "PAST-GOA-2025",
     "slug": "sunburn-goa-beach-2025",
     "title": "Sunburn Beach Arena Goa 2025",
+    "eventType": "Music Festival / Concert",
     "year": "2025",
     "city": "GOA",
     "country": "INDIA",
     "venue": "Vagator Coastal Arena",
     "date": "2025-12-28",
     "dateDisplay": "28 DEC 2025",
+    "artist": "Dj G-Spark",
     "attendance": "55,000+ Fans",
     "image": "/images/past_event_sunset.jpg",
-    "excerpt": "A legendary sunset-to-midnight seaside journey with 55,000 festivalgoers and the global debut of the 'Feel The Spark' anthem.",
+    "excerpt": "A legendary sunset-to-midnight seaside journey with 55,000 festivalgoers and the live debut of Dj G-Spark's signature festival anthems.",
     "description": "Performing on the main stage as dusk settled over the Arabian Sea, Dj G-Spark delivered a 3.5-hour masterclass in progressive melodic techno and high-energy bass. Over 200 pyro drones coordinated above the crowd, syncing with the bass drops.",
     "highlights": [
       "Premiere of 'Ignite The Night' Live VIP Mix",
@@ -27,124 +29,84 @@
     ]
   },
   {
-    "id": "PAST-MIAMI-2025",
-    "slug": "ultra-music-festival-miami-2025",
-    "title": "Ultra Music Festival Miami 2025",
-    "year": "2025",
-    "city": "MIAMI",
-    "country": "USA",
-    "venue": "Bayfront Park Worldwide Stage",
-    "date": "2025-03-23",
-    "dateDisplay": "23 MAR 2025",
-    "attendance": "70,000+ Fans",
-    "image": "/images/past_event_crowd.jpg",
-    "excerpt": "Closing headline performance on the iconic Worldwide Stage under a canopy of 32 synchronized multi-color lasers.",
-    "description": "Dj G-Spark commanded Bayfront Park with relentless 135 BPM energy. The set drew the largest crowd in the history of the Worldwide Stage, with a broadcast that reached 4.5 million fans across YouTube and SiriusXM.",
-    "highlights": [
-      "Largest crowd in Worldwide Stage history",
-      "Synchronized 32-laser aerial matrix",
-      "Billboard Dance 'Top 3 Sets of Miami Music Week'"
-    ],
-    "tracklist": [
-      "01. Dj G-Spark - Miami Overdrive",
-      "02. Dj G-Spark - Cyber Realm",
-      "03. Dj G-Spark - Bass Resonance",
-      "04. Dj G-Spark - Horizon Glow"
-    ]
-  },
-  {
-    "id": "PAST-BELGIUM-2024",
-    "slug": "tomorrowland-freedom-stage-2024",
-    "title": "Tomorrowland Freedom Stage 2024",
-    "year": "2024",
-    "city": "BOOM",
-    "country": "BELGIUM",
-    "venue": "Freedom Stage Indoor Holosphere",
-    "date": "2024-07-27",
-    "dateDisplay": "27 JUL 2024",
-    "attendance": "45,000+ Fans",
-    "image": "/images/concert_led.jpg",
-    "excerpt": "A visual masterpiece featuring custom 3D Holosphere projection mapping that redefined the indoor festival experience.",
-    "description": "Widely voted one of the most innovative audio-visual sets of Tomorrowland 2024. The Freedom Stage was transformed into an interactive holographic hypercube responding directly to Dj G-Spark's turntable manipulations.",
-    "highlights": [
-      "Recognized by DJ Mag as Top Visual Set 2024",
-      "Proprietary 3D Holosphere projection system",
-      "Full 90-minute 4K broadcast archived on YouTube"
-    ],
-    "tracklist": [
-      "01. Dj G-Spark - Holosphere Awakening",
-      "02. Dj G-Spark - Subatomic Wave",
-      "03. Dj G-Spark - Neon Catalyst"
-    ]
-  },
-  {
     "id": "PAST-DELHI-2024",
     "slug": "delhi-arena-homecoming-2024",
     "title": "Delhi Arena Homecoming Showcase 2024",
+    "eventType": "Arena Concert",
     "year": "2024",
     "city": "NEW DELHI",
     "country": "INDIA",
     "venue": "Indira Gandhi Indoor Arena",
     "date": "2024-11-15",
     "dateDisplay": "15 NOV 2024",
+    "artist": "Dj G-Spark",
     "attendance": "28,000+ Fans",
     "image": "/images/dj_hero.jpg",
-    "excerpt": "A triumphant sold-out arena homecoming show celebrating Dj G-Spark's #1 global streaming milestone.",
-    "description": "28,000 die-hard fans packed the IGI Stadium for a non-stop 4-hour musical journey with full stadium pyrotechnics, moving truss ceiling, and surprise vocal collaborators.",
+    "excerpt": "A triumphant sold-out arena homecoming show celebrating Dj G-Spark's decade of electronic and Bollywood mastery.",
+    "description": "28,000 die-hard fans packed the IGI Stadium for a non-stop 4-hour musical journey with full stadium pyrotechnics, moving truss ceiling, and live dhol collaboration.",
     "highlights": [
-      "Sold out in under 18 minutes",
-      "First Indian electronic artist with full moving ceiling rig",
-      "Official live album recorded on venue"
+      "Sold out arena crowd in the capital",
+      "Live percussion & dhol ensemble synchronization",
+      "Exclusive 4-hour extended homecoming set"
     ],
     "tracklist": [
-      "01. Dj G-Spark - New Delhi Sunset",
-      "02. Dj G-Spark - Royal Bassline",
+      "01. Dj G-Spark - New Delhi Sunset (Opening)",
+      "02. Dj G-Spark - Royal Bassline & Dhol Sync",
       "03. Dj G-Spark - Pulse of the Capital"
     ]
   },
   {
-    "id": "PAST-DUBAI-2023",
-    "slug": "dubai-superdome-skyline-2023",
-    "title": "Dubai Skyline Showcase 2023",
-    "year": "2023",
-    "city": "DUBAI",
-    "country": "UAE",
-    "venue": "Coca-Cola Arena",
-    "date": "2023-12-08",
-    "dateDisplay": "08 DEC 2023",
-    "attendance": "16,500+ Fans",
-    "image": "/images/tour_poster.jpg",
-    "excerpt": "A glittering night in the desert with luxury production, laser canopy, and VIP superyacht afterparty.",
-    "description": "Dj G-Spark electrified the UAE with an unreleased setlist featuring Middle Eastern melodic scales woven into heavy driving techno basslines.",
+    "id": "PAST-UDAIPUR-2024",
+    "slug": "udaipur-royal-sangeet-afterparty-2024",
+    "title": "Udaipur Royal Sangeet & Afterparty 2024",
+    "eventType": "Royal Destination Wedding",
+    "year": "2024",
+    "city": "UDAIPUR",
+    "country": "INDIA",
+    "venue": "The Oberoi Udaivilas Grounds",
+    "date": "2024-12-05",
+    "dateDisplay": "05 DEC 2024",
+    "artist": "Dj G-Spark",
+    "attendance": "1,200+ VIP Guests",
+    "image": "/images/gallery_eep09781.jpg",
+    "excerpt": "An ultra-luxury palace destination wedding featuring custom video mapping, retro Bollywood remixes, and an unforgettable 5-hour high energy party set.",
+    "description": "Set overlooking Lake Pichola, Dj G-Spark electrified the grand royal sangeet celebration with seamless transitions from vintage 90s Bollywood to modern high-energy Punjabi and commercial dance anthems that kept the dance floor packed until 4:00 AM.",
     "highlights": [
-      "Highest grossing indoor electronic set in UAE 2023",
-      "Full drone lighting matrix"
+      "5-hour non-stop interactive DJ set",
+      "Live LED dhol and percussion accompaniment",
+      "Custom acoustic calibration for lakeside heritage palace"
     ],
     "tracklist": [
-      "01. Dj G-Spark - Desert Mirage",
-      "02. Dj G-Spark - Midnight Skyline"
+      "01. Dj G-Spark - Royal Heritage Overture",
+      "02. Dj G-Spark - Sangeet Euphoria Mashup",
+      "03. Dj G-Spark - Late Night Punjabi Bollytech"
     ]
   },
   {
-    "id": "PAST-AMSTERDAM-2023",
-    "slug": "amsterdam-warehouse-marathon-2023",
-    "title": "Amsterdam ADE Warehouse Marathon 2023",
-    "year": "2023",
-    "city": "AMSTERDAM",
-    "country": "NETHERLANDS",
-    "venue": "Gashouder Industrial Hall",
-    "date": "2023-10-20",
-    "dateDisplay": "20 OCT 2023",
-    "attendance": "14,000+ Fans",
-    "image": "/images/album_art.jpg",
-    "excerpt": "An intimate, raw 8-hour industrial warehouse marathon set hailed by European critics.",
-    "description": "Stripped of conventional spectacle, the Gashouder warehouse was filled with raw concrete reverberation, monochrome strobes, and relentless dark techno groove.",
+    "id": "PAST-MUMBAI-2024",
+    "slug": "mumbai-dome-live-electronic-2024",
+    "title": "Mumbai Dome Live Electronic Showcase 2024",
+    "eventType": "Arena Concert",
+    "year": "2024",
+    "city": "MUMBAI",
+    "country": "INDIA",
+    "venue": "NSCI Dome, Worli",
+    "date": "2024-04-20",
+    "dateDisplay": "20 APR 2024",
+    "artist": "Dj G-Spark",
+    "attendance": "15,000+ Fans",
+    "image": "/images/past_event_crowd.jpg",
+    "excerpt": "Massive indoor sensory show in Mumbai with synchronized moving lights, heavy driving basslines, and unreleased festival anthems.",
+    "description": "A packed NSCI Dome witnessed Dj G-Spark's signature hybrid set bridging commercial Bollywood vocals with club-shaking electronic drops, backed by a 60-meter curved LED visual wall.",
     "highlights": [
-      "8-hour continuous uninterrupted performance",
-      "Critical acclaim across European dance press"
+      "15,000 indoor concert attendance",
+      "60-meter ultra-wide LED visual wall",
+      "Premiered official 2024 festival bootlegs"
     ],
     "tracklist": [
-      "01. Dj G-Spark - Gashouder Protocol (Live Marathon Mix)"
+      "01. Dj G-Spark - Mumbai Overdrive (Intro Edit)",
+      "02. Dj G-Spark - Arabian Sea Rhythm",
+      "03. Dj G-Spark - Commercial Anthems Live Mashup"
     ]
   }
 ]

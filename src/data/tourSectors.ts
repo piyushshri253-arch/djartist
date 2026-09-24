@@ -37,7 +37,7 @@ export const TOUR_SECTORS: TourSector[] = [
     id: "gallery_bio",
     num: "03",
     title: "GALLERY & ABOUT Dj G-Spark",
-    subtitle: "LEFT: SUNBURN 55K & TOMORROWLAND // RIGHT: BIOGRAPHY & PHILOSOPHY",
+    subtitle: "LEFT: SUNBURN 55K & ARENA CONCERTS // RIGHT: BIOGRAPHY & PHILOSOPHY",
     telemetry: "WAYPOINT 03 // MUSEUM WALL MOUNTED PANELS // 15+ YEARS",
     videoSrc: "/images/tour_02_backstage.mp4",
     fallbackImage: "/images/gallery_corridor_2k.jpg",

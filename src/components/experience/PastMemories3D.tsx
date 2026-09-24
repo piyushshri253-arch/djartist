@@ -48,7 +48,7 @@ export function PastMemories3D() {
         <pointLight color="#FFE0B0" intensity={2.8} distance={7} position={[0, 2.2, 1.2]} />
       </group>
 
-      {/* 2. Memory Panel Right: Tomorrowland Sunset */}
+      {/* 2. Memory Panel Right: Goa Sunburn Sunset */}
       <group position={[5.2, 3.2, -8]} rotation={[0, -0.28, 0.02]}>
         <mesh>
           <boxGeometry args={[5.2, 3.4, 0.16]} />
@@ -76,7 +76,7 @@ export function PastMemories3D() {
             letterSpacing={0.22}
             material-toneMapped={false}
           >
-            TOMORROWLAND MAINSTAGE // SUNSET ANTHEM
+            GOA SUNBURN MAINSTAGE // SUNSET ANTHEM
           </Text>
         </group>
         <pointLight color="#FFE0B0" intensity={2.8} distance={7} position={[0, 2.2, 1.2]} />

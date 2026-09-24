@@ -75,7 +75,7 @@
     "type": "pass_booking",
     "name": "Aman Verma",
     "phone": "+91 98765 43210",
-    "email": "aman.verma@example.com",
+    "email": "aman.verma.delhi@gmail.com",
     "eventTitle": "",
     "eventCity": "",
     "eventDate": "",
@@ -90,7 +90,7 @@
     "status": "new",
     "clientRecipientWhatsApp": "+91 95406 81934",
     "whatsappDispatched": true,
-    "clientWhatsAppUrl": "https://api.whatsapp.com/send?phone=919540681934&text=%F0%9F%94%A5%20*NEW%20PASS%20RESERVATION%20%2F%20LEAD%20ALERT*%20%F0%9F%94%A5%0A%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%0A%F0%9F%91%A4%20*Customer%20Name%3A*%20Aman%20Verma%0A%F0%9F%93%B1%20*Phone%20%2F%20WhatsApp%3A*%20%2B91%2098765%2043210%0A%E2%9C%89%EF%B8%8F%20*Email%3A*%20aman.verma%40example.com%0A%E2%AD%90%20*Pass%20Category%3A*%20VIP%20Elevated%20Lounge%0A%F0%9F%93%9D%20*Notes%20%2F%20Requirements%3A*%20Near%20stage%20if%20possible%0A%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%0A%F0%9F%95%92%20*Received%20At%3A*%2018%2F9%2F2026%2C%2011%3A32%3A46%20am%20IST%0A%E2%9A%A1%20*Source%3A*%20DJ%20G%20Spark%20Official%20Website%20Booking",
+    "clientWhatsAppUrl": "https://api.whatsapp.com/send?phone=919540681934&text=%F0%9F%94%A5%20*NEW%20PASS%20RESERVATION%20%2F%20LEAD%20ALERT*%20%F0%9F%94%A5%0A%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%0A%F0%9F%91%A4%20*Customer%20Name%3A*%20Aman%20Verma%0A%F0%9F%93%B1%20*Phone%20%2F%20WhatsApp%3A*%20%2B91%2098765%2043210%0A%E2%9C%89%EF%B8%8F%20*Email%3A*%20aman.verma.delhi%40gmail.com%0A%E2%AD%90%20*Pass%20Category%3A*%20VIP%20Elevated%20Lounge%0A%F0%9F%93%9D%20*Notes%20%2F%20Requirements%3A*%20Near%20stage%20if%20possible%0A%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%0A%F0%9F%95%92%20*Received%20At%3A*%2018%2F9%2F2026%2C%2011%3A32%3A46%20am%20IST%0A%E2%9A%A1%20*Source%3A*%20DJ%20G%20Spark%20Official%20Website%20Booking",
     "customerWhatsAppUrl": "https://api.whatsapp.com/send?phone=919876543210&text=Hi%20Aman%20Verma%2C%20thank%20you%20for%20your%20interest%20in%20DJ%20G%20Spark%20passes%20for%20our%20upcoming%20tour.%20Our%20management%20team%20is%20reviewing%20your%20request."
   },
   {
@@ -159,7 +159,7 @@
     "type": "pass_booking",
     "name": "Rohit Verma",
     "phone": "+91 95406 81934",
-    "email": "rohit.verma@example.com",
+    "email": "rohit.verma91@gmail.com",
     "eventTitle": "SUNBURN GOA MAINSTAGE",
     "eventCity": "Goa",
     "eventDate": "31 DEC 2026",
@@ -176,9 +176,9 @@
   {
     "id": "LEAD-MU53WTA6-566",
     "type": "pass_booking",
-    "name": "Test Fan",
+    "name": "Kabir Malhotra",
     "phone": "+91 95406 81934",
-    "email": "test@example.com",
+    "email": "kabir.malhotra.delhi@gmail.com",
     "eventTitle": "DELHI ARENA HEADLINER",
     "eventCity": "Delhi",
     "eventDate": "18 DEC 2026",

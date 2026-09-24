@@ -196,7 +196,7 @@ const VIDEO_SHOWCASE = [
   },
   {
     id: "v5",
-    title: "Tomorrowland Sunset Mainstage 2026",
+    title: "Delhi NCR Mega Arena Sangeet & Concert Climax",
     tag: "LIVE FESTIVAL SET // 4K",
     duration: "24:18",
     thumbnail: "/images/past_event_sunset.jpg",
@@ -270,7 +270,7 @@ const PHOTO_GALLERY = [
   },
   {
     src: "/images/past_event_sunset.jpg",
-    title: "Tomorrowland Sunset Arena",
+    title: "Goa Beachfront Sunset Arena",
     subtitle: "Melodic Anthem Euphoria",
     category: "festivals",
   },

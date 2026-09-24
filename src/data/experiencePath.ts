@@ -78,7 +78,7 @@ export const EXPERIENCE_PATH: CameraWaypoint[] = [
     zone: "ARCHIVES // SUNBURN",
   },
   {
-    // 09: GALLERY: TOMORROWLAND & GLOBAL ARENAS (58% - 66%)
+    // 09: GALLERY: SUNBURN & GRAND ARENAS (58% - 66%)
     progress: 0.62,
     pos: new THREE.Vector3(0.5, 2.1, 4),
     lookAt: new THREE.Vector3(2.6, 2.3, 4),

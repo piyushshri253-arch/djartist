@@ -44,7 +44,7 @@ export function PastGallery3D() {
         <spotLight position={[0, 3, 2]} intensity={2.5} angle={0.5} color="#FFA040" distance={8} />
       </group>
 
-      {/* Frame 2 (Center): Tomorrowland Belgium */}
+      {/* Frame 2 (Center): Delhi JLN Stadium */}
       <group position={[0, 0, -5]}>
         <mesh>
           <boxGeometry args={[4.4, 2.8, 0.1]} />
@@ -55,12 +55,12 @@ export function PastGallery3D() {
           <meshStandardMaterial map={crowdTexture} roughness={0.4} />
         </mesh>
         <Text position={[0, -1.6, 0]} fontSize={0.2} color="#FFA020" anchorX="center" letterSpacing={0.12}>
-          TOMORROWLAND 2024 • 70,000 UNITED
+          DELHI JLN ARENA 2024 • 28,000 UNITED
         </Text>
         <spotLight position={[0, 3.5, 2]} intensity={3.0} angle={0.5} color="#00B4D8" distance={9} />
       </group>
 
-      {/* Frame 3 (Right): Ultra Miami */}
+      {/* Frame 3 (Right): Mumbai Dome */}
       <group position={[3.6, 0, 0]} rotation={[0, -0.2, 0]}>
         <mesh>
           <boxGeometry args={[3.8, 2.5, 0.1]} />
@@ -71,7 +71,7 @@ export function PastGallery3D() {
           <meshStandardMaterial map={ledTexture} roughness={0.4} />
         </mesh>
         <Text position={[0, -1.45, 0]} fontSize={0.18} color="#00B4D8" anchorX="center" letterSpacing={0.12}>
-          ULTRA MIAMI 2025 • 38,000 AUDIENCE
+          MUMBAI DOME SHOWCASE • 15,000 AUDIENCE
         </Text>
         <spotLight position={[0, 3, 2]} intensity={2.5} angle={0.5} color="#FFA040" distance={8} />
       </group>

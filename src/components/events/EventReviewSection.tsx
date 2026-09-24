@@ -229,7 +229,7 @@ export function EventReviewSection({ eventId, eventSlug, eventTitle }: EventRevi
                 </label>
                 <input
                   type="email"
-                  placeholder="e.g. sahil@example.com"
+                  placeholder="e.g. sahil.sharma@gmail.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-[#1F2833] border border-white/10 focus:border-[#00E5FF] rounded-xl px-4 py-2.5 text-white focus:outline-none transition-colors placeholder:text-[#555]"

@@ -271,7 +271,7 @@ export function ArticleReviewSection({ articleSlug, articleTitle }: ArticleRevie
                     type="text"
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
-                    placeholder="e.g. Amsterdam, NL"
+                    placeholder="e.g. New Delhi, IN"
                     className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder-white/25 focus:border-[#00E5FF] focus:outline-none transition-colors"
                   />
                 </div>
