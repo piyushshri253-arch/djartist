@@ -57,8 +57,23 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
   // Audio Context Integration
   const { currentTrack, isPlaying, togglePlay, playTrack, tracks } = useAudio();
 
-  // Load latest blogs from API (if updated dynamically in admin panel)
+  // Load latest blogs from API and localStorage cache
   useEffect(() => {
+    try {
+      const cached = localStorage.getItem("dj_gspark_blogs_cache");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setAllPosts(parsed);
+          const cachedMatch = parsed.find((p: any) => p.slug === slug || p.id === slug);
+          if (cachedMatch) {
+            setPost(cachedMatch);
+            setLoading(false);
+          }
+        }
+      }
+    } catch (_) {}
+
     fetch("/api/blogs", { cache: "no-store" })
       .then((r) => r.json())
       .then((data: BlogPostItem[]) => {
@@ -68,6 +83,9 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
           if (match) {
             setPost(match);
           }
+          try {
+            localStorage.setItem("dj_gspark_blogs_cache", JSON.stringify(data));
+          } catch (_) {}
         }
       })
       .catch(() => {})

@@ -437,12 +437,33 @@ export default function HomePage() {
       heroVideoRef.current.play().catch(() => {});
     }
 
-    // Dynamic Live Events & Blogs Fetch
+    // Dynamic Live Events & Blogs Fetch with Local Cache Fallback
+    try {
+      const cachedEv = localStorage.getItem("dj_gspark_events_cache");
+      if (cachedEv) {
+        const parsed = JSON.parse(cachedEv);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const upcoming = parsed.filter((e: any) => !isEventPast(e.date || e.dateDisplay) && e.isPublished !== false);
+          if (upcoming.length > 0) setUpcomingEvents(upcoming.slice(0, 8));
+        }
+      }
+      const cachedBlogs = localStorage.getItem("dj_gspark_blogs_cache");
+      if (cachedBlogs) {
+        const parsedB = JSON.parse(cachedBlogs);
+        if (Array.isArray(parsedB) && parsedB.length > 0) {
+          setLatestPosts(parsedB.slice(0, 3));
+        }
+      }
+    } catch (_) {}
+
     fetch("/api/events?type=upcoming", { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
           setUpcomingEvents(data.slice(0, 8));
+          try {
+            localStorage.setItem("dj_gspark_events_cache", JSON.stringify(data));
+          } catch (_) {}
         }
       })
       .catch(() => {});
@@ -1120,9 +1141,9 @@ export default function HomePage() {
                       </span>
                     </div>
 
-                    {/* Status Pill */}
-                    <div className="absolute top-3.5 right-3.5 px-2.5 py-1 rounded bg-[#00E5FF]/90 text-black text-[9px] font-mono uppercase tracking-widest font-bold">
-                      {event.status || "ONSALE NOW"}
+                    {/* Event Type Pill */}
+                    <div className="absolute top-3.5 right-3.5 px-2.5 py-1 rounded bg-amber-400 text-black text-[9px] font-mono uppercase tracking-widest font-black shadow-sm">
+                      {event.eventType || "ARENA CONCERT"}
                     </div>
                   </Link>
 
@@ -1130,25 +1151,28 @@ export default function HomePage() {
                   <div className="p-5 flex flex-col flex-grow justify-between">
                     <div>
                       <span className="text-[10px] font-mono tracking-[0.2em] text-[#00B4D8] uppercase block mb-1">
-                        {badge}
+                        {event.city}{event.country ? `, ${event.country}` : ""}
                       </span>
-                      <h3 className="font-heading font-bold text-xl uppercase text-white mb-2 group-hover:text-[#00E5FF] transition-colors">
+                      <h3 className="font-heading font-bold text-lg uppercase text-white mb-2 group-hover:text-[#00E5FF] transition-colors line-clamp-1" title={event.title || event.city}>
                         <Link href={detailsLink}>
-                          {event.city}, {event.country}
+                          {event.title || `${event.city} ARENA TOUR`}
                         </Link>
                       </h3>
                       <div className="space-y-1.5 text-xs text-[#929292] font-mono mb-3">
                         <div className="flex items-center gap-2">
-                          <MapPin className="w-3.5 h-3.5 text-[#00E5FF]" />
+                          <MapPin className="w-3.5 h-3.5 text-[#00E5FF] shrink-0" />
                           <span className="truncate">{event.venue}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Clock className="w-3.5 h-3.5 text-white/50" />
-                          <span>DOORS: {doors}</span>
                         </div>
                       </div>
 
-                      {/* Event Type & Headliner */}
+                      {/* Summary Snippet */}
+                      {event.description && (
+                        <p className="text-[11px] text-[#8A8D93] leading-relaxed line-clamp-2 mb-3">
+                          {event.description}
+                        </p>
+                      )}
+
+                      {/* Artist */}
                       <div className="mb-4 pt-2 border-t border-white/5 flex items-center justify-between text-[11px] font-mono">
                         <span className="text-[#8A8D93] uppercase">Artist:</span>
                         <span className="font-bold text-[#00E5FF] truncate max-w-[140px]">{event.artist || "Dj G-Spark"}</span>

@@ -11,11 +11,24 @@ export default function BlogPage() {
   const [filter, setFilter] = useState("all");
 
   useEffect(() => {
+    try {
+      const cached = localStorage.getItem("dj_gspark_blogs_cache");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setPosts(parsed);
+        }
+      }
+    } catch (_) {}
+
     fetch("/api/blogs", { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
           setPosts(data);
+          try {
+            localStorage.setItem("dj_gspark_blogs_cache", JSON.stringify(data));
+          } catch (_) {}
         }
       })
       .catch(() => {});

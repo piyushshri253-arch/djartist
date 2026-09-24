@@ -139,6 +139,7 @@ export default function AdminDashboardPage() {
   const [galleryCategoryFilter, setGalleryCategoryFilter] = useState<string>("all");
   const [gallerySearchQuery, setGallerySearchQuery] = useState("");
   const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
+  const [editingPhoto, setEditingPhoto] = useState<GalleryItem | null>(null);
   const [isSavingGallery, setIsSavingGallery] = useState(false);
   const [galleryForm, setGalleryForm] = useState({
     title: "",
@@ -150,6 +151,7 @@ export default function AdminDashboardPage() {
   // Video Showcase Management States
   const [videoSearchQuery, setVideoSearchQuery] = useState("");
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [editingVideo, setEditingVideo] = useState<VideoShowcaseItem | null>(null);
   const [isSavingVideo, setIsSavingVideo] = useState(false);
   const [videoForm, setVideoForm] = useState({
     title: "",
@@ -635,7 +637,7 @@ export default function AdminDashboardPage() {
   const handleSaveEvent = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!eventForm.title.trim() || !eventForm.city.trim() || !eventForm.venue.trim()) {
-      showToast("error", "Please provide Title, City, and Venue for the event.");
+      showToast("error", "Please provide Title, City / State, and Venue for the event.");
       return;
     }
 
@@ -658,7 +660,22 @@ export default function AdminDashboardPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to save event");
 
-      showToast("success", `Event ${editingEvent ? "updated" : "published"} successfully!`);
+      showToast("success", `Upcoming Event ${editingEvent ? "updated" : "published"} successfully!`);
+      
+      // Update local state and client cache immediately
+      setEvents((prev) => {
+        let updated: EventData[];
+        if (editingEvent) {
+          updated = prev.map((ev) => (ev.id === data.event.id ? data.event : ev));
+        } else {
+          updated = [data.event, ...prev];
+        }
+        try {
+          localStorage.setItem("dj_gspark_events_cache", JSON.stringify(updated));
+        } catch (_) {}
+        return updated;
+      });
+
       await fetchData();
 
       // Return smoothly to the appropriate archive or upcoming tab
@@ -686,7 +703,13 @@ export default function AdminDashboardPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to delete event");
 
-      setEvents((prev) => prev.filter((e) => e.id !== id));
+      setEvents((prev) => {
+        const filtered = prev.filter((e) => e.id !== id);
+        try {
+          localStorage.setItem("dj_gspark_events_cache", JSON.stringify(filtered));
+        } catch (_) {}
+        return filtered;
+      });
       showToast("success", `Event ${title ? `"${title}"` : ""} deleted successfully.`);
 
       // If inside dedicated editor, navigate back to listing
@@ -698,7 +721,30 @@ export default function AdminDashboardPage() {
     }
   };
 
-  // Save Gallery Photo Action
+  // Gallery Photo Actions (Add, Edit, Delete)
+  const openCreateGallery = () => {
+    setEditingPhoto(null);
+    setGalleryForm({
+      title: "",
+      subtitle: "",
+      category: "live",
+      src: "/images/gallery_stage_lasers.jpg",
+    });
+    setIsGalleryModalOpen(true);
+  };
+
+  const openEditGallery = (photo: any) => {
+    setEditingPhoto(photo);
+    setGalleryForm({
+      title: photo.title || "",
+      subtitle: photo.subtitle || "",
+      category: photo.category || "live",
+      src: photo.src || "/images/gallery_stage_lasers.jpg",
+    });
+    setIsGalleryModalOpen(true);
+  };
+
+  // Save Gallery Photo Action (Supports POST & PUT)
   const handleSaveGalleryPhoto = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!galleryForm.title.trim() || !galleryForm.src.trim()) {
@@ -707,15 +753,29 @@ export default function AdminDashboardPage() {
     }
     setIsSavingGallery(true);
     try {
+      const method = editingPhoto ? "PUT" : "POST";
+      const payload = editingPhoto ? { ...galleryForm, id: editingPhoto.id } : galleryForm;
       const res = await fetch("/api/admin/gallery", {
-        method: "POST",
+        method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(galleryForm),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to add photo");
+      if (!res.ok) throw new Error(data.error || "Failed to save photo");
 
-      setGalleryItems((prev) => [data.item, ...prev]);
+      setGalleryItems((prev) => {
+        let updated: any[];
+        if (editingPhoto) {
+          updated = prev.map((p) => (p.id === data.item.id ? data.item : p));
+        } else {
+          updated = [data.item, ...prev];
+        }
+        try {
+          localStorage.setItem("dj_gspark_gallery_cache", JSON.stringify(updated));
+        } catch (_) {}
+        return updated;
+      });
+
       setIsGalleryModalOpen(false);
       setGalleryForm({
         title: "",
@@ -723,9 +783,9 @@ export default function AdminDashboardPage() {
         category: "live",
         src: "/images/gallery_stage_lasers.jpg",
       });
-      showToast("success", "Photo added to live gallery successfully!");
+      showToast("success", `Photo ${editingPhoto ? "updated" : "added to live gallery"} successfully!`);
     } catch (err: any) {
-      showToast("error", err.message || "Failed to add photo");
+      showToast("error", err.message || "Failed to save photo");
     } finally {
       setIsSavingGallery(false);
     }
@@ -741,14 +801,45 @@ export default function AdminDashboardPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to delete photo");
 
-      setGalleryItems((prev) => prev.filter((item) => item.id !== id));
+      setGalleryItems((prev) => {
+        const filtered = prev.filter((item) => item.id !== id);
+        try {
+          localStorage.setItem("dj_gspark_gallery_cache", JSON.stringify(filtered));
+        } catch (_) {}
+        return filtered;
+      });
       showToast("success", "Photo removed from gallery.");
     } catch (err: any) {
       showToast("error", err.message || "Failed to delete photo");
     }
   };
 
-  // Save Video Showcase Action
+  // Video Showcase Actions (Add, Edit, Delete)
+  const openCreateVideo = () => {
+    setEditingVideo(null);
+    setVideoForm({
+      title: "",
+      tag: "4K CINEMATIC // BASS DROP",
+      duration: "03:45",
+      thumbnail: "/images/past_event_crowd.jpg",
+      videoSrc: "/images/tour_09_arena_climax.mp4",
+    });
+    setIsVideoModalOpen(true);
+  };
+
+  const openEditVideo = (video: any) => {
+    setEditingVideo(video);
+    setVideoForm({
+      title: video.title || "",
+      tag: video.tag || "4K CINEMATIC // BASS DROP",
+      duration: video.duration || "03:45",
+      thumbnail: video.thumbnail || "/images/past_event_crowd.jpg",
+      videoSrc: video.videoSrc || "",
+    });
+    setIsVideoModalOpen(true);
+  };
+
+  // Save Video Showcase Action (Supports POST & PUT)
   const handleSaveVideo = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!videoForm.title.trim() || !videoForm.videoSrc.trim()) {
@@ -757,15 +848,29 @@ export default function AdminDashboardPage() {
     }
     setIsSavingVideo(true);
     try {
+      const method = editingVideo ? "PUT" : "POST";
+      const payload = editingVideo ? { ...videoForm, id: editingVideo.id } : videoForm;
       const res = await fetch("/api/admin/videos", {
-        method: "POST",
+        method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(videoForm),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to add video");
+      if (!res.ok) throw new Error(data.error || "Failed to save video");
 
-      setVideoItems((prev) => [data.item, ...prev]);
+      setVideoItems((prev) => {
+        let updated: any[];
+        if (editingVideo) {
+          updated = prev.map((v) => (v.id === data.item.id ? data.item : v));
+        } else {
+          updated = [data.item, ...prev];
+        }
+        try {
+          localStorage.setItem("dj_gspark_videos_cache", JSON.stringify(updated));
+        } catch (_) {}
+        return updated;
+      });
+
       setIsVideoModalOpen(false);
       setVideoForm({
         title: "",
@@ -774,9 +879,9 @@ export default function AdminDashboardPage() {
         thumbnail: "/images/past_event_crowd.jpg",
         videoSrc: "/images/tour_09_arena_climax.mp4",
       });
-      showToast("success", "Video added to live showcase successfully!");
+      showToast("success", `Video ${editingVideo ? "updated" : "added to live showcase"} successfully!`);
     } catch (err: any) {
-      showToast("error", err.message || "Failed to add video");
+      showToast("error", err.message || "Failed to save video");
     } finally {
       setIsSavingVideo(false);
     }
@@ -792,7 +897,13 @@ export default function AdminDashboardPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to delete video");
 
-      setVideoItems((prev) => prev.filter((item) => item.id !== id));
+      setVideoItems((prev) => {
+        const filtered = prev.filter((item) => item.id !== id);
+        try {
+          localStorage.setItem("dj_gspark_videos_cache", JSON.stringify(filtered));
+        } catch (_) {}
+        return filtered;
+      });
       showToast("success", "Video removed from showcase.");
     } catch (err: any) {
       showToast("error", err.message || "Failed to delete video");
@@ -870,6 +981,20 @@ export default function AdminDashboardPage() {
 
       showToast("success", `Article ${editingBlog ? "updated" : "published"} successfully!`);
       setIsBlogModalOpen(false);
+
+      setBlogs((prev) => {
+        let updated: any[];
+        if (editingBlog) {
+          updated = prev.map((b) => (b.id === data.post.id ? data.post : b));
+        } else {
+          updated = [data.post, ...prev];
+        }
+        try {
+          localStorage.setItem("dj_gspark_blogs_cache", JSON.stringify(updated));
+        } catch (_) {}
+        return updated;
+      });
+
       await fetchData();
     } catch (err: any) {
       showToast("error", err.message || "Failed to save blog");
@@ -888,7 +1013,13 @@ export default function AdminDashboardPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to delete article");
 
-      setBlogs((prev) => prev.filter((b) => b.id !== id));
+      setBlogs((prev) => {
+        const filtered = prev.filter((b) => b.id !== id);
+        try {
+          localStorage.setItem("dj_gspark_blogs_cache", JSON.stringify(filtered));
+        } catch (_) {}
+        return filtered;
+      });
       showToast("success", "Article removed successfully.");
     } catch (err: any) {
       showToast("error", err.message || "Failed to delete article");
@@ -1489,22 +1620,24 @@ export default function AdminDashboardPage() {
 
             {/* Events Data Table */}
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-left text-xs min-w-[760px]">
+              <table className="w-full text-left text-xs min-w-[900px]">
                 <thead className="bg-slate-50 text-slate-500 uppercase tracking-wider font-semibold border-b border-slate-200">
                   <tr>
-                    <th className="p-4">Event / Poster</th>
-                    <th className="p-4">Date & Time</th>
-                    <th className="p-4">Venue & City</th>
-                    <th className="p-4">Timeline Status</th>
-                    <th className="p-4">Pricing</th>
-                    <th className="p-4">Visibility</th>
-                    <th className="p-4 text-right">Actions</th>
+                    <th className="p-3.5">Photo</th>
+                    <th className="p-3.5">Upcoming Event</th>
+                    <th className="p-3.5">Event Type</th>
+                    <th className="p-3.5">Venue</th>
+                    <th className="p-3.5">City / State</th>
+                    <th className="p-3.5">Date</th>
+                    <th className="p-3.5">Artist</th>
+                    <th className="p-3.5">Summary Column</th>
+                    <th className="p-3.5 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-slate-700">
                   {filteredEvents.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="p-8 text-center text-slate-400">
+                      <td colSpan={9} className="p-8 text-center text-slate-400">
                         No events match the current search and filter criteria.
                       </td>
                     </tr>
@@ -1517,87 +1650,74 @@ export default function AdminDashboardPage() {
 
                       return (
                         <tr key={ev.id} className="hover:bg-slate-50/80 transition-colors">
-                          {/* Event / Poster */}
-                          <td className="p-4">
-                            <div className="flex items-center gap-3">
-                              <div className="relative w-12 h-14 rounded-lg overflow-hidden bg-slate-100 shrink-0 border border-slate-200">
-                                <img
-                                  src={ev.image || "/images/past_event_crowd.jpg"}
-                                  alt={ev.title}
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                              <div className="min-w-0">
-                                <span className="font-bold text-slate-900 block truncate max-w-xs">
-                                  {ev.title}
-                                </span>
-                                <span className="text-[11px] font-mono text-slate-400 block truncate max-w-xs">
-                                  /{ev.slug || ev.id}
-                                </span>
-                              </div>
+                          {/* Photo */}
+                          <td className="p-3.5">
+                            <div className="relative w-12 h-14 rounded-lg overflow-hidden bg-slate-100 shrink-0 border border-slate-200">
+                              <img
+                                src={ev.image || "/images/past_event_crowd.jpg"}
+                                alt={ev.title}
+                                className="w-full h-full object-cover"
+                              />
                             </div>
                           </td>
 
-                          {/* Date & Time */}
-                          <td className="p-4">
+                          {/* Upcoming Event */}
+                          <td className="p-3.5">
+                            <div className="min-w-0 max-w-[200px]">
+                              <span className="font-bold text-slate-900 block truncate" title={ev.title}>
+                                {ev.title}
+                              </span>
+                              <span className="text-[11px] font-mono text-slate-400 block truncate">
+                                /{ev.slug || ev.id}
+                              </span>
+                            </div>
+                          </td>
+
+                          {/* Event Type */}
+                          <td className="p-3.5 whitespace-nowrap">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-50 text-amber-800 border border-amber-200">
+                              {ev.eventType || "Arena Concert"}
+                            </span>
+                          </td>
+
+                          {/* Venue */}
+                          <td className="p-3.5">
+                            <span className="font-semibold text-slate-800 block truncate max-w-[130px]" title={ev.venue}>
+                              {ev.venue}
+                            </span>
+                          </td>
+
+                          {/* City / State */}
+                          <td className="p-3.5 whitespace-nowrap">
+                            <span className="font-semibold text-slate-800 block">
+                              {ev.city}{ev.country ? `, ${ev.country}` : ""}
+                            </span>
+                          </td>
+
+                          {/* Date */}
+                          <td className="p-3.5 whitespace-nowrap">
                             <span className="font-semibold text-slate-800 block">
                               {ev.dateDisplay || ev.date}
                             </span>
                             <span className="text-[11px] text-slate-400 block">{ev.time}</span>
                           </td>
 
-                          {/* Venue & City */}
-                          <td className="p-4">
-                            <span className="font-semibold text-slate-800 block">{ev.venue}</span>
-                            <span className="text-[11px] text-slate-500 block">
-                              {ev.city}, {ev.country}
+                          {/* Artist */}
+                          <td className="p-3.5 whitespace-nowrap">
+                            <span className="font-bold text-amber-700 block truncate max-w-[120px]" title={ev.artist || "Dj G-Spark"}>
+                              {ev.artist || "Dj G-Spark"}
                             </span>
                           </td>
 
-                          {/* Timeline Status */}
-                          <td className="p-4">
-                            {past ? (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">
-                                <Clock className="w-3 h-3 text-slate-500" />
-                                <span>Past Archive</span>
-                              </span>
-                            ) : (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                <span>Upcoming Tour</span>
-                              </span>
-                            )}
-                          </td>
-
-                          {/* Pricing */}
-                          <td className="p-4 font-mono text-[11px]">
-                            {ev.showPrice !== false ? (
-                              <div>
-                                <span className="font-bold text-slate-900">
-                                  {ev.priceINR ? `₹ ${ev.priceINR}` : "₹ 2,499"}
-                                </span>
-                                <span className="text-slate-400 block">/ ${ev.priceUSD || 35}</span>
-                              </div>
-                            ) : (
-                              <span className="text-emerald-600 font-semibold">Reservation Only</span>
-                            )}
-                          </td>
-
-                          {/* Visibility */}
-                          <td className="p-4">
-                            <span
-                              className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                                ev.isPublished !== false
-                                  ? "bg-emerald-50 text-emerald-700"
-                                  : "bg-slate-100 text-slate-600"
-                              }`}
-                            >
-                              {ev.isPublished !== false ? "Published" : "Draft"}
-                            </span>
+                          {/* Summary Column */}
+                          <td className="p-3.5">
+                            <p className="text-xs text-slate-500 line-clamp-2 max-w-[220px] leading-relaxed" title={ev.description}>
+                              {ev.description || "—"}
+                            </p>
                           </td>
 
                           {/* Actions */}
-                          <td className="p-4 text-right">
+                          <td className="p-3.5 text-right whitespace-nowrap">
                             <div className="inline-flex items-center gap-1.5">
                               <Link
                                 href={viewUrl}
@@ -2201,7 +2321,7 @@ export default function AdminDashboardPage() {
                   {/* Title */}
                   <div>
                     <label className="text-xs font-bold text-slate-700 block mb-1">
-                      Event Title <span className="text-rose-500">*</span>
+                      Upcoming Event (Title) <span className="text-rose-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -2236,7 +2356,7 @@ export default function AdminDashboardPage() {
 
                     <div>
                       <label className="text-xs font-bold text-slate-700 block mb-1">
-                        Artist / Headliner
+                        Artist <span className="text-slate-400 font-normal">(Default: Dj G-Spark)</span>
                       </label>
                       <input
                         type="text"
@@ -2284,7 +2404,7 @@ export default function AdminDashboardPage() {
                   {/* Short Description */}
                   <div>
                     <label className="text-xs font-bold text-slate-700 block mb-1">
-                      Short Summary / Teaser
+                      Summary Column (Teaser Writeup) <span className="text-rose-500">*</span>
                     </label>
                     <textarea
                       rows={2}
@@ -2446,14 +2566,14 @@ export default function AdminDashboardPage() {
                     {/* City */}
                     <div>
                       <label className="text-xs font-bold text-slate-700 block mb-1">
-                        City <span className="text-rose-500">*</span>
+                        City / State <span className="text-rose-500">*</span>
                       </label>
                       <input
                         type="text"
                         required
                         value={eventForm.city}
                         onChange={(e) => setEventForm({ ...eventForm, city: e.target.value })}
-                        placeholder="e.g. MUMBAI"
+                        placeholder="e.g. MUMBAI or DELHI NCR"
                         className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:border-amber-500"
                       />
                     </div>
@@ -3577,7 +3697,7 @@ export default function AdminDashboardPage() {
               <div className="flex items-center gap-3">
                 <button
                   type="button"
-                  onClick={() => setIsGalleryModalOpen(true)}
+                  onClick={openCreateGallery}
                   className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-2 shadow-xs transition-colors cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
@@ -3661,17 +3781,27 @@ export default function AdminDashboardPage() {
                       </div>
 
                       <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-                        <span className="text-[10px] text-slate-400 font-mono">
+                        <span className="text-[10px] text-slate-400 font-mono truncate max-w-[120px]">
                           {photo.src.split("/").pop()}
                         </span>
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteGalleryPhoto(photo.id)}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                          title="Delete photo from gallery"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                        <div className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => openEditGallery(photo)}
+                            className="p-1.5 rounded-lg text-slate-500 hover:text-amber-600 hover:bg-amber-50 transition-colors cursor-pointer"
+                            title="Edit photo details"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteGalleryPhoto(photo.id)}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                            title="Delete photo from gallery"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -3704,7 +3834,7 @@ export default function AdminDashboardPage() {
               <div className="flex items-center gap-3">
                 <button
                   type="button"
-                  onClick={() => setIsVideoModalOpen(true)}
+                  onClick={openCreateVideo}
                   className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-2 shadow-xs transition-colors cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
@@ -3795,14 +3925,24 @@ export default function AdminDashboardPage() {
                           <span>Test Play</span>
                         </button>
 
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteVideo(video.id)}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                          title="Delete video from showcase"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                        <div className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => openEditVideo(video)}
+                            className="p-1.5 rounded-lg text-slate-500 hover:text-amber-600 hover:bg-amber-50 transition-colors cursor-pointer"
+                            title="Edit video showcase details"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteVideo(video.id)}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                            title="Delete video from showcase"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -3891,8 +4031,12 @@ export default function AdminDashboardPage() {
           <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95">
             <div className="p-5 border-b border-slate-100 flex items-center justify-between">
               <div>
-                <h3 className="font-bold text-base text-slate-900">Add Photo to Live Gallery</h3>
-                <p className="text-xs text-slate-500">Photo will appear instantly under the website (#gallery) section.</p>
+                <h3 className="font-bold text-base text-slate-900">
+                  {editingPhoto ? "Edit Gallery Photo" : "Add Photo to Live Gallery"}
+                </h3>
+                <p className="text-xs text-slate-500">
+                  {editingPhoto ? "Update photography details on the live website (#gallery)." : "Photo will appear instantly under the website (#gallery) section."}
+                </p>
               </div>
               <button
                 type="button"
@@ -3972,7 +4116,7 @@ export default function AdminDashboardPage() {
                   disabled={isSavingGallery}
                   className="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
                 >
-                  {isSavingGallery ? "Adding..." : "Add to Live Gallery"}
+                  {isSavingGallery ? "Saving..." : editingPhoto ? "Save Photo Changes" : "Add to Live Gallery"}
                 </button>
               </div>
             </form>
@@ -3988,8 +4132,12 @@ export default function AdminDashboardPage() {
           <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95">
             <div className="p-5 border-b border-slate-100 flex items-center justify-between">
               <div>
-                <h3 className="font-bold text-base text-slate-900">Add Video to Showcase</h3>
-                <p className="text-xs text-slate-500">Supports direct MP4 videos or YouTube links on (/#videos).</p>
+                <h3 className="font-bold text-base text-slate-900">
+                  {editingVideo ? "Edit Video Showcase" : "Add Video to Showcase"}
+                </h3>
+                <p className="text-xs text-slate-500">
+                  {editingVideo ? "Update showcase video details and links on the live site (#videos)." : "Supports direct MP4 videos or YouTube links on (/#videos)."}
+                </p>
               </div>
               <button
                 type="button"
@@ -4073,7 +4221,7 @@ export default function AdminDashboardPage() {
                   disabled={isSavingVideo}
                   className="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
                 >
-                  {isSavingVideo ? "Adding..." : "Publish to Showcase"}
+                  {isSavingVideo ? "Saving..." : editingVideo ? "Save Video Changes" : "Publish to Showcase"}
                 </button>
               </div>
             </form>

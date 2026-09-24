@@ -100,3 +100,49 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: "Failed to delete gallery photo" }, { status: 500 });
   }
 }
+
+// PUT: Edit existing gallery photo
+export async function PUT(req: Request) {
+  try {
+    const admin = await getAuthenticatedAdmin();
+    if (!admin) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await req.json();
+    const { id, src, title, subtitle, category } = body;
+
+    if (!id || !src || !title) {
+      return NextResponse.json(
+        { error: "Photo ID, image source, and title are required" },
+        { status: 400 }
+      );
+    }
+
+    const items = (await readJsonFile<GalleryItem[]>("gallery.json")) || [];
+    const index = items.findIndex((i) => i.id === id);
+
+    if (index === -1) {
+      return NextResponse.json({ error: "Photo not found" }, { status: 404 });
+    }
+
+    const updatedItem: GalleryItem = {
+      ...items[index],
+      src: src.trim(),
+      title: title.trim(),
+      subtitle: subtitle ? subtitle.trim() : items[index].subtitle,
+      category: ["live", "festivals", "backstage"].includes(category)
+        ? category
+        : items[index].category || "live",
+    };
+
+    items[index] = updatedItem;
+    await writeJsonFile("gallery.json", items);
+
+    return NextResponse.json({ success: true, item: updatedItem });
+  } catch (error) {
+    console.error("Admin gallery update error:", error);
+    return NextResponse.json({ error: "Failed to update gallery photo" }, { status: 500 });
+  }
+}
+

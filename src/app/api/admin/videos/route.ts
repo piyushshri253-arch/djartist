@@ -99,3 +99,48 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: "Failed to delete video" }, { status: 500 });
   }
 }
+
+// PUT: Edit existing video
+export async function PUT(req: Request) {
+  try {
+    const admin = await getAuthenticatedAdmin();
+    if (!admin) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await req.json();
+    const { id, title, tag, duration, thumbnail, videoSrc } = body;
+
+    if (!id || !title || !videoSrc) {
+      return NextResponse.json(
+        { error: "Video ID, title, and video source/URL are required" },
+        { status: 400 }
+      );
+    }
+
+    const items = (await readJsonFile<VideoShowcaseItem[]>("videos.json")) || [];
+    const index = items.findIndex((i) => i.id === id);
+
+    if (index === -1) {
+      return NextResponse.json({ error: "Video not found" }, { status: 404 });
+    }
+
+    const updatedItem: VideoShowcaseItem = {
+      ...items[index],
+      title: title.trim(),
+      tag: tag ? tag.trim() : items[index].tag,
+      duration: duration ? duration.trim() : items[index].duration,
+      thumbnail: thumbnail ? thumbnail.trim() : items[index].thumbnail,
+      videoSrc: videoSrc.trim(),
+    };
+
+    items[index] = updatedItem;
+    await writeJsonFile("videos.json", items);
+
+    return NextResponse.json({ success: true, item: updatedItem });
+  } catch (error) {
+    console.error("Admin videos update error:", error);
+    return NextResponse.json({ error: "Failed to update video" }, { status: 500 });
+  }
+}
+

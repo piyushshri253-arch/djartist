@@ -18,11 +18,29 @@ export default function EventsPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
+    try {
+      const cached = localStorage.getItem("dj_gspark_events_cache");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const upcomingCached = parsed.filter(
+            (ev: any) => ev.isPublished !== false && !isEventPast(ev.date || ev.dateDisplay)
+          );
+          if (upcomingCached.length > 0) {
+            setEvents(upcomingCached);
+          }
+        }
+      }
+    } catch (_) {}
+
     fetch("/api/events?type=upcoming", { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
           setEvents(data);
+          try {
+            localStorage.setItem("dj_gspark_events_cache", JSON.stringify(data));
+          } catch (_) {}
         }
       })
       .catch(() => {});
@@ -146,12 +164,12 @@ export default function EventsPage() {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#1F2833] via-transparent to-black/50" />
-                  <div className="absolute top-4 left-4 flex items-center gap-2">
-                    <span className="px-3 py-1 rounded-full bg-black/80 backdrop-blur-md text-[10px] font-bold tracking-wider text-[#00B4D8] uppercase border border-white/10">
-                      {ev.city} • {ev.country}
+                  <div className="absolute top-4 left-4 flex flex-wrap items-center gap-2">
+                    <span className="px-3 py-1 rounded-full bg-gradient-to-r from-amber-500/20 to-amber-600/20 backdrop-blur-md text-[10px] font-extrabold tracking-wider text-amber-400 uppercase border border-amber-500/30">
+                      {ev.eventType || "ARENA CONCERT"}
                     </span>
-                    <span className="px-3 py-1 rounded-full bg-[#00FF88]/20 backdrop-blur-md text-[10px] font-bold tracking-wider text-[#00FF88] uppercase border border-[#00FF88]/30">
-                      {ev.status || "ONSALE NOW"}
+                    <span className="px-3 py-1 rounded-full bg-black/80 backdrop-blur-md text-[10px] font-bold tracking-wider text-[#00B4D8] uppercase border border-white/10">
+                      {ev.city}{ev.country ? ` • ${ev.country}` : ""}
                     </span>
                   </div>
                 </Link>
@@ -172,7 +190,7 @@ export default function EventsPage() {
 
                     <div className="flex items-center gap-2 text-xs text-[#8A8D93] mb-4">
                       <MapPin className="w-3.5 h-3.5 flex-shrink-0 text-[#00E5FF]" />
-                      <span>{ev.venue}, <strong>{ev.city}</strong></span>
+                      <span><strong>{ev.venue}</strong> • {ev.city}{ev.country ? `, ${ev.country}` : ""}</span>
                     </div>
 
                     <p className="text-xs text-[#8A8D93] leading-relaxed line-clamp-2 mb-4">
@@ -198,9 +216,9 @@ export default function EventsPage() {
                   <div className="flex items-center justify-between pt-4 border-t border-white/10">
                     <div>
                       <span className="text-[10px] uppercase tracking-wider text-[#8A8D93] block font-mono">
-                        Headliner
+                        Artist
                       </span>
-                      <span className="text-xs font-bold text-white font-mono truncate block max-w-[130px]">
+                      <span className="text-xs font-bold text-[#00E5FF] font-mono truncate block max-w-[130px]">
                         {ev.artist || "Dj G-Spark"}
                       </span>
                     </div>
