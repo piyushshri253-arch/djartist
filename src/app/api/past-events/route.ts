@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { readJsonFile } from "@/lib/serverData";
+import { readJsonFile, getDeletedEventIdentifiers } from "@/lib/serverData";
 import { EventData } from "@/app/api/admin/events/route";
 import { isEventPast } from "@/lib/eventsHelper";
 
@@ -16,12 +16,21 @@ export async function GET(req: Request) {
     const toDate = searchParams.get("to");
     const sort = searchParams.get("sort") || "latest"; // "latest" | "oldest"
 
-    const [allEvents, dedicatedPastEvents] = await Promise.all([
+    const [allEvents, dedicatedPastEvents, deletedSet] = await Promise.all([
       readJsonFile<EventData[]>("events.json").catch(() => []),
       readJsonFile<any[]>("past-events.json").catch(() => []),
+      getDeletedEventIdentifiers(),
     ]);
+
+    const isDeleted = (ev: any) => {
+      if (!ev) return true;
+      if (ev.id && deletedSet.has(String(ev.id).toLowerCase().trim())) return true;
+      if (ev.slug && deletedSet.has(String(ev.slug).toLowerCase().trim())) return true;
+      if (ev.title && deletedSet.has(String(ev.title).toLowerCase().trim())) return true;
+      return false;
+    };
     
-    const eventsList = Array.isArray(allEvents) ? allEvents : [];
+    const eventsList = (Array.isArray(allEvents) ? allEvents : []).filter((e) => !isDeleted(e));
 
     // Auto-filter: Only events whose date has passed or are marked completed, and published
     let pastEvents = eventsList.filter((ev) => {
@@ -29,11 +38,11 @@ export async function GET(req: Request) {
       return isEventPast(ev.date) || ev.status === "COMPLETED";
     });
 
-    // Merge dedicated past events if not already included
+    // Merge dedicated past events if not already included and not deleted
     if (Array.isArray(dedicatedPastEvents) && dedicatedPastEvents.length > 0) {
       const existingKeys = new Set(pastEvents.map((e) => e.slug || e.id));
       for (const d of dedicatedPastEvents) {
-        if (!existingKeys.has(d.slug) && !existingKeys.has(d.id)) {
+        if (!isDeleted(d) && !existingKeys.has(d.slug) && !existingKeys.has(d.id)) {
           pastEvents.push({
             ...d,
             status: "COMPLETED",

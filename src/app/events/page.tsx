@@ -22,9 +22,7 @@ export default function EventsPage() {
     const upcomingCached = merged.filter(
       (ev: any) => ev.isPublished !== false && !isEventPast(ev.date || ev.dateDisplay)
     );
-    if (upcomingCached.length > 0) {
-      setEvents(upcomingCached);
-    }
+    setEvents(upcomingCached);
 
     fetch("/api/events?type=upcoming", { cache: "no-store" })
       .then((res) => res.json())

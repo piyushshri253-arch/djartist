@@ -45,7 +45,7 @@ function setLocalJson(key: string, value: any): void {
 }
 
 // Generic Merger
-function mergeCollections<T extends { id: string }>(
+function mergeCollections<T extends { id?: string; slug?: string; title?: string }>(
   baseItems: T[],
   customKey: string,
   deletedKey: string
@@ -54,27 +54,36 @@ function mergeCollections<T extends { id: string }>(
 
   const customItems = getLocalJson<T[]>(customKey, []);
   const deletedIds = getLocalJson<string[]>(deletedKey, []);
-  const deletedSet = new Set(deletedIds);
+  const deletedSet = new Set(deletedIds.map((s) => String(s).toLowerCase().trim()));
+
+  const isDeleted = (item: any) => {
+    if (!item) return false;
+    if (item.id && deletedSet.has(String(item.id).toLowerCase().trim())) return true;
+    if (item.slug && deletedSet.has(String(item.slug).toLowerCase().trim())) return true;
+    if (item.title && deletedSet.has(String(item.title).toLowerCase().trim())) return true;
+    return false;
+  };
 
   // 1. Filter out deleted IDs from base items
-  const filteredBase = (baseItems || []).filter(
-    (item) => item && item.id && !deletedSet.has(item.id)
-  );
+  const filteredBase = (baseItems || []).filter((item) => !isDeleted(item));
 
   // 2. Put custom items first (newest additions / user edits)
   const result: T[] = [];
   const customIdSet = new Set<string>();
 
-  customItems.forEach((c) => {
-    if (c && c.id && !deletedSet.has(c.id)) {
+  customItems.forEach((c: any) => {
+    if (c && !isDeleted(c)) {
       result.push(c);
-      customIdSet.add(c.id);
+      if (c.id) customIdSet.add(String(c.id).toLowerCase().trim());
+      if (c.slug) customIdSet.add(String(c.slug).toLowerCase().trim());
     }
   });
 
   // 3. Append remaining base items not overridden by custom
-  filteredBase.forEach((b) => {
-    if (!customIdSet.has(b.id)) {
+  filteredBase.forEach((b: any) => {
+    const bId = b.id ? String(b.id).toLowerCase().trim() : "";
+    const bSlug = b.slug ? String(b.slug).toLowerCase().trim() : "";
+    if ((!bId || !customIdSet.has(bId)) && (!bSlug || !customIdSet.has(bSlug))) {
       result.push(b);
     }
   });
@@ -99,11 +108,21 @@ export function saveCustomEvent(event: any): void {
   const deleted = getLocalJson<string[]>(STORAGE_KEYS.events.deleted, []);
 
   // Remove from deleted list if re-added
-  const updatedDeleted = deleted.filter((id) => id !== event.id);
+  const identifiers = [event.id, event.slug, event.title]
+    .filter(Boolean)
+    .map((s) => String(s).toLowerCase().trim());
+  const updatedDeleted = deleted.filter(
+    (id) => !identifiers.includes(String(id).toLowerCase().trim())
+  );
   setLocalJson(STORAGE_KEYS.events.deleted, updatedDeleted);
 
   // Update existing custom or prepend new
-  const existingIdx = custom.findIndex((e) => e.id === event.id);
+  const existingIdx = custom.findIndex(
+    (e) =>
+      e.id === event.id ||
+      (event.slug && e.slug === event.slug) ||
+      (event.title && e.title?.toLowerCase().trim() === event.title.toLowerCase().trim())
+  );
   let updatedCustom: any[];
   if (existingIdx >= 0) {
     updatedCustom = [...custom];
@@ -114,19 +133,27 @@ export function saveCustomEvent(event: any): void {
   setLocalJson(STORAGE_KEYS.events.custom, updatedCustom);
 }
 
-export function deleteCustomEvent(id: string): void {
+export function deleteCustomEvent(id: string, slug?: string, title?: string): void {
   if (typeof window === "undefined" || !id) return;
   const custom = getLocalJson<any[]>(STORAGE_KEYS.events.custom, []);
   const deleted = getLocalJson<string[]>(STORAGE_KEYS.events.deleted, []);
 
+  const keysToDelete = [id, slug, title]
+    .filter(Boolean)
+    .map((s) => String(s).toLowerCase().trim());
+
   // Remove from custom list
-  const updatedCustom = custom.filter((e) => e.id !== id);
+  const updatedCustom = custom.filter((e) => {
+    if (e.id && keysToDelete.includes(String(e.id).toLowerCase().trim())) return false;
+    if (e.slug && keysToDelete.includes(String(e.slug).toLowerCase().trim())) return false;
+    if (e.title && keysToDelete.includes(String(e.title).toLowerCase().trim())) return false;
+    return true;
+  });
   setLocalJson(STORAGE_KEYS.events.custom, updatedCustom);
 
-  // Add to deleted set
-  if (!deleted.includes(id)) {
-    setLocalJson(STORAGE_KEYS.events.deleted, [...deleted, id]);
-  }
+  // Add all keys to deleted list
+  const newDeleted = Array.from(new Set([...deleted, ...keysToDelete]));
+  setLocalJson(STORAGE_KEYS.events.deleted, newDeleted);
 }
 
 // ---------------------------------------------------------------------------
@@ -145,10 +172,20 @@ export function saveCustomBlog(blog: any): void {
   const custom = getLocalJson<any[]>(STORAGE_KEYS.blogs.custom, []);
   const deleted = getLocalJson<string[]>(STORAGE_KEYS.blogs.deleted, []);
 
-  const updatedDeleted = deleted.filter((id) => id !== blog.id);
+  const identifiers = [blog.id, blog.slug, blog.title]
+    .filter(Boolean)
+    .map((s) => String(s).toLowerCase().trim());
+  const updatedDeleted = deleted.filter(
+    (id) => !identifiers.includes(String(id).toLowerCase().trim())
+  );
   setLocalJson(STORAGE_KEYS.blogs.deleted, updatedDeleted);
 
-  const existingIdx = custom.findIndex((b) => b.id === blog.id);
+  const existingIdx = custom.findIndex(
+    (b) =>
+      b.id === blog.id ||
+      (blog.slug && b.slug === blog.slug) ||
+      (blog.title && b.title?.toLowerCase().trim() === blog.title.toLowerCase().trim())
+  );
   let updatedCustom: any[];
   if (existingIdx >= 0) {
     updatedCustom = [...custom];
@@ -159,17 +196,25 @@ export function saveCustomBlog(blog: any): void {
   setLocalJson(STORAGE_KEYS.blogs.custom, updatedCustom);
 }
 
-export function deleteCustomBlog(id: string): void {
+export function deleteCustomBlog(id: string, slug?: string, title?: string): void {
   if (typeof window === "undefined" || !id) return;
   const custom = getLocalJson<any[]>(STORAGE_KEYS.blogs.custom, []);
   const deleted = getLocalJson<string[]>(STORAGE_KEYS.blogs.deleted, []);
 
-  const updatedCustom = custom.filter((b) => b.id !== id);
+  const keysToDelete = [id, slug, title]
+    .filter(Boolean)
+    .map((s) => String(s).toLowerCase().trim());
+
+  const updatedCustom = custom.filter((b) => {
+    if (b.id && keysToDelete.includes(String(b.id).toLowerCase().trim())) return false;
+    if (b.slug && keysToDelete.includes(String(b.slug).toLowerCase().trim())) return false;
+    if (b.title && keysToDelete.includes(String(b.title).toLowerCase().trim())) return false;
+    return true;
+  });
   setLocalJson(STORAGE_KEYS.blogs.custom, updatedCustom);
 
-  if (!deleted.includes(id)) {
-    setLocalJson(STORAGE_KEYS.blogs.deleted, [...deleted, id]);
-  }
+  const newDeleted = Array.from(new Set([...deleted, ...keysToDelete]));
+  setLocalJson(STORAGE_KEYS.blogs.deleted, newDeleted);
 }
 
 // ---------------------------------------------------------------------------

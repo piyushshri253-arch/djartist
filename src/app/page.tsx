@@ -328,7 +328,10 @@ export default function HomePage() {
     const merged = getMergedEvents(rawEvents as any[]);
     return merged.filter((ev) => ev.isPublished !== false && !isEventPast(ev.date || ev.dateDisplay)).slice(0, 8);
   });
-  const [homepagePastEvents, setHomepagePastEvents] = useState<any[]>(INITIAL_HOMEPAGE_PAST_EVENTS);
+  const [homepagePastEvents, setHomepagePastEvents] = useState<any[]>(() => {
+    const merged = getMergedEvents(rawPastEvents as any[]);
+    return merged.filter((ev) => ev.isPublished !== false && (isEventPast(ev.date || ev.dateDisplay) || ev.status === "COMPLETED")).slice(0, 4);
+  });
   const [latestPosts, setLatestPosts] = useState<any[]>(() => {
     const merged = getMergedBlogs(rawBlogs as any[]);
     return merged.slice(0, 3);
@@ -454,10 +457,14 @@ export default function HomePage() {
     try {
       const mergedEv = getMergedEvents(rawEvents as any[]);
       const upcoming = mergedEv.filter((e: any) => !isEventPast(e.date || e.dateDisplay) && e.isPublished !== false);
-      if (upcoming.length > 0) setUpcomingEvents(upcoming.slice(0, 8));
+      setUpcomingEvents(upcoming.slice(0, 8));
+
+      const mergedPast = getMergedEvents(rawPastEvents as any[]);
+      const past = mergedPast.filter((e: any) => isEventPast(e.date || e.dateDisplay) || e.status === "COMPLETED");
+      setHomepagePastEvents(past.slice(0, 4));
 
       const mergedB = getMergedBlogs(rawBlogs as any[]);
-      if (mergedB.length > 0) setLatestPosts(mergedB.slice(0, 3));
+      setLatestPosts(mergedB.slice(0, 3));
 
       setGalleryPhotos(getMergedGallery(PHOTO_GALLERY));
       setVideoList(getMergedVideos(VIDEO_SHOWCASE));
@@ -478,8 +485,10 @@ export default function HomePage() {
     fetch("/api/past-events?sort=latest", { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          setHomepagePastEvents(data.slice(0, 4));
+        if (Array.isArray(data)) {
+          const merged = getMergedEvents(data);
+          const past = merged.filter((ev) => ev.isPublished !== false && (isEventPast(ev.date || ev.dateDisplay) || ev.status === "COMPLETED"));
+          setHomepagePastEvents(past.slice(0, 4));
         }
       })
       .catch(() => {});

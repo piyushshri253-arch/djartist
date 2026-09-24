@@ -3,23 +3,32 @@
 import { useState, useEffect, use } from "react";
 import Link from "next/link";
 import rawPastEvents from "@/data/past-events.json";
+import { getMergedEvents } from "@/lib/clientStorage";
 import { Users, Calendar, MapPin, Music, ArrowLeft, Disc } from "lucide-react";
 import { useAudio } from "@/context/AudioContext";
 import { EventReviewSection } from "@/components/events/EventReviewSection";
 
 export default function PastEventSinglePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
-  const initialEvents = rawPastEvents as any[];
-  const initialEvent = initialEvents.find((e) => e.slug === slug || e.id === slug) || initialEvents[0];
-  const [event, setEvent] = useState<any>(initialEvent);
+  const [event, setEvent] = useState<any>(() => {
+    const merged = getMergedEvents(rawPastEvents as any[]);
+    return merged.find((e) => e.slug === slug || e.id === slug) || null;
+  });
   const { togglePlay, isPlaying } = useAudio();
 
   useEffect(() => {
+    const cachedMerged = getMergedEvents(rawPastEvents as any[]);
+    const cachedMatch = cachedMerged.find((e) => e.slug === slug || e.id === slug);
+    if (!cachedMatch) {
+      setEvent(null);
+    }
+
     fetch("/api/past-events", { cache: "no-store" })
       .then((r) => r.json())
       .then((data) => {
         if (Array.isArray(data)) {
-          const match = data.find((e: any) => e.slug === slug || e.id === slug);
+          const merged = getMergedEvents(data);
+          const match = merged.find((e: any) => e.slug === slug || e.id === slug);
           if (match) {
             setEvent(match);
             return;
@@ -30,13 +39,31 @@ export default function PastEventSinglePage({ params }: { params: Promise<{ slug
           .then((r) => r.json())
           .then((allData) => {
             if (Array.isArray(allData)) {
-              const match = allData.find((e: any) => e.slug === slug || e.id === slug);
-              if (match) setEvent(match);
+              const mergedAll = getMergedEvents(allData);
+              const match = mergedAll.find((e: any) => e.slug === slug || e.id === slug);
+              setEvent(match || null);
+            } else {
+              setEvent(null);
             }
           });
       })
       .catch(() => {});
   }, [slug]);
+
+  if (!event) {
+    return (
+      <main className="min-h-screen pt-40 pb-24 text-center px-6 max-w-xl mx-auto">
+        <h1 className="text-3xl font-extrabold text-white mb-4">Concert Archive Not Found</h1>
+        <p className="text-sm text-[#8A8D93] mb-8">The requested past tour archive could not be found or has been removed.</p>
+        <Link
+          href="/past-events"
+          className="px-6 py-3 rounded-full bg-[#00E5FF] text-black text-xs font-bold uppercase tracking-wider hover:bg-white transition-colors"
+        >
+          View All Tour Archives
+        </Link>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen pt-28 pb-24">

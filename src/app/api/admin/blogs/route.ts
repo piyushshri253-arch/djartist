@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { getAuthenticatedAdmin } from "@/lib/auth";
-import { readJsonFile, writeJsonFile } from "@/lib/serverData";
+import {
+  readJsonFile,
+  writeJsonFile,
+  getDeletedBlogIdentifiers,
+  purgeBlogEverywhere,
+  unmarkDeletedBlog,
+} from "@/lib/serverData";
 
 export interface BlogPostData {
   id: string;
@@ -25,8 +31,19 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const blogs = await readJsonFile<BlogPostData[]>("blog.json");
-  return NextResponse.json(blogs);
+  const [blogs, deletedSet] = await Promise.all([
+    readJsonFile<BlogPostData[]>("blog.json"),
+    getDeletedBlogIdentifiers(),
+  ]);
+
+  const active = (blogs || []).filter((b) => {
+    if (b.id && deletedSet.has(b.id.toLowerCase().trim())) return false;
+    if (b.slug && deletedSet.has(b.slug.toLowerCase().trim())) return false;
+    if (b.title && deletedSet.has(b.title.toLowerCase().trim())) return false;
+    return true;
+  });
+
+  return NextResponse.json(active);
 }
 
 // POST create a new blog post
@@ -77,6 +94,7 @@ export async function POST(request: Request) {
     // Prepend to list
     blogs.unshift(newPost);
     await writeJsonFile("blog.json", blogs);
+    await unmarkDeletedBlog([newPost.id, newPost.slug, newPost.title]);
 
     return NextResponse.json({ success: true, post: newPost }, { status: 201 });
   } catch (error) {
@@ -139,20 +157,15 @@ export async function DELETE(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
+    const slug = searchParams.get("slug") || undefined;
+    const title = searchParams.get("title") || undefined;
 
     if (!id) {
       return NextResponse.json({ error: "Post ID is required" }, { status: 400 });
     }
 
-    const blogs = await readJsonFile<BlogPostData[]>("blog.json");
-    const filtered = blogs.filter((b) => b.id !== id);
-
-    if (filtered.length === blogs.length) {
-      return NextResponse.json({ error: "Post not found" }, { status: 404 });
-    }
-
-    await writeJsonFile("blog.json", filtered);
-    return NextResponse.json({ success: true, message: "Blog post deleted" });
+    await purgeBlogEverywhere(id, slug, title);
+    return NextResponse.json({ success: true, message: "Blog post deleted permanently" });
   } catch (error) {
     console.error("Delete blog error:", error);
     return NextResponse.json({ error: "Failed to delete blog post" }, { status: 500 });

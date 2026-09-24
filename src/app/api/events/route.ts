@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { readJsonFile } from "@/lib/serverData";
+import { readJsonFile, getDeletedEventIdentifiers } from "@/lib/serverData";
 import { EventData } from "@/app/api/admin/events/route";
 import { isEventPast, getAutoEventStatus } from "@/lib/eventsHelper";
 
@@ -10,10 +10,19 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const type = searchParams.get("type"); // "upcoming" | "past" | "all"
 
-    const allEvents = await readJsonFile<EventData[]>("events.json");
+    const [allEvents, deletedSet] = await Promise.all([
+      readJsonFile<EventData[]>("events.json"),
+      getDeletedEventIdentifiers(),
+    ]);
     
-    // Only return events where isPublished is not explicitly false
-    let events = (allEvents || []).filter((ev) => ev.isPublished !== false);
+    // Only return events where isPublished is not explicitly false and not deleted
+    let events = (allEvents || []).filter((ev) => {
+      if (ev.isPublished === false) return false;
+      if (ev.id && deletedSet.has(ev.id.toLowerCase().trim())) return false;
+      if (ev.slug && deletedSet.has(ev.slug.toLowerCase().trim())) return false;
+      if (ev.title && deletedSet.has(ev.title.toLowerCase().trim())) return false;
+      return true;
+    });
 
     // Auto-annotate isPast and auto status
     const annotatedEvents = events.map((ev) => {

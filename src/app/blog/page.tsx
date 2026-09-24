@@ -15,9 +15,7 @@ export default function BlogPage() {
 
   useEffect(() => {
     const merged = getMergedBlogs(rawBlog as unknown as BlogPostItem[]);
-    if (merged.length > 0) {
-      setPosts(merged);
-    }
+    setPosts(merged);
 
     fetch("/api/blogs", { cache: "no-store" })
       .then((res) => res.json())

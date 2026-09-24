@@ -54,6 +54,7 @@ import { isEventPast } from "@/lib/eventsHelper";
 import { ReviewItem, AdminUserData, PlatformSocialConfig, GalleryItem, VideoShowcaseItem } from "@/types";
 import { EventData } from "@/app/api/admin/events/route";
 import rawEvents from "@/data/events.json";
+import rawPastEvents from "@/data/past-events.json";
 import rawBlogs from "@/data/blog.json";
 import rawGallery from "@/data/gallery.json";
 import rawVideos from "@/data/videos.json";
@@ -113,7 +114,21 @@ export default function AdminDashboardPage() {
   const [toastMessage, setToastMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   // Data states - initialized with merged client storage so added items NEVER vanish on refresh!
-  const [events, setEvents] = useState<EventData[]>(() => getMergedEvents(rawEvents as any[]));
+  const [events, setEvents] = useState<EventData[]>(() => {
+    const combined = [...(rawEvents as any[])];
+    const existingIds = new Set(combined.map((e) => e.id));
+    for (const p of (rawPastEvents as any[])) {
+      if (!existingIds.has(p.id)) {
+        combined.push({
+          ...p,
+          status: "COMPLETED",
+          isPublished: true,
+        });
+        existingIds.add(p.id);
+      }
+    }
+    return getMergedEvents(combined);
+  });
   const [reviews, setReviews] = useState<ReviewItem[]>([]);
   const [reviewCounts, setReviewCounts] = useState({ total: 0, pending: 0, approved: 0, rejected: 0 });
   const [leads, setLeads] = useState<LeadData[]>([]);
@@ -238,12 +253,29 @@ export default function AdminDashboardPage() {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      // 1. Unified Events
-      const evRes = await fetch("/api/admin/events", { cache: "no-store" });
-      if (evRes.ok) {
-        const evData = await evRes.json();
-        if (Array.isArray(evData)) setEvents(getMergedEvents(evData));
+      // 1. Unified Events (Upcoming + Past Archives)
+      const [evRes, pastEvRes] = await Promise.all([
+        fetch("/api/admin/events", { cache: "no-store" }).catch(() => null),
+        fetch("/api/admin/past-events", { cache: "no-store" }).catch(() => null),
+      ]);
+      const evData = evRes && evRes.ok ? await evRes.json().catch(() => []) : [];
+      const pastEvData = pastEvRes && pastEvRes.ok ? await pastEvRes.json().catch(() => []) : [];
+      
+      const combinedEvents = Array.isArray(evData) ? [...evData] : [];
+      const existingIds = new Set(combinedEvents.map((e: any) => e.id));
+      if (Array.isArray(pastEvData)) {
+        for (const p of pastEvData) {
+          if (!existingIds.has(p.id)) {
+            combinedEvents.push({
+              ...p,
+              status: "COMPLETED",
+              isPublished: true,
+            });
+            existingIds.add(p.id);
+          }
+        }
       }
+      setEvents(getMergedEvents(combinedEvents));
 
       // 2. Reviews
       const revRes = await fetch("/api/admin/reviews", { cache: "no-store" });
@@ -706,18 +738,36 @@ export default function AdminDashboardPage() {
   };
 
   // Delete Event Action (Supports title confirmation & automatic return from editor)
-  const handleDeleteEvent = async (id: string, title?: string) => {
+  const handleDeleteEvent = async (id: string, title?: string, slug?: string) => {
     const name = title ? `"${title}"` : "this event";
     if (!window.confirm(`Are you sure you want to permanently delete ${name}? This will remove it from all website archives and listings.`)) {
       return;
     }
 
     try {
-      // Remove from client persistent storage immediately
-      deleteCustomEvent(id);
-      setEvents((prev) => prev.filter((e) => e.id !== id));
+      // Remove from client persistent storage immediately with id, slug, and title
+      deleteCustomEvent(id, slug, title);
+      setEvents((prev) =>
+        prev.filter((e) => {
+          if (e.id === id) return false;
+          if (slug && (e.slug === slug || e.id === slug)) return false;
+          if (title && e.title?.toLowerCase().trim() === title.toLowerCase().trim()) return false;
+          return true;
+        })
+      );
 
-      await fetch(`/api/admin/events?id=${id}`, { method: "DELETE" }).catch(() => {});
+      // Call BOTH /api/admin/events AND /api/admin/past-events delete endpoints
+      const qParams = new URLSearchParams();
+      qParams.set("id", id);
+      if (slug) qParams.set("slug", slug);
+      if (title) qParams.set("title", title);
+      const qStr = qParams.toString();
+
+      await Promise.allSettled([
+        fetch(`/api/admin/events?${qStr}`, { method: "DELETE" }),
+        fetch(`/api/admin/past-events?${qStr}`, { method: "DELETE" }),
+      ]);
+
       showToast("success", `Event ${title ? `"${title}"` : ""} deleted successfully.`);
 
       // If inside dedicated editor, navigate back to listing
@@ -988,15 +1038,26 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const handleDeleteBlog = async (id: string, title?: string) => {
+  const handleDeleteBlog = async (id: string, title?: string, slug?: string) => {
     if (!window.confirm(`Are you sure you want to permanently delete "${title || "this article"}"?`)) {
       return;
     }
 
     try {
-      deleteCustomBlog(id);
-      setBlogs((prev) => prev.filter((b) => b.id !== id));
-      await fetch(`/api/admin/blogs?id=${id}`, { method: "DELETE" }).catch(() => {});
+      deleteCustomBlog(id, slug, title);
+      setBlogs((prev) =>
+        prev.filter((b) => {
+          if (b.id === id) return false;
+          if (slug && (b.slug === slug || b.id === slug)) return false;
+          if (title && b.title?.toLowerCase().trim() === title.toLowerCase().trim()) return false;
+          return true;
+        })
+      );
+      const qParams = new URLSearchParams();
+      qParams.set("id", id);
+      if (slug) qParams.set("slug", slug);
+      if (title) qParams.set("title", title);
+      await fetch(`/api/admin/blogs?${qParams.toString()}`, { method: "DELETE" }).catch(() => {});
       showToast("success", "Article removed successfully.");
     } catch (err: any) {
       showToast("error", err.message || "Failed to delete article");
@@ -1714,7 +1775,7 @@ export default function AdminDashboardPage() {
                                 <span>Edit</span>
                               </button>
                               <button
-                                onClick={() => handleDeleteEvent(ev.id, ev.title)}
+                                onClick={() => handleDeleteEvent(ev.id, ev.title, ev.slug)}
                                 className="px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
                                 title="Delete Event"
                               >
@@ -2063,7 +2124,7 @@ export default function AdminDashboardPage() {
                                     <span>Edit</span>
                                   </button>
                                   <button
-                                    onClick={() => handleDeleteEvent(ev.id, ev.title)}
+                                    onClick={() => handleDeleteEvent(ev.id, ev.title, ev.slug)}
                                     className="px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs hover:border-rose-300"
                                     title="Delete This Past Event"
                                   >
@@ -2156,7 +2217,7 @@ export default function AdminDashboardPage() {
                               <span>Edit Event</span>
                             </button>
                             <button
-                              onClick={() => handleDeleteEvent(ev.id, ev.title)}
+                              onClick={() => handleDeleteEvent(ev.id, ev.title, ev.slug)}
                               className="px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs hover:border-rose-300"
                               title="Delete Past Event"
                             >
@@ -2239,7 +2300,7 @@ export default function AdminDashboardPage() {
                   {editingEvent && (
                     <button
                       type="button"
-                      onClick={() => handleDeleteEvent(editingEvent.id, editingEvent.title)}
+                      onClick={() => handleDeleteEvent(editingEvent.id, editingEvent.title, editingEvent.slug)}
                       className="px-4 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
                       title="Permanently Delete Event"
                     >
@@ -2710,7 +2771,7 @@ export default function AdminDashboardPage() {
                       <div className="pt-2 border-t border-slate-100">
                         <button
                           type="button"
-                          onClick={() => handleDeleteEvent(editingEvent.id, editingEvent.title)}
+                          onClick={() => handleDeleteEvent(editingEvent.id, editingEvent.title, editingEvent.slug)}
                           className="w-full py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-2xs hover:border-rose-300"
                           title="Permanently Delete Event"
                         >
@@ -3636,7 +3697,7 @@ export default function AdminDashboardPage() {
                         </button>
                         <button
                           type="button"
-                          onClick={() => handleDeleteBlog(b.id, b.title)}
+                          onClick={() => handleDeleteBlog(b.id, b.title, b.slug)}
                           className="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
                           title="Delete Article"
                         >

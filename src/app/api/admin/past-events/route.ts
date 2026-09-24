@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { getAuthenticatedAdmin } from "@/lib/auth";
-import { readJsonFile, writeJsonFile } from "@/lib/serverData";
+import {
+  readJsonFile,
+  writeJsonFile,
+  getDeletedEventIdentifiers,
+  purgeEventEverywhere,
+  unmarkDeletedEvent,
+} from "@/lib/serverData";
 
 export interface PastEventData {
   id: string;
@@ -27,8 +33,17 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const pastEvents = await readJsonFile<PastEventData[]>("past-events.json");
-  return NextResponse.json(pastEvents);
+  const [pastEvents, deletedSet] = await Promise.all([
+    readJsonFile<PastEventData[]>("past-events.json"),
+    getDeletedEventIdentifiers(),
+  ]);
+  const activePastEvents = (pastEvents || []).filter((e) => {
+    if (e.id && deletedSet.has(e.id.toLowerCase().trim())) return false;
+    if (e.slug && deletedSet.has(e.slug.toLowerCase().trim())) return false;
+    if (e.title && deletedSet.has(e.title.toLowerCase().trim())) return false;
+    return true;
+  });
+  return NextResponse.json(activePastEvents);
 }
 
 // POST create a past event recap
@@ -94,6 +109,7 @@ export async function POST(request: Request) {
 
     pastEvents.unshift(newPastEvent);
     await writeJsonFile("past-events.json", pastEvents);
+    await unmarkDeletedEvent([newPastEvent.id, newPastEvent.slug, newPastEvent.title]);
 
     return NextResponse.json({ success: true, event: newPastEvent }, { status: 201 });
   } catch (error) {
@@ -169,20 +185,15 @@ export async function DELETE(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
+    const slug = searchParams.get("slug") || undefined;
+    const title = searchParams.get("title") || undefined;
 
     if (!id) {
       return NextResponse.json({ error: "ID is required" }, { status: 400 });
     }
 
-    const pastEvents = await readJsonFile<PastEventData[]>("past-events.json");
-    const filtered = pastEvents.filter((e) => e.id !== id);
-
-    if (filtered.length === pastEvents.length) {
-      return NextResponse.json({ error: "Past event not found" }, { status: 404 });
-    }
-
-    await writeJsonFile("past-events.json", filtered);
-    return NextResponse.json({ success: true, message: "Past event deleted" });
+    await purgeEventEverywhere(id, slug, title);
+    return NextResponse.json({ success: true, message: "Past event permanently deleted" });
   } catch (error) {
     console.error("Delete past event error:", error);
     return NextResponse.json({ error: "Failed to delete past event" }, { status: 500 });
