@@ -93,30 +93,90 @@ function mergeCollections<T extends { id?: string; slug?: string; title?: string
 
 // ---------------------------------------------------------------------------
 // EVENTS (Single Source of Truth: MongoDB Atlas -> API -> Frontend)
-// Client-side localStorage overrides are disabled and purged so all devices
-// see the exact same live database state.
+// Automatically rescues any real custom event created on the Admin's laptop
+// into MongoDB Atlas once, then clears localStorage so all devices see the
+// exact same live database state.
 // ---------------------------------------------------------------------------
-function clearEventLocalStorage(): void {
-  if (typeof window === "undefined") return;
+const LEGACY_SEED_EVENT_IDS = new Set([
+  "ev-delhi-2026",
+  "ev-mumbai-2026",
+  "ev-goa-2026",
+  "ev-bangalore-2026",
+  "ev-gurugram-2027",
+  "ev-jaipur-2027",
+  "past-goa-2025",
+  "past-delhi-2024",
+  "past-udaipur-2024",
+  "past-mumbai-2024",
+]);
+
+let isMigratingCustomEvents = false;
+
+function migrateAndClearEventLocalStorage(): any[] | null {
+  if (typeof window === "undefined") return null;
   try {
+    const rawCustom = localStorage.getItem(STORAGE_KEYS.events.custom);
+    const rawDeleted = localStorage.getItem(STORAGE_KEYS.events.deleted);
+    if (!rawCustom && !rawDeleted) return null;
+
+    const deletedList: string[] = rawDeleted ? JSON.parse(rawDeleted) : [];
+    const deletedSet = new Set(deletedList.map((s) => String(s).toLowerCase().trim()));
+
+    const customList: any[] = rawCustom ? JSON.parse(rawCustom) : [];
+    const realCustomEvents = customList.filter((ev) => {
+      if (!ev || !ev.title || !ev.city) return false;
+      const id = String(ev.id || "").toLowerCase().trim();
+      const slug = String(ev.slug || "").toLowerCase().trim();
+      const title = String(ev.title || "").toLowerCase().trim();
+      if (LEGACY_SEED_EVENT_IDS.has(id)) return false;
+      if (id && deletedSet.has(id)) return false;
+      if (slug && deletedSet.has(slug)) return false;
+      if (title && deletedSet.has(title)) return false;
+      return true;
+    });
+
+    if (realCustomEvents.length > 0 && !isMigratingCustomEvents) {
+      isMigratingCustomEvents = true;
+      fetch("/api/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ migrateCustomEvents: realCustomEvents }),
+      })
+        .then((res) => {
+          if (res.ok) {
+            localStorage.removeItem(STORAGE_KEYS.events.custom);
+            localStorage.removeItem(STORAGE_KEYS.events.deleted);
+          }
+        })
+        .catch(() => {})
+        .finally(() => {
+          isMigratingCustomEvents = false;
+        });
+      return realCustomEvents;
+    }
+
     localStorage.removeItem(STORAGE_KEYS.events.custom);
     localStorage.removeItem(STORAGE_KEYS.events.deleted);
   } catch {
     // ignore
   }
+  return null;
 }
 
 export function getMergedEvents(baseEvents: any[]): any[] {
-  clearEventLocalStorage();
+  const pendingMigration = migrateAndClearEventLocalStorage();
+  if (pendingMigration && pendingMigration.length > 0) {
+    return pendingMigration;
+  }
   return Array.isArray(baseEvents) ? baseEvents : [];
 }
 
 export function saveCustomEvent(_event: any): void {
-  clearEventLocalStorage();
+  migrateAndClearEventLocalStorage();
 }
 
 export function deleteCustomEvent(_id: string, _slug?: string, _title?: string): void {
-  clearEventLocalStorage();
+  migrateAndClearEventLocalStorage();
 }
 
 // ---------------------------------------------------------------------------

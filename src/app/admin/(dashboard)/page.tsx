@@ -53,8 +53,6 @@ import { InstagramIntegrationModule } from "@/components/admin/InstagramIntegrat
 import { isEventPast } from "@/lib/eventsHelper";
 import { ReviewItem, AdminUserData, PlatformSocialConfig, GalleryItem, VideoShowcaseItem } from "@/types";
 import { EventData } from "@/app/api/admin/events/route";
-import rawEvents from "@/data/events.json";
-import rawPastEvents from "@/data/past-events.json";
 import rawBlogs from "@/data/blog.json";
 import rawGallery from "@/data/gallery.json";
 import rawVideos from "@/data/videos.json";

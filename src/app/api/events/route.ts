@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { readJsonFile, getDeletedEventIdentifiers } from "@/lib/serverData";
+import { revalidatePath } from "next/cache";
+import { readJsonFile, writeJsonFile, getDeletedEventIdentifiers, unmarkDeletedEvent } from "@/lib/serverData";
 import { EventData } from "@/app/api/admin/events/route";
-import { isEventPast, getAutoEventStatus } from "@/lib/eventsHelper";
+import { isEventPast } from "@/lib/eventsHelper";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -14,6 +15,19 @@ const NO_STORE_HEADERS = {
   Pragma: "no-cache",
   Expires: "0",
 };
+
+const LEGACY_SEED_IDS = new Set([
+  "ev-delhi-2026",
+  "ev-mumbai-2026",
+  "ev-goa-2026",
+  "ev-bangalore-2026",
+  "ev-gurugram-2027",
+  "ev-jaipur-2027",
+  "past-goa-2025",
+  "past-delhi-2024",
+  "past-udaipur-2024",
+  "past-mumbai-2024",
+]);
 
 export async function GET(req: Request) {
   try {
@@ -63,6 +77,39 @@ export async function GET(req: Request) {
     });
   } catch (error) {
     return NextResponse.json({ error: "Failed to load events" }, { status: 500, headers: NO_STORE_HEADERS });
+  }
+}
+
+// One-time migration endpoint to sync any real event created on the Admin's browser localStorage into MongoDB Atlas
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+    const customList = Array.isArray(body?.migrateCustomEvents) ? body.migrateCustomEvents : [];
+    const realEvents = customList.filter((ev: any) => {
+      if (!ev || !ev.title || !ev.city) return false;
+      const idLower = String(ev.id || "").toLowerCase().trim();
+      return !LEGACY_SEED_IDS.has(idLower);
+    });
+
+    if (realEvents.length === 0) {
+      return NextResponse.json({ synced: false, count: 0 }, { headers: NO_STORE_HEADERS });
+    }
+
+    await writeJsonFile("events.json", realEvents);
+    for (const ev of realEvents) {
+      await unmarkDeletedEvent([ev.id, ev.slug, ev.title]);
+    }
+
+    try {
+      revalidatePath("/", "layout");
+      revalidatePath("/events");
+      revalidatePath("/past-events");
+      revalidatePath("/admin");
+    } catch (_) {}
+
+    return NextResponse.json({ synced: true, count: realEvents.length, events: realEvents }, { headers: NO_STORE_HEADERS });
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to sync events" }, { status: 500, headers: NO_STORE_HEADERS });
   }
 }
 
