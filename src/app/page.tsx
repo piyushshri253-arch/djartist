@@ -40,6 +40,13 @@ import { ReviewItem } from "@/types";
 import { isEventPast } from "@/lib/eventsHelper";
 import rawEvents from "@/data/events.json";
 import rawPastEvents from "@/data/past-events.json";
+import rawBlogs from "@/data/blog.json";
+import {
+  getMergedEvents,
+  getMergedBlogs,
+  getMergedGallery,
+  getMergedVideos,
+} from "@/lib/clientStorage";
 
 const INITIAL_HOMEPAGE_UPCOMING_EVENTS = (rawEvents as any[])
   .filter((ev) => ev.isPublished !== false && !isEventPast(ev.date || ev.dateDisplay))
@@ -311,15 +318,21 @@ export default function HomePage() {
   const [activeVideoModal, setActiveVideoModal] = useState<string | null>(null);
   const [activePhotoModal, setActivePhotoModal] = useState<string | null>(null);
   const [isReelMuted, setIsReelMuted] = useState(true);
-  const [galleryPhotos, setGalleryPhotos] = useState<any[]>(PHOTO_GALLERY);
-  const [videoList, setVideoList] = useState<any[]>(VIDEO_SHOWCASE);
+  const [galleryPhotos, setGalleryPhotos] = useState<any[]>(() => getMergedGallery(PHOTO_GALLERY));
+  const [videoList, setVideoList] = useState<any[]>(() => getMergedVideos(VIDEO_SHOWCASE));
   const [galleryFilter, setGalleryFilter] = useState("all");
   const [reviewCategory, setReviewCategory] = useState("all");
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [reviewsList, setReviewsList] = useState<ReviewItem[]>([]);
-  const [upcomingEvents, setUpcomingEvents] = useState<any[]>(INITIAL_HOMEPAGE_UPCOMING_EVENTS);
+  const [upcomingEvents, setUpcomingEvents] = useState<any[]>(() => {
+    const merged = getMergedEvents(rawEvents as any[]);
+    return merged.filter((ev) => ev.isPublished !== false && !isEventPast(ev.date || ev.dateDisplay)).slice(0, 8);
+  });
   const [homepagePastEvents, setHomepagePastEvents] = useState<any[]>(INITIAL_HOMEPAGE_PAST_EVENTS);
-  const [latestPosts, setLatestPosts] = useState<any[]>(LATEST_POSTS);
+  const [latestPosts, setLatestPosts] = useState<any[]>(() => {
+    const merged = getMergedBlogs(rawBlogs as any[]);
+    return merged.slice(0, 3);
+  });
   const [siteSettings, setSiteSettings] = useState<any | null>(null);
   const [publicInstagram, setPublicInstagram] = useState<{
     enabled: boolean;
@@ -437,33 +450,26 @@ export default function HomePage() {
       heroVideoRef.current.play().catch(() => {});
     }
 
-    // Dynamic Live Events & Blogs Fetch with Local Cache Fallback
+    // Dynamic Live Events, Blogs, Gallery & Videos Fetch with Persistent Storage Sync
     try {
-      const cachedEv = localStorage.getItem("dj_gspark_events_cache");
-      if (cachedEv) {
-        const parsed = JSON.parse(cachedEv);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          const upcoming = parsed.filter((e: any) => !isEventPast(e.date || e.dateDisplay) && e.isPublished !== false);
-          if (upcoming.length > 0) setUpcomingEvents(upcoming.slice(0, 8));
-        }
-      }
-      const cachedBlogs = localStorage.getItem("dj_gspark_blogs_cache");
-      if (cachedBlogs) {
-        const parsedB = JSON.parse(cachedBlogs);
-        if (Array.isArray(parsedB) && parsedB.length > 0) {
-          setLatestPosts(parsedB.slice(0, 3));
-        }
-      }
+      const mergedEv = getMergedEvents(rawEvents as any[]);
+      const upcoming = mergedEv.filter((e: any) => !isEventPast(e.date || e.dateDisplay) && e.isPublished !== false);
+      if (upcoming.length > 0) setUpcomingEvents(upcoming.slice(0, 8));
+
+      const mergedB = getMergedBlogs(rawBlogs as any[]);
+      if (mergedB.length > 0) setLatestPosts(mergedB.slice(0, 3));
+
+      setGalleryPhotos(getMergedGallery(PHOTO_GALLERY));
+      setVideoList(getMergedVideos(VIDEO_SHOWCASE));
     } catch (_) {}
 
     fetch("/api/events?type=upcoming", { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          setUpcomingEvents(data.slice(0, 8));
-          try {
-            localStorage.setItem("dj_gspark_events_cache", JSON.stringify(data));
-          } catch (_) {}
+        if (Array.isArray(data)) {
+          const merged = getMergedEvents(data);
+          const upcoming = merged.filter((e: any) => !isEventPast(e.date || e.dateDisplay) && e.isPublished !== false);
+          setUpcomingEvents(upcoming.slice(0, 8));
         }
       })
       .catch(() => {});
@@ -481,8 +487,9 @@ export default function HomePage() {
     fetch("/api/blogs", { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          setLatestPosts(data.slice(0, 3));
+        if (Array.isArray(data)) {
+          const merged = getMergedBlogs(data);
+          setLatestPosts(merged.slice(0, 3));
         }
       })
       .catch(() => {});
@@ -510,8 +517,8 @@ export default function HomePage() {
     fetch("/api/gallery", { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          setGalleryPhotos(data);
+        if (Array.isArray(data)) {
+          setGalleryPhotos(getMergedGallery(data));
         }
       })
       .catch(() => {});
@@ -520,8 +527,8 @@ export default function HomePage() {
     fetch("/api/videos", { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          setVideoList(data);
+        if (Array.isArray(data)) {
+          setVideoList(getMergedVideos(data));
         }
       })
       .catch(() => {});

@@ -17,9 +17,14 @@ import {
 } from "lucide-react";
 
 import rawPastEvents from "@/data/past-events.json";
+import { getMergedEvents } from "@/lib/clientStorage";
+import { isEventPast } from "@/lib/eventsHelper";
 
 export default function PastEventsPage() {
-  const [events, setEvents] = useState<any[]>(rawPastEvents as any[]);
+  const [events, setEvents] = useState<any[]>(() => {
+    const merged = getMergedEvents(rawPastEvents as any[]);
+    return merged.filter((ev) => ev.isPublished !== false && (isEventPast(ev.date || ev.dateDisplay) || ev.status === "COMPLETED"));
+  });
   const [loading, setLoading] = useState(false);
 
   // Search & Filter State
@@ -41,7 +46,9 @@ export default function PastEventsPage() {
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
-          setEvents(data);
+          const merged = getMergedEvents(data);
+          const past = merged.filter((ev) => ev.isPublished !== false && (isEventPast(ev.date || ev.dateDisplay) || ev.status === "COMPLETED"));
+          setEvents(past);
         }
       })
       .catch(() => {})

@@ -4,31 +4,26 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import rawBlog from "@/data/blog.json";
 import { BlogPostItem } from "@/types";
+import { getMergedBlogs } from "@/lib/clientStorage";
 import { Clock, User, ArrowRight } from "lucide-react";
 
 export default function BlogPage() {
-  const [posts, setPosts] = useState<BlogPostItem[]>(rawBlog as unknown as BlogPostItem[]);
+  const [posts, setPosts] = useState<BlogPostItem[]>(() => {
+    return getMergedBlogs(rawBlog as unknown as BlogPostItem[]);
+  });
   const [filter, setFilter] = useState("all");
 
   useEffect(() => {
-    try {
-      const cached = localStorage.getItem("dj_gspark_blogs_cache");
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setPosts(parsed);
-        }
-      }
-    } catch (_) {}
+    const merged = getMergedBlogs(rawBlog as unknown as BlogPostItem[]);
+    if (merged.length > 0) {
+      setPosts(merged);
+    }
 
     fetch("/api/blogs", { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          setPosts(data);
-          try {
-            localStorage.setItem("dj_gspark_blogs_cache", JSON.stringify(data));
-          } catch (_) {}
+        if (Array.isArray(data)) {
+          setPosts(getMergedBlogs(data));
         }
       })
       .catch(() => {});

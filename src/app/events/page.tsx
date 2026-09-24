@@ -4,43 +4,37 @@ import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import rawEvents from "@/data/events.json";
 import { isEventPast } from "@/lib/eventsHelper";
+import { getMergedEvents } from "@/lib/clientStorage";
 import { MapPin, Calendar, Users, ArrowRight, Search, Sparkles, Filter, MessageCircle } from "lucide-react";
 
 export default function EventsPage() {
-  const initialUpcoming = useMemo(() => {
-    return (rawEvents as any[]).filter(
+  const [events, setEvents] = useState<any[]>(() => {
+    const merged = getMergedEvents(rawEvents as any[]);
+    return merged.filter(
       (ev) => ev.isPublished !== false && !isEventPast(ev.date || ev.dateDisplay)
     );
-  }, []);
-
-  const [events, setEvents] = useState<any[]>(initialUpcoming);
+  });
   const [filter, setFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    try {
-      const cached = localStorage.getItem("dj_gspark_events_cache");
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          const upcomingCached = parsed.filter(
-            (ev: any) => ev.isPublished !== false && !isEventPast(ev.date || ev.dateDisplay)
-          );
-          if (upcomingCached.length > 0) {
-            setEvents(upcomingCached);
-          }
-        }
-      }
-    } catch (_) {}
+    const merged = getMergedEvents(rawEvents as any[]);
+    const upcomingCached = merged.filter(
+      (ev: any) => ev.isPublished !== false && !isEventPast(ev.date || ev.dateDisplay)
+    );
+    if (upcomingCached.length > 0) {
+      setEvents(upcomingCached);
+    }
 
     fetch("/api/events?type=upcoming", { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          setEvents(data);
-          try {
-            localStorage.setItem("dj_gspark_events_cache", JSON.stringify(data));
-          } catch (_) {}
+        if (Array.isArray(data)) {
+          const mergedWithServer = getMergedEvents(data);
+          const upcoming = mergedWithServer.filter(
+            (ev: any) => ev.isPublished !== false && !isEventPast(ev.date || ev.dateDisplay)
+          );
+          setEvents(upcoming);
         }
       })
       .catch(() => {});

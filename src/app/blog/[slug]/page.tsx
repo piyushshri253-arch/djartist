@@ -4,6 +4,7 @@ import { use, useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import rawBlog from "@/data/blog.json";
 import { BlogPostItem } from "@/types";
+import { getMergedBlogs } from "@/lib/clientStorage";
 import { useAudio } from "@/context/AudioContext";
 import {
   ArrowLeft,
@@ -42,12 +43,18 @@ function XIcon({ className = "w-4 h-4" }: { className?: string }) {
 
 export default function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
-  const initialPosts = rawBlog as unknown as BlogPostItem[];
-  const initialPost = initialPosts.find((p) => p.slug === slug || p.id === slug) || null;
   
-  const [allPosts, setAllPosts] = useState<BlogPostItem[]>(initialPosts);
-  const [post, setPost] = useState<BlogPostItem | null>(initialPost);
-  const [loading, setLoading] = useState(!initialPost);
+  const [allPosts, setAllPosts] = useState<BlogPostItem[]>(() => {
+    return getMergedBlogs(rawBlog as unknown as BlogPostItem[]);
+  });
+  const [post, setPost] = useState<BlogPostItem | null>(() => {
+    const merged = getMergedBlogs(rawBlog as unknown as BlogPostItem[]);
+    return merged.find((p) => p.slug === slug || p.id === slug) || null;
+  });
+  const [loading, setLoading] = useState<boolean>(() => {
+    const merged = getMergedBlogs(rawBlog as unknown as BlogPostItem[]);
+    return !merged.some((p) => p.slug === slug || p.id === slug);
+  });
   const [copied, setCopied] = useState(false);
   const [fontSize, setFontSize] = useState<"normal" | "large" | "xl">("normal");
   const [sparksCount, setSparksCount] = useState(128);
@@ -59,33 +66,26 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
 
   // Load latest blogs from API and localStorage cache
   useEffect(() => {
-    try {
-      const cached = localStorage.getItem("dj_gspark_blogs_cache");
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setAllPosts(parsed);
-          const cachedMatch = parsed.find((p: any) => p.slug === slug || p.id === slug);
-          if (cachedMatch) {
-            setPost(cachedMatch);
-            setLoading(false);
-          }
-        }
+    const merged = getMergedBlogs(rawBlog as unknown as BlogPostItem[]);
+    if (merged.length > 0) {
+      setAllPosts(merged);
+      const match = merged.find((p) => p.slug === slug || p.id === slug);
+      if (match) {
+        setPost(match);
+        setLoading(false);
       }
-    } catch (_) {}
+    }
 
     fetch("/api/blogs", { cache: "no-store" })
       .then((r) => r.json())
       .then((data: BlogPostItem[]) => {
-        if (Array.isArray(data) && data.length > 0) {
-          setAllPosts(data);
-          const match = data.find((p) => p.slug === slug || p.id === slug);
+        if (Array.isArray(data)) {
+          const mergedWithServer = getMergedBlogs(data);
+          setAllPosts(mergedWithServer);
+          const match = mergedWithServer.find((p) => p.slug === slug || p.id === slug);
           if (match) {
             setPost(match);
           }
-          try {
-            localStorage.setItem("dj_gspark_blogs_cache", JSON.stringify(data));
-          } catch (_) {}
         }
       })
       .catch(() => {})

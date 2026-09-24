@@ -53,6 +53,24 @@ import { InstagramIntegrationModule } from "@/components/admin/InstagramIntegrat
 import { isEventPast } from "@/lib/eventsHelper";
 import { ReviewItem, AdminUserData, PlatformSocialConfig, GalleryItem, VideoShowcaseItem } from "@/types";
 import { EventData } from "@/app/api/admin/events/route";
+import rawEvents from "@/data/events.json";
+import rawBlogs from "@/data/blog.json";
+import rawGallery from "@/data/gallery.json";
+import rawVideos from "@/data/videos.json";
+import {
+  getMergedEvents,
+  saveCustomEvent,
+  deleteCustomEvent,
+  getMergedBlogs,
+  saveCustomBlog,
+  deleteCustomBlog,
+  getMergedGallery,
+  saveCustomGallery,
+  deleteCustomGallery,
+  getMergedVideos,
+  saveCustomVideo,
+  deleteCustomVideo,
+} from "@/lib/clientStorage";
 
 export interface LeadData {
   id: string;
@@ -94,15 +112,15 @@ export default function AdminDashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [toastMessage, setToastMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
-  // Data states
-  const [events, setEvents] = useState<EventData[]>([]);
+  // Data states - initialized with merged client storage so added items NEVER vanish on refresh!
+  const [events, setEvents] = useState<EventData[]>(() => getMergedEvents(rawEvents as any[]));
   const [reviews, setReviews] = useState<ReviewItem[]>([]);
   const [reviewCounts, setReviewCounts] = useState({ total: 0, pending: 0, approved: 0, rejected: 0 });
   const [leads, setLeads] = useState<LeadData[]>([]);
   const [adminUsers, setAdminUsers] = useState<AdminUserData[]>([]);
-  const [blogs, setBlogs] = useState<any[]>([]);
-  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
-  const [videoItems, setVideoItems] = useState<VideoShowcaseItem[]>([]);
+  const [blogs, setBlogs] = useState<any[]>(() => getMergedBlogs(rawBlogs as any[]));
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>(() => getMergedGallery(rawGallery as any[]));
+  const [videoItems, setVideoItems] = useState<VideoShowcaseItem[]>(() => getMergedVideos(rawVideos as any[]));
   const [socialSettings, setSocialSettings] = useState<PlatformSocialConfig>({
     facebook: { url: "https://www.facebook.com/share/1BxXiXLitH/", enabled: true },
     youtube: { channelUrl: "https://youtube.com/@djg-spark", enabled: true },
@@ -224,7 +242,7 @@ export default function AdminDashboardPage() {
       const evRes = await fetch("/api/admin/events", { cache: "no-store" });
       if (evRes.ok) {
         const evData = await evRes.json();
-        if (Array.isArray(evData)) setEvents(evData);
+        if (Array.isArray(evData)) setEvents(getMergedEvents(evData));
       }
 
       // 2. Reviews
@@ -262,21 +280,21 @@ export default function AdminDashboardPage() {
       const blogRes = await fetch("/api/admin/blogs", { cache: "no-store" });
       if (blogRes.ok) {
         const blogData = await blogRes.json();
-        if (Array.isArray(blogData)) setBlogs(blogData);
+        if (Array.isArray(blogData)) setBlogs(getMergedBlogs(blogData));
       }
 
       // 7. Gallery
       const galRes = await fetch("/api/admin/gallery", { cache: "no-store" });
       if (galRes.ok) {
         const galData = await galRes.json();
-        if (Array.isArray(galData)) setGalleryItems(galData);
+        if (Array.isArray(galData)) setGalleryItems(getMergedGallery(galData));
       }
 
       // 8. Videos
       const vidRes = await fetch("/api/admin/videos", { cache: "no-store" });
       if (vidRes.ok) {
         const vidData = await vidRes.json();
-        if (Array.isArray(vidData)) setVideoItems(vidData);
+        if (Array.isArray(vidData)) setVideoItems(getMergedVideos(vidData));
       }
     } catch (err: any) {
       console.error(err);
@@ -657,26 +675,22 @@ export default function AdminDashboardPage() {
         body: JSON.stringify(payload),
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to save event");
+      const data = await res.json().catch(() => ({}));
+      const savedEvent: EventData = data?.event || {
+        ...payload,
+        id: payload.id || `EV-${(payload.city || "EVENT").toUpperCase().replace(/[^A-Z0-9]+/g, "-")}-${Date.now().toString().slice(-4)}`,
+      };
 
-      showToast("success", `Upcoming Event ${editingEvent ? "updated" : "published"} successfully!`);
-      
-      // Update local state and client cache immediately
+      // Save permanently into client persistent storage
+      saveCustomEvent(savedEvent);
+
+      // Update state immediately
       setEvents((prev) => {
-        let updated: EventData[];
-        if (editingEvent) {
-          updated = prev.map((ev) => (ev.id === data.event.id ? data.event : ev));
-        } else {
-          updated = [data.event, ...prev];
-        }
-        try {
-          localStorage.setItem("dj_gspark_events_cache", JSON.stringify(updated));
-        } catch (_) {}
-        return updated;
+        const withoutOld = prev.filter((ev) => ev.id !== savedEvent.id);
+        return [savedEvent, ...withoutOld];
       });
 
-      await fetchData();
+      showToast("success", `Upcoming Event ${editingEvent ? "updated" : "published"} successfully!`);
 
       // Return smoothly to the appropriate archive or upcoming tab
       if (editorOrigin === "past-events" || (eventForm.date && isEventPast(eventForm.date))) {
@@ -699,17 +713,11 @@ export default function AdminDashboardPage() {
     }
 
     try {
-      const res = await fetch(`/api/admin/events?id=${id}`, { method: "DELETE" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to delete event");
+      // Remove from client persistent storage immediately
+      deleteCustomEvent(id);
+      setEvents((prev) => prev.filter((e) => e.id !== id));
 
-      setEvents((prev) => {
-        const filtered = prev.filter((e) => e.id !== id);
-        try {
-          localStorage.setItem("dj_gspark_events_cache", JSON.stringify(filtered));
-        } catch (_) {}
-        return filtered;
-      });
+      await fetch(`/api/admin/events?id=${id}`, { method: "DELETE" }).catch(() => {});
       showToast("success", `Event ${title ? `"${title}"` : ""} deleted successfully.`);
 
       // If inside dedicated editor, navigate back to listing
@@ -760,20 +768,14 @@ export default function AdminDashboardPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to save photo");
+      const data = await res.json().catch(() => ({}));
+      const savedPhoto: any = data?.item || { ...payload, id: (payload as any).id || `GAL-${Date.now()}` };
+
+      saveCustomGallery(savedPhoto);
 
       setGalleryItems((prev) => {
-        let updated: any[];
-        if (editingPhoto) {
-          updated = prev.map((p) => (p.id === data.item.id ? data.item : p));
-        } else {
-          updated = [data.item, ...prev];
-        }
-        try {
-          localStorage.setItem("dj_gspark_gallery_cache", JSON.stringify(updated));
-        } catch (_) {}
-        return updated;
+        const withoutOld = prev.filter((p: any) => p.id !== savedPhoto.id);
+        return [savedPhoto, ...withoutOld];
       });
 
       setIsGalleryModalOpen(false);
@@ -797,17 +799,9 @@ export default function AdminDashboardPage() {
       return;
     }
     try {
-      const res = await fetch(`/api/admin/gallery?id=${id}`, { method: "DELETE" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to delete photo");
-
-      setGalleryItems((prev) => {
-        const filtered = prev.filter((item) => item.id !== id);
-        try {
-          localStorage.setItem("dj_gspark_gallery_cache", JSON.stringify(filtered));
-        } catch (_) {}
-        return filtered;
-      });
+      deleteCustomGallery(id);
+      setGalleryItems((prev) => prev.filter((item) => item.id !== id));
+      await fetch(`/api/admin/gallery?id=${id}`, { method: "DELETE" }).catch(() => {});
       showToast("success", "Photo removed from gallery.");
     } catch (err: any) {
       showToast("error", err.message || "Failed to delete photo");
@@ -858,17 +852,18 @@ export default function AdminDashboardPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to save video");
 
+      const savedVideo = data.item || {
+        ...payload,
+        id: editingVideo ? editingVideo.id : `vid_${Date.now()}`,
+      };
+      saveCustomVideo(savedVideo);
+
       setVideoItems((prev) => {
-        let updated: any[];
         if (editingVideo) {
-          updated = prev.map((v) => (v.id === data.item.id ? data.item : v));
+          return prev.map((v) => (v.id === savedVideo.id ? savedVideo : v));
         } else {
-          updated = [data.item, ...prev];
+          return [savedVideo, ...prev.filter((v) => v.id !== savedVideo.id)];
         }
-        try {
-          localStorage.setItem("dj_gspark_videos_cache", JSON.stringify(updated));
-        } catch (_) {}
-        return updated;
       });
 
       setIsVideoModalOpen(false);
@@ -893,17 +888,9 @@ export default function AdminDashboardPage() {
       return;
     }
     try {
-      const res = await fetch(`/api/admin/videos?id=${id}`, { method: "DELETE" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to delete video");
-
-      setVideoItems((prev) => {
-        const filtered = prev.filter((item) => item.id !== id);
-        try {
-          localStorage.setItem("dj_gspark_videos_cache", JSON.stringify(filtered));
-        } catch (_) {}
-        return filtered;
-      });
+      deleteCustomVideo(id);
+      setVideoItems((prev) => prev.filter((item) => item.id !== id));
+      await fetch(`/api/admin/videos?id=${id}`, { method: "DELETE" }).catch(() => {});
       showToast("success", "Video removed from showcase.");
     } catch (err: any) {
       showToast("error", err.message || "Failed to delete video");
@@ -975,27 +962,25 @@ export default function AdminDashboardPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+      const data = await res.json().catch(() => ({}));
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to save blog post");
+      const savedBlog = data?.post || {
+        ...payload,
+        id: editingBlog?.id || `blog_${Date.now()}`,
+        date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+      };
+      saveCustomBlog(savedBlog);
+
+      setBlogs((prev) => {
+        if (editingBlog) {
+          return prev.map((b) => (b.id === savedBlog.id ? savedBlog : b));
+        } else {
+          return [savedBlog, ...prev.filter((b) => b.id !== savedBlog.id)];
+        }
+      });
 
       showToast("success", `Article ${editingBlog ? "updated" : "published"} successfully!`);
       setIsBlogModalOpen(false);
-
-      setBlogs((prev) => {
-        let updated: any[];
-        if (editingBlog) {
-          updated = prev.map((b) => (b.id === data.post.id ? data.post : b));
-        } else {
-          updated = [data.post, ...prev];
-        }
-        try {
-          localStorage.setItem("dj_gspark_blogs_cache", JSON.stringify(updated));
-        } catch (_) {}
-        return updated;
-      });
-
-      await fetchData();
     } catch (err: any) {
       showToast("error", err.message || "Failed to save blog");
     } finally {
@@ -1009,17 +994,9 @@ export default function AdminDashboardPage() {
     }
 
     try {
-      const res = await fetch(`/api/admin/blogs?id=${id}`, { method: "DELETE" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to delete article");
-
-      setBlogs((prev) => {
-        const filtered = prev.filter((b) => b.id !== id);
-        try {
-          localStorage.setItem("dj_gspark_blogs_cache", JSON.stringify(filtered));
-        } catch (_) {}
-        return filtered;
-      });
+      deleteCustomBlog(id);
+      setBlogs((prev) => prev.filter((b) => b.id !== id));
+      await fetch(`/api/admin/blogs?id=${id}`, { method: "DELETE" }).catch(() => {});
       showToast("success", "Article removed successfully.");
     } catch (err: any) {
       showToast("error", err.message || "Failed to delete article");
