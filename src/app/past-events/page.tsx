@@ -21,11 +21,9 @@ import { getMergedEvents } from "@/lib/clientStorage";
 import { isEventPast } from "@/lib/eventsHelper";
 
 export default function PastEventsPage() {
-  const [events, setEvents] = useState<any[]>(() => {
-    const merged = getMergedEvents(rawPastEvents as any[]);
-    return merged.filter((ev) => ev.isPublished !== false && (isEventPast(ev.date || ev.dateDisplay) || ev.status === "COMPLETED"));
-  });
-  const [loading, setLoading] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // Search & Filter State
   const [searchQuery, setSearchQuery] = useState("");
@@ -37,6 +35,12 @@ export default function PastEventsPage() {
   const [sortBy, setSortBy] = useState<"latest" | "oldest">("latest");
 
   useEffect(() => {
+    setIsMounted(true);
+    // Instant client-side hydration from localStorage before network call
+    const merged = getMergedEvents(rawPastEvents as any[]);
+    const past = merged.filter((ev) => ev.isPublished !== false && (isEventPast(ev.date || ev.dateDisplay) || ev.status === "COMPLETED"));
+    setEvents(past);
+
     fetchEvents();
   }, [sortBy]);
 
@@ -320,8 +324,8 @@ export default function PastEventsPage() {
         {/* Status Count Line */}
         <div className="flex items-center justify-between text-xs text-[#888] pt-2">
           <span>
-            Showing <strong className="text-white">{filteredEvents.length}</strong> of{" "}
-            <strong className="text-white">{events.length}</strong> past events
+            Showing <strong className="text-white">{(!isMounted || loading) ? "..." : filteredEvents.length}</strong> of{" "}
+            <strong className="text-white">{(!isMounted || loading) ? "..." : events.length}</strong> past events
           </span>
           {hasActiveFilters && (
             <span className="text-[#00B4D8] text-[11px]">
@@ -332,7 +336,7 @@ export default function PastEventsPage() {
       </div>
 
       {/* Loading Skeleton */}
-      {loading && (
+      {(!isMounted || loading) && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div key={i} className="glass-card rounded-2xl h-96 animate-pulse bg-white/5 border border-white/5" />
@@ -341,7 +345,7 @@ export default function PastEventsPage() {
       )}
 
       {/* Empty State */}
-      {!loading && filteredEvents.length === 0 && (
+      {!(!isMounted || loading) && filteredEvents.length === 0 && (
         <div className="text-center py-20 glass-card rounded-2xl border border-white/10 max-w-lg mx-auto p-8">
           <Calendar className="w-12 h-12 text-[#00E5FF]/40 mx-auto mb-4" />
           <h3 className="text-lg font-bold text-white mb-2">No Past Events Found</h3>
@@ -358,7 +362,7 @@ export default function PastEventsPage() {
       )}
 
       {/* Past Events Grid */}
-      {!loading && filteredEvents.length > 0 && (
+      {!(!isMounted || loading) && filteredEvents.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredEvents.map((ev) => {
             const eventYear = ev.date ? ev.date.split("-")[0] : ev.year || "ARCHIVE";

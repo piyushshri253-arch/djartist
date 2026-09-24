@@ -9,17 +9,17 @@ import { MapPin, Calendar, Clock, ShieldCheck, ArrowLeft, MessageCircle, Phone, 
 
 export default function EventSinglePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
-  const [event, setEvent] = useState<any>(() => {
-    const merged = getMergedEvents(rawEvents as any[]);
-    return merged.find((e) => e.slug === slug || e.id === slug) || null;
-  });
-  const [loading, setLoading] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const [event, setEvent] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setIsMounted(true);
     const cachedMerged = getMergedEvents(rawEvents as any[]);
     const cachedMatch = cachedMerged.find((e) => e.slug === slug || e.id === slug);
-    if (!cachedMatch) {
-      setEvent(null);
+    if (cachedMatch) {
+      setEvent(cachedMatch);
+      setLoading(false);
     }
 
     fetch("/api/events", { cache: "no-store" })
@@ -35,7 +35,7 @@ export default function EventSinglePage({ params }: { params: Promise<{ slug: st
       .finally(() => setLoading(false));
   }, [slug]);
 
-  if (loading && !event) {
+  if (!isMounted || (loading && !event)) {
     return (
       <main className="min-h-screen pt-40 pb-24 text-center px-6">
         <div className="inline-block w-8 h-8 border-2 border-[#00E5FF] border-t-transparent rounded-full animate-spin mb-4" />

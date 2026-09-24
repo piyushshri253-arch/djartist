@@ -110,32 +110,19 @@ export default function AdminDashboardPage() {
   const [editorOrigin, setEditorOrigin] = useState<"events" | "past-events" | "overview">("events");
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [toastMessage, setToastMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
-  // Data states - initialized with merged client storage so added items NEVER vanish on refresh!
-  const [events, setEvents] = useState<EventData[]>(() => {
-    const combined = [...(rawEvents as any[])];
-    const existingIds = new Set(combined.map((e) => e.id));
-    for (const p of (rawPastEvents as any[])) {
-      if (!existingIds.has(p.id)) {
-        combined.push({
-          ...p,
-          status: "COMPLETED",
-          isPublished: true,
-        });
-        existingIds.add(p.id);
-      }
-    }
-    return getMergedEvents(combined);
-  });
+  // Data states - initialized empty during SSR to avoid 1-second flash of old/deleted items before client hydration
+  const [events, setEvents] = useState<EventData[]>([]);
   const [reviews, setReviews] = useState<ReviewItem[]>([]);
   const [reviewCounts, setReviewCounts] = useState({ total: 0, pending: 0, approved: 0, rejected: 0 });
   const [leads, setLeads] = useState<LeadData[]>([]);
   const [adminUsers, setAdminUsers] = useState<AdminUserData[]>([]);
-  const [blogs, setBlogs] = useState<any[]>(() => getMergedBlogs(rawBlogs as any[]));
-  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>(() => getMergedGallery(rawGallery as any[]));
-  const [videoItems, setVideoItems] = useState<VideoShowcaseItem[]>(() => getMergedVideos(rawVideos as any[]));
+  const [blogs, setBlogs] = useState<any[]>([]);
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
+  const [videoItems, setVideoItems] = useState<VideoShowcaseItem[]>([]);
   const [socialSettings, setSocialSettings] = useState<PlatformSocialConfig>({
     facebook: { url: "https://www.facebook.com/share/1BxXiXLitH/", enabled: true },
     youtube: { channelUrl: "https://youtube.com/@djg-spark", enabled: true },
@@ -337,6 +324,26 @@ export default function AdminDashboardPage() {
   };
 
   useEffect(() => {
+    setIsMounted(true);
+
+    // Instant client-side hydration from localStorage (runs in 0ms synchronously before network fetch!)
+    const combined = [...(rawEvents as any[])];
+    const existingIds = new Set(combined.map((e) => e.id));
+    for (const p of (rawPastEvents as any[])) {
+      if (!existingIds.has(p.id)) {
+        combined.push({
+          ...p,
+          status: "COMPLETED",
+          isPublished: true,
+        });
+        existingIds.add(p.id);
+      }
+    }
+    setEvents(getMergedEvents(combined));
+    setBlogs(getMergedBlogs(rawBlogs as any[]));
+    setGalleryItems(getMergedGallery(rawGallery as any[]));
+    setVideoItems(getMergedVideos(rawVideos as any[]));
+
     fetchData();
 
     // Check query params for tab selection (e.g. ?tab=past-events or ?tab=gallery)
@@ -1361,23 +1368,35 @@ export default function AdminDashboardPage() {
                     <Calendar className="w-4 h-4" />
                   </div>
                 </div>
-                <div className="text-3xl font-black text-slate-900">{events.length}</div>
+                <div className="text-3xl font-black text-slate-900">
+                  {!isMounted || isLoading ? (
+                    <div className="h-8 w-16 bg-slate-100 rounded-lg animate-pulse" />
+                  ) : (
+                    events.length
+                  )}
+                </div>
                 <div className="flex items-center gap-2 text-xs text-slate-500 mt-2">
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab("events")}
-                    className="text-emerald-600 font-bold hover:underline cursor-pointer"
-                  >
-                    {events.filter((e) => !isEventPast(e.date) && e.status !== "COMPLETED").length} Upcoming
-                  </button>
-                  <span>•</span>
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab("past-events")}
-                    className="text-slate-600 font-bold hover:underline cursor-pointer"
-                  >
-                    {events.filter((e) => isEventPast(e.date) || e.status === "COMPLETED").length} Past Completed
-                  </button>
+                  {!isMounted || isLoading ? (
+                    <div className="h-4 w-32 bg-slate-100 rounded animate-pulse" />
+                  ) : (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab("events")}
+                        className="text-emerald-600 font-bold hover:underline cursor-pointer"
+                      >
+                        {events.filter((e) => !isEventPast(e.date) && e.status !== "COMPLETED").length} Upcoming
+                      </button>
+                      <span>•</span>
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab("past-events")}
+                        className="text-slate-600 font-bold hover:underline cursor-pointer"
+                      >
+                        {events.filter((e) => isEventPast(e.date) || e.status === "COMPLETED").length} Past Completed
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -1391,11 +1410,23 @@ export default function AdminDashboardPage() {
                     <Star className="w-4 h-4" />
                   </div>
                 </div>
-                <div className="text-3xl font-black text-amber-600">{reviewCounts.pending}</div>
+                <div className="text-3xl font-black text-amber-600">
+                  {!isMounted || isLoading ? (
+                    <div className="h-8 w-12 bg-slate-100 rounded-lg animate-pulse" />
+                  ) : (
+                    reviewCounts.pending
+                  )}
+                </div>
                 <div className="flex items-center gap-2 text-xs text-slate-500 mt-2">
-                  <span className="text-emerald-600 font-bold">{reviewCounts.approved} Live</span>
-                  <span>•</span>
-                  <span>{reviewCounts.total} Total Submissions</span>
+                  {!isMounted || isLoading ? (
+                    <div className="h-4 w-28 bg-slate-100 rounded animate-pulse" />
+                  ) : (
+                    <>
+                      <span className="text-emerald-600 font-bold">{reviewCounts.approved} Live</span>
+                      <span>•</span>
+                      <span>{reviewCounts.total} Total Submissions</span>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -1409,7 +1440,13 @@ export default function AdminDashboardPage() {
                     <Ticket className="w-4 h-4" />
                   </div>
                 </div>
-                <div className="text-3xl font-black text-slate-900">{leads.length}</div>
+                <div className="text-3xl font-black text-slate-900">
+                  {!isMounted || isLoading ? (
+                    <div className="h-8 w-12 bg-slate-100 rounded-lg animate-pulse" />
+                  ) : (
+                    leads.length
+                  )}
+                </div>
                 <div className="text-xs text-slate-500 mt-2">
                   <span>Client pass & ticket requests received</span>
                 </div>
@@ -1673,7 +1710,21 @@ export default function AdminDashboardPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-slate-700">
-                  {filteredEvents.length === 0 ? (
+                  {(!isMounted || isLoading) ? (
+                    [1, 2, 3, 4].map((i) => (
+                      <tr key={i} className="animate-pulse">
+                        <td className="p-3.5"><div className="w-12 h-14 bg-slate-100 rounded-lg" /></td>
+                        <td className="p-3.5"><div className="h-4 w-36 bg-slate-100 rounded mb-1.5" /><div className="h-3 w-20 bg-slate-100 rounded" /></td>
+                        <td className="p-3.5"><div className="h-5 w-20 bg-slate-100 rounded-full" /></td>
+                        <td className="p-3.5"><div className="h-4 w-28 bg-slate-100 rounded" /></td>
+                        <td className="p-3.5"><div className="h-4 w-20 bg-slate-100 rounded" /></td>
+                        <td className="p-3.5"><div className="h-4 w-24 bg-slate-100 rounded" /></td>
+                        <td className="p-3.5"><div className="h-4 w-20 bg-slate-100 rounded" /></td>
+                        <td className="p-3.5"><div className="h-4 w-44 bg-slate-100 rounded" /></td>
+                        <td className="p-3.5 text-right"><div className="h-8 w-16 bg-slate-100 rounded ml-auto" /></td>
+                      </tr>
+                    ))
+                  ) : filteredEvents.length === 0 ? (
                     <tr>
                       <td colSpan={9} className="p-8 text-center text-slate-400">
                         No events match the current search and filter criteria.
@@ -1844,10 +1895,16 @@ export default function AdminDashboardPage() {
                   </div>
                 </div>
                 <div className="mt-3 flex items-baseline gap-2">
-                  <span className="text-2xl font-black text-slate-900">{pastEventsList.length}</span>
-                  <span className="text-xs text-slate-500 font-medium">
-                    of {events.filter((e) => isEventPast(e.date) || e.status === "COMPLETED").length} total past
-                  </span>
+                  {!isMounted || isLoading ? (
+                    <div className="h-7 w-12 bg-slate-100 rounded-lg animate-pulse" />
+                  ) : (
+                    <>
+                      <span className="text-2xl font-black text-slate-900">{pastEventsList.length}</span>
+                      <span className="text-xs text-slate-500 font-medium">
+                        of {events.filter((e) => isEventPast(e.date) || e.status === "COMPLETED").length} total past
+                      </span>
+                    </>
+                  )}
                 </div>
                 <div className="mt-2 text-[11px] text-emerald-600 font-medium flex items-center gap-1">
                   <CheckCircle2 className="w-3 h-3" />
@@ -1863,8 +1920,14 @@ export default function AdminDashboardPage() {
                   </div>
                 </div>
                 <div className="mt-3 flex items-baseline gap-2">
-                  <span className="text-2xl font-black text-slate-900">{pastEventCities.length}</span>
-                  <span className="text-xs text-slate-500 font-medium">Metros & Arenas</span>
+                  {!isMounted || isLoading ? (
+                    <div className="h-7 w-12 bg-slate-100 rounded-lg animate-pulse" />
+                  ) : (
+                    <>
+                      <span className="text-2xl font-black text-slate-900">{pastEventCities.length}</span>
+                      <span className="text-xs text-slate-500 font-medium">Metros & Arenas</span>
+                    </>
+                  )}
                 </div>
                 <div className="mt-2 text-[11px] text-slate-500 font-medium">
                   {pastEventCities.slice(0, 3).join(", ") || "Global Venues"}
@@ -2019,7 +2082,19 @@ export default function AdminDashboardPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 text-slate-700">
-                      {pastEventsList.length === 0 ? (
+                      {(!isMounted || isLoading) ? (
+                        [1, 2, 3, 4].map((i) => (
+                          <tr key={i} className="animate-pulse">
+                            <td className="p-4"><div className="flex items-center gap-3"><div className="w-12 h-14 bg-slate-100 rounded-lg shrink-0" /><div className="h-4 w-36 bg-slate-100 rounded" /></div></td>
+                            <td className="p-4"><div className="h-4 w-24 bg-slate-100 rounded" /></td>
+                            <td className="p-4"><div className="h-4 w-28 bg-slate-100 rounded" /></td>
+                            <td className="p-4"><div className="h-5 w-20 bg-slate-100 rounded" /></td>
+                            <td className="p-4"><div className="h-5 w-20 bg-slate-100 rounded" /></td>
+                            <td className="p-4"><div className="h-5 w-16 bg-slate-100 rounded" /></td>
+                            <td className="p-4 text-right"><div className="h-8 w-20 bg-slate-100 rounded ml-auto" /></td>
+                          </tr>
+                        ))
+                      ) : pastEventsList.length === 0 ? (
                         <tr>
                           <td colSpan={7} className="p-12 text-center text-slate-400">
                             <Clock className="w-8 h-8 text-slate-300 mx-auto mb-2" />
@@ -2144,7 +2219,17 @@ export default function AdminDashboardPage() {
             ) : (
               /* Cards Grid View */
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                {pastEventsList.length === 0 ? (
+                {(!isMounted || isLoading) ? (
+                  [1, 2, 3, 4, 5, 6].map((i) => (
+                    <div key={i} className="bg-white rounded-2xl border border-slate-200 h-64 animate-pulse p-4 flex flex-col justify-between">
+                      <div className="w-full h-32 bg-slate-100 rounded-xl" />
+                      <div className="space-y-2 mt-3">
+                        <div className="h-4 w-3/4 bg-slate-100 rounded" />
+                        <div className="h-3 w-1/2 bg-slate-100 rounded" />
+                      </div>
+                    </div>
+                  ))
+                ) : pastEventsList.length === 0 ? (
                   <div className="col-span-full bg-white rounded-2xl border border-slate-200 p-12 text-center text-slate-400">
                     <Clock className="w-8 h-8 text-slate-300 mx-auto mb-2" />
                     <p className="font-semibold text-slate-600">No past events found</p>

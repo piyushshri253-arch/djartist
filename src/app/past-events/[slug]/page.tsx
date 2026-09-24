@@ -10,17 +10,18 @@ import { EventReviewSection } from "@/components/events/EventReviewSection";
 
 export default function PastEventSinglePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
-  const [event, setEvent] = useState<any>(() => {
-    const merged = getMergedEvents(rawPastEvents as any[]);
-    return merged.find((e) => e.slug === slug || e.id === slug) || null;
-  });
+  const [isMounted, setIsMounted] = useState(false);
+  const [event, setEvent] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const { togglePlay, isPlaying } = useAudio();
 
   useEffect(() => {
+    setIsMounted(true);
     const cachedMerged = getMergedEvents(rawPastEvents as any[]);
     const cachedMatch = cachedMerged.find((e) => e.slug === slug || e.id === slug);
-    if (!cachedMatch) {
-      setEvent(null);
+    if (cachedMatch) {
+      setEvent(cachedMatch);
+      setLoading(false);
     }
 
     fetch("/api/past-events", { cache: "no-store" })
@@ -47,8 +48,18 @@ export default function PastEventSinglePage({ params }: { params: Promise<{ slug
             }
           });
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, [slug]);
+
+  if (!isMounted || (loading && !event)) {
+    return (
+      <main className="min-h-screen pt-40 pb-24 text-center px-6">
+        <div className="inline-block w-8 h-8 border-2 border-[#00E5FF] border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-sm font-mono text-[#8A8D93]">Loading concert archive...</p>
+      </main>
+    );
+  }
 
   if (!event) {
     return (

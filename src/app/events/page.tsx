@@ -8,16 +8,13 @@ import { getMergedEvents } from "@/lib/clientStorage";
 import { MapPin, Calendar, Users, ArrowRight, Search, Sparkles, Filter, MessageCircle } from "lucide-react";
 
 export default function EventsPage() {
-  const [events, setEvents] = useState<any[]>(() => {
-    const merged = getMergedEvents(rawEvents as any[]);
-    return merged.filter(
-      (ev) => ev.isPublished !== false && !isEventPast(ev.date || ev.dateDisplay)
-    );
-  });
+  const [isMounted, setIsMounted] = useState(false);
+  const [events, setEvents] = useState<any[]>([]);
   const [filter, setFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
+    setIsMounted(true);
     const merged = getMergedEvents(rawEvents as any[]);
     const upcomingCached = merged.filter(
       (ev: any) => ev.isPublished !== false && !isEventPast(ev.date || ev.dateDisplay)
@@ -121,12 +118,21 @@ export default function EventsPage() {
 
       {/* Events Results Count */}
       <div className="flex items-center justify-between text-xs font-mono text-[#888888] border-b border-white/10 pb-4 mb-8">
-        <span>SHOWING {filteredEvents.length} TOUR DATES</span>
+        <span>SHOWING {!isMounted ? "..." : filteredEvents.length} TOUR DATES</span>
         <span>VIP PASS RESERVATION & CONCIERGE</span>
       </div>
 
       {/* Events Grid */}
-      {filteredEvents.length === 0 ? (
+      {!isMounted ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {[1, 2, 3].map((n) => (
+            <div
+              key={n}
+              className="glass-card rounded-2xl h-96 animate-pulse bg-white/5 border border-white/5"
+            />
+          ))}
+        </div>
+      ) : filteredEvents.length === 0 ? (
         <div className="text-center py-20 bg-white/[0.02] border border-white/5 rounded-2xl p-8">
           <p className="text-white text-lg font-bold mb-2">No tour dates found matching your criteria</p>
           <p className="text-sm text-[#888888] mb-6">Try clearing your search query or selecting another filter category.</p>
