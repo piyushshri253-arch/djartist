@@ -92,68 +92,31 @@ function mergeCollections<T extends { id?: string; slug?: string; title?: string
 }
 
 // ---------------------------------------------------------------------------
-// EVENTS
+// EVENTS (Single Source of Truth: MongoDB Atlas -> API -> Frontend)
+// Client-side localStorage overrides are disabled and purged so all devices
+// see the exact same live database state.
 // ---------------------------------------------------------------------------
-export function getMergedEvents(baseEvents: any[]): any[] {
-  return mergeCollections(
-    baseEvents,
-    STORAGE_KEYS.events.custom,
-    STORAGE_KEYS.events.deleted
-  );
-}
-
-export function saveCustomEvent(event: any): void {
-  if (typeof window === "undefined" || !event?.id) return;
-  const custom = getLocalJson<any[]>(STORAGE_KEYS.events.custom, []);
-  const deleted = getLocalJson<string[]>(STORAGE_KEYS.events.deleted, []);
-
-  // Remove from deleted list if re-added
-  const identifiers = [event.id, event.slug, event.title]
-    .filter(Boolean)
-    .map((s) => String(s).toLowerCase().trim());
-  const updatedDeleted = deleted.filter(
-    (id) => !identifiers.includes(String(id).toLowerCase().trim())
-  );
-  setLocalJson(STORAGE_KEYS.events.deleted, updatedDeleted);
-
-  // Update existing custom or prepend new
-  const existingIdx = custom.findIndex(
-    (e) =>
-      e.id === event.id ||
-      (event.slug && e.slug === event.slug) ||
-      (event.title && e.title?.toLowerCase().trim() === event.title.toLowerCase().trim())
-  );
-  let updatedCustom: any[];
-  if (existingIdx >= 0) {
-    updatedCustom = [...custom];
-    updatedCustom[existingIdx] = { ...updatedCustom[existingIdx], ...event };
-  } else {
-    updatedCustom = [event, ...custom];
+function clearEventLocalStorage(): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem(STORAGE_KEYS.events.custom);
+    localStorage.removeItem(STORAGE_KEYS.events.deleted);
+  } catch {
+    // ignore
   }
-  setLocalJson(STORAGE_KEYS.events.custom, updatedCustom);
 }
 
-export function deleteCustomEvent(id: string, slug?: string, title?: string): void {
-  if (typeof window === "undefined" || !id) return;
-  const custom = getLocalJson<any[]>(STORAGE_KEYS.events.custom, []);
-  const deleted = getLocalJson<string[]>(STORAGE_KEYS.events.deleted, []);
+export function getMergedEvents(baseEvents: any[]): any[] {
+  clearEventLocalStorage();
+  return Array.isArray(baseEvents) ? baseEvents : [];
+}
 
-  const keysToDelete = [id, slug, title]
-    .filter(Boolean)
-    .map((s) => String(s).toLowerCase().trim());
+export function saveCustomEvent(_event: any): void {
+  clearEventLocalStorage();
+}
 
-  // Remove from custom list
-  const updatedCustom = custom.filter((e) => {
-    if (e.id && keysToDelete.includes(String(e.id).toLowerCase().trim())) return false;
-    if (e.slug && keysToDelete.includes(String(e.slug).toLowerCase().trim())) return false;
-    if (e.title && keysToDelete.includes(String(e.title).toLowerCase().trim())) return false;
-    return true;
-  });
-  setLocalJson(STORAGE_KEYS.events.custom, updatedCustom);
-
-  // Add all keys to deleted list
-  const newDeleted = Array.from(new Set([...deleted, ...keysToDelete]));
-  setLocalJson(STORAGE_KEYS.events.deleted, newDeleted);
+export function deleteCustomEvent(_id: string, _slug?: string, _title?: string): void {
+  clearEventLocalStorage();
 }
 
 // ---------------------------------------------------------------------------

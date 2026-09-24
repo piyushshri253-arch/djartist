@@ -38,8 +38,6 @@ import { WhatsAppFloatButton } from "@/components/ui/WhatsAppFloatButton";
 import ReviewModal from "@/components/reviews/ReviewModal";
 import { ReviewItem } from "@/types";
 import { isEventPast } from "@/lib/eventsHelper";
-import rawEvents from "@/data/events.json";
-import rawPastEvents from "@/data/past-events.json";
 import rawBlogs from "@/data/blog.json";
 import {
   getMergedEvents,
@@ -47,11 +45,6 @@ import {
   getMergedGallery,
   getMergedVideos,
 } from "@/lib/clientStorage";
-
-const INITIAL_HOMEPAGE_UPCOMING_EVENTS = (rawEvents as any[])
-  .filter((ev) => ev.isPublished !== false && !isEventPast(ev.date || ev.dateDisplay))
-  .slice(0, 8);
-const INITIAL_HOMEPAGE_PAST_EVENTS = (rawPastEvents as any[]).slice(0, 4);
 
 // Social Media Platforms Reach Data (Official Verified Platforms Only)
 const SOCIAL_PLATFORMS = [
@@ -93,70 +86,6 @@ const SOCIAL_PLATFORMS = [
     bgHover: "hover:border-[#1877F2]/60",
     Icon: FacebookIcon,
     cta: "JOIN COMMUNITY",
-  },
-];
-
-// Tour Event Data
-const UPCOMING_EVENTS = [
-  {
-    id: "delhi-jln",
-    city: "DELHI",
-    country: "INDIA",
-    venue: "Jawaharlal Nehru Stadium",
-    date: "DEC 18, 2026",
-    day: "18",
-    month: "DEC",
-    time: "07:00 PM IST",
-    doors: "05:00 PM",
-    badge: "HEADLINER STADIUM TOUR",
-    status: "SELLING FAST",
-    poster: "/images/poster_delhi.jpg",
-    ticketLink: "/booking",
-  },
-  {
-    id: "mumbai-dypatil",
-    city: "MUMBAI",
-    country: "INDIA",
-    venue: "D.Y. Patil Stadium",
-    date: "DEC 24, 2026",
-    day: "24",
-    month: "DEC",
-    time: "07:30 PM IST",
-    doors: "05:30 PM",
-    badge: "360° SENSORY ARENA",
-    status: "LIMITED VIP LEFT",
-    poster: "/images/poster_mumbai.jpg",
-    ticketLink: "/booking",
-  },
-  {
-    id: "goa-sunburn",
-    city: "GOA",
-    country: "INDIA",
-    venue: "Vagator Beach Festival Grounds",
-    date: "DEC 31, 2026",
-    day: "31",
-    month: "DEC",
-    time: "09:00 PM IST",
-    doors: "06:00 PM",
-    badge: "SUNBURN NYE SUNSET CLIMAX",
-    status: "ALMOST SOLD OUT",
-    poster: "/images/poster_goa.jpg",
-    ticketLink: "/booking",
-  },
-  {
-    id: "dubai-cocacola",
-    city: "DUBAI",
-    country: "UAE",
-    venue: "Coca-Cola Arena",
-    date: "JAN 15, 2027",
-    day: "15",
-    month: "JAN",
-    time: "08:30 PM GST",
-    doors: "06:30 PM",
-    badge: "WORLD TOUR ARENA SPECTACLE",
-    status: "VIP FAST TRACK",
-    poster: "/images/poster_dubai.jpg",
-    ticketLink: "/booking",
   },
 ];
 
@@ -449,16 +378,9 @@ export default function HomePage() {
       heroVideoRef.current.play().catch(() => {});
     }
 
-    // Dynamic Live Events, Blogs, Gallery & Videos Fetch with Persistent Storage Sync
+    // Clear any legacy localStorage event overrides; load events strictly from MongoDB Atlas via API
     try {
-      const mergedEv = getMergedEvents(rawEvents as any[]);
-      const upcoming = mergedEv.filter((e: any) => !isEventPast(e.date || e.dateDisplay) && e.isPublished !== false);
-      setUpcomingEvents(upcoming.slice(0, 8));
-
-      const mergedPast = getMergedEvents(rawPastEvents as any[]);
-      const past = mergedPast.filter((e: any) => isEventPast(e.date || e.dateDisplay) || e.status === "COMPLETED");
-      setHomepagePastEvents(past.slice(0, 4));
-
+      getMergedEvents([]);
       const mergedB = getMergedBlogs(rawBlogs as any[]);
       setLatestPosts(mergedB.slice(0, 3));
 
@@ -470,8 +392,7 @@ export default function HomePage() {
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
-          const merged = getMergedEvents(data);
-          const upcoming = merged.filter((e: any) => !isEventPast(e.date || e.dateDisplay) && e.isPublished !== false);
+          const upcoming = data.filter((e: any) => !isEventPast(e.date || e.dateDisplay) && e.isPublished !== false);
           setUpcomingEvents(upcoming.slice(0, 8));
         }
       })
@@ -482,8 +403,7 @@ export default function HomePage() {
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
-          const merged = getMergedEvents(data);
-          const past = merged.filter((ev) => ev.isPublished !== false && (isEventPast(ev.date || ev.dateDisplay) || ev.status === "COMPLETED"));
+          const past = data.filter((ev) => ev.isPublished !== false && (isEventPast(ev.date || ev.dateDisplay) || ev.status === "COMPLETED"));
           setHomepagePastEvents(past.slice(0, 4));
         }
       })

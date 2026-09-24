@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getAuthenticatedAdmin } from "@/lib/auth";
 import {
   readJsonFile,
@@ -7,6 +8,9 @@ import {
   purgeEventEverywhere,
   unmarkDeletedEvent,
 } from "@/lib/serverData";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export interface EventData {
   id: string;
@@ -56,7 +60,13 @@ export async function GET() {
     if (e.title && deletedSet.has(e.title.toLowerCase().trim())) return false;
     return true;
   });
-  return NextResponse.json(activeEvents);
+  return NextResponse.json(activeEvents, {
+    headers: {
+      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+      "CDN-Cache-Control": "no-store",
+      "Vercel-CDN-Cache-Control": "no-store",
+    },
+  });
 }
 
 // POST create a new upcoming event
@@ -129,7 +139,7 @@ export async function POST(request: Request) {
     }
 
     const newEvent: EventData = {
-      id: `EV-${city.toUpperCase().replace(/[^A-Z0-9]+/g, "-")}-${Date.now().toString().slice(-4)}`,
+      id: body.id || `EV-${city.toUpperCase().replace(/[^A-Z0-9]+/g, "-")}-${Date.now().toString().slice(-4)}`,
       slug,
       title,
       eventType: eventType || "Arena Concert",
@@ -168,7 +178,21 @@ export async function POST(request: Request) {
     await writeJsonFile("events.json", events);
     await unmarkDeletedEvent([newEvent.id, newEvent.slug, newEvent.title]);
 
-    return NextResponse.json({ success: true, event: newEvent }, { status: 201 });
+    try {
+      revalidatePath("/", "layout");
+      revalidatePath("/events");
+      revalidatePath(`/events/${newEvent.slug}`);
+      revalidatePath("/past-events");
+      revalidatePath("/admin");
+    } catch (_) {}
+
+    return NextResponse.json(
+      { success: true, event: newEvent },
+      {
+        status: 201,
+        headers: { "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0" },
+      }
+    );
   } catch (error) {
     console.error("Create event error:", error);
     return NextResponse.json({ error: "Failed to create event" }, { status: 500 });
@@ -250,7 +274,19 @@ export async function PUT(request: Request) {
     };
 
     await writeJsonFile("events.json", events);
-    return NextResponse.json({ success: true, event: events[index] });
+
+    try {
+      revalidatePath("/", "layout");
+      revalidatePath("/events");
+      revalidatePath(`/events/${events[index].slug}`);
+      revalidatePath("/past-events");
+      revalidatePath("/admin");
+    } catch (_) {}
+
+    return NextResponse.json(
+      { success: true, event: events[index] },
+      { headers: { "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0" } }
+    );
   } catch (error) {
     console.error("Edit event error:", error);
     return NextResponse.json({ error: "Failed to update event" }, { status: 500 });
@@ -275,7 +311,20 @@ export async function DELETE(request: Request) {
     }
 
     await purgeEventEverywhere(id, slug, title);
-    return NextResponse.json({ success: true, message: "Event permanently deleted" });
+
+    try {
+      revalidatePath("/", "layout");
+      revalidatePath("/events");
+      if (slug) revalidatePath(`/events/${slug}`);
+      revalidatePath("/past-events");
+      if (slug) revalidatePath(`/past-events/${slug}`);
+      revalidatePath("/admin");
+    } catch (_) {}
+
+    return NextResponse.json(
+      { success: true, message: "Event permanently deleted" },
+      { headers: { "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0" } }
+    );
   } catch (error) {
     console.error("Delete event error:", error);
     return NextResponse.json({ error: "Failed to delete event" }, { status: 500 });

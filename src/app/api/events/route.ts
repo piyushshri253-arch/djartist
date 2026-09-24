@@ -4,6 +4,16 @@ import { EventData } from "@/app/api/admin/events/route";
 import { isEventPast, getAutoEventStatus } from "@/lib/eventsHelper";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = "force-no-store";
+
+const NO_STORE_HEADERS = {
+  "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+  "CDN-Cache-Control": "no-store",
+  "Vercel-CDN-Cache-Control": "no-store",
+  Pragma: "no-cache",
+  Expires: "0",
+};
 
 export async function GET(req: Request) {
   try {
@@ -37,22 +47,22 @@ export async function GET(req: Request) {
     if (type === "upcoming") {
       const upcoming = annotatedEvents.filter((ev) => !ev.isPast);
       return NextResponse.json(upcoming, {
-        headers: { "Cache-Control": "no-store, max-age=0" },
+        headers: NO_STORE_HEADERS,
       });
     }
 
     if (type === "past") {
       const past = annotatedEvents.filter((ev) => ev.isPast);
       return NextResponse.json(past, {
-        headers: { "Cache-Control": "no-store, max-age=0" },
+        headers: NO_STORE_HEADERS,
       });
     }
 
     return NextResponse.json(annotatedEvents, {
-      headers: { "Cache-Control": "no-store, max-age=0" },
+      headers: NO_STORE_HEADERS,
     });
   } catch (error) {
-    return NextResponse.json({ error: "Failed to load events" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to load events" }, { status: 500, headers: NO_STORE_HEADERS });
   }
 }
 

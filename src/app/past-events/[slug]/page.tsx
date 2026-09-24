@@ -2,7 +2,6 @@
 
 import { useState, useEffect, use } from "react";
 import Link from "next/link";
-import rawPastEvents from "@/data/past-events.json";
 import { getMergedEvents } from "@/lib/clientStorage";
 import { Users, Calendar, MapPin, Music, ArrowLeft, Disc } from "lucide-react";
 import { useAudio } from "@/context/AudioContext";
@@ -17,19 +16,13 @@ export default function PastEventSinglePage({ params }: { params: Promise<{ slug
 
   useEffect(() => {
     setIsMounted(true);
-    const cachedMerged = getMergedEvents(rawPastEvents as any[]);
-    const cachedMatch = cachedMerged.find((e) => e.slug === slug || e.id === slug);
-    if (cachedMatch) {
-      setEvent(cachedMatch);
-      setLoading(false);
-    }
+    getMergedEvents([]);
 
     fetch("/api/past-events", { cache: "no-store" })
       .then((r) => r.json())
       .then((data) => {
         if (Array.isArray(data)) {
-          const merged = getMergedEvents(data);
-          const match = merged.find((e: any) => e.slug === slug || e.id === slug);
+          const match = data.find((e: any) => e.slug === slug || e.id === slug);
           if (match) {
             setEvent(match);
             return;
@@ -40,8 +33,7 @@ export default function PastEventSinglePage({ params }: { params: Promise<{ slug
           .then((r) => r.json())
           .then((allData) => {
             if (Array.isArray(allData)) {
-              const mergedAll = getMergedEvents(allData);
-              const match = mergedAll.find((e: any) => e.slug === slug || e.id === slug);
+              const match = allData.find((e: any) => e.slug === slug || e.id === slug);
               setEvent(match || null);
             } else {
               setEvent(null);

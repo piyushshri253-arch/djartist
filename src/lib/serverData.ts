@@ -21,7 +21,7 @@ function getCollectionName(filename: string): string {
 export async function readJsonFile<T>(filename: string): Promise<T> {
   const collectionName = getCollectionName(filename);
 
-  // 1. Try reading from MongoDB if connected
+  // 1. Primary Source of Truth: MongoDB Atlas
   try {
     const db = await getDb();
     if (db) {
@@ -33,7 +33,7 @@ export async function readJsonFile<T>(filename: string): Promise<T> {
         return record.data as T;
       }
 
-      // If database collection is empty, seed from local JSON file
+      // If database collection does not have current_dataset yet, seed once from local JSON file
       const localData = await readLocalJson<T>(filename);
       await collection.updateOne(
         { _id: "current_dataset" as any },
@@ -47,7 +47,7 @@ export async function readJsonFile<T>(filename: string): Promise<T> {
     console.warn(`[Storage] MongoDB read failed for ${filename}, falling back:`, dbErr);
   }
 
-  // 2. Check in-memory store (instant & reliable for serverless runtime)
+  // 2. Check in-memory store
   if (memoryStore.has(filename)) {
     return memoryStore.get(filename) as T;
   }
@@ -72,29 +72,28 @@ export async function readJsonFile<T>(filename: string): Promise<T> {
 export async function writeJsonFile<T>(filename: string, content: T): Promise<void> {
   const collectionName = getCollectionName(filename);
 
-  // 1. Update in-memory store immediately
-  memoryStore.set(filename, content);
-
-  // 2. Try writing to MongoDB if connected
-  try {
+  // 1. Write to MongoDB Atlas FIRST (Primary Source of Truth)
+  if (process.env.MONGODB_URI) {
     const db = await getDb();
-    if (db) {
-      const collection = db.collection(collectionName);
-      await collection.updateOne(
-        { _id: "current_dataset" as any },
-        { $set: { data: content, updatedAt: new Date() } },
-        { upsert: true }
-      );
+    if (!db) {
+      throw new Error(`[Storage] Cannot connect to MongoDB Atlas to write ${filename}`);
     }
-  } catch (dbErr) {
-    console.warn(`[Storage] MongoDB write failed for ${filename}:`, dbErr);
+    const collection = db.collection(collectionName);
+    await collection.updateOne(
+      { _id: "current_dataset" as any },
+      { $set: { data: content, updatedAt: new Date() } },
+      { upsert: true }
+    );
   }
+
+  // 2. Update in-memory store after DB write succeeds
+  memoryStore.set(filename, content);
 
   // 3. Try writing to /tmp (writable on Vercel serverless)
   try {
     const tmpFilePath = path.join(TMP_DIR, filename);
     await fs.writeFile(tmpFilePath, JSON.stringify(content, null, 2), "utf-8");
-  } catch (tmpErr) {
+  } catch {
     // ignore /tmp error if any
   }
 
@@ -102,9 +101,8 @@ export async function writeJsonFile<T>(filename: string, content: T): Promise<vo
   try {
     const filePath = path.join(DATA_DIR, filename);
     await fs.writeFile(filePath, JSON.stringify(content, null, 2), "utf-8");
-  } catch (fsErr: any) {
+  } catch {
     // On Vercel serverless functions, filesystem is read-only.
-    // In-memory and /tmp have already been updated safely.
   }
 }
 

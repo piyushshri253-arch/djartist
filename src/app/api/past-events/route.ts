@@ -4,6 +4,16 @@ import { EventData } from "@/app/api/admin/events/route";
 import { isEventPast } from "@/lib/eventsHelper";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = "force-no-store";
+
+const NO_STORE_HEADERS = {
+  "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+  "CDN-Cache-Control": "no-store",
+  "Vercel-CDN-Cache-Control": "no-store",
+  Pragma: "no-cache",
+  Expires: "0",
+};
 
 export async function GET(req: Request) {
   try {
@@ -99,12 +109,10 @@ export async function GET(req: Request) {
     });
 
     return NextResponse.json(pastEvents, {
-      headers: {
-        "Cache-Control": "no-store, max-age=0",
-      },
+      headers: NO_STORE_HEADERS,
     });
   } catch (error) {
-    return NextResponse.json({ error: "Failed to load past events" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to load past events" }, { status: 500, headers: NO_STORE_HEADERS });
   }
 }
 

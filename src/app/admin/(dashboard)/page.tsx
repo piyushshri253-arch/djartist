@@ -326,20 +326,8 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     setIsMounted(true);
 
-    // Instant client-side hydration from localStorage (runs in 0ms synchronously before network fetch!)
-    const combined = [...(rawEvents as any[])];
-    const existingIds = new Set(combined.map((e) => e.id));
-    for (const p of (rawPastEvents as any[])) {
-      if (!existingIds.has(p.id)) {
-        combined.push({
-          ...p,
-          status: "COMPLETED",
-          isPublished: true,
-        });
-        existingIds.add(p.id);
-      }
-    }
-    setEvents(getMergedEvents(combined));
+    // Clear any legacy localStorage event overrides; load events strictly from MongoDB Atlas via API
+    saveCustomEvent(null);
     setBlogs(getMergedBlogs(rawBlogs as any[]));
     setGalleryItems(getMergedGallery(rawGallery as any[]));
     setVideoItems(getMergedVideos(rawVideos as any[]));
@@ -712,24 +700,30 @@ export default function AdminDashboardPage() {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
+        cache: "no-store",
       });
 
       const data = await res.json().catch(() => ({}));
-      const savedEvent: EventData = data?.event || {
-        ...payload,
-        id: payload.id || `EV-${(payload.city || "EVENT").toUpperCase().replace(/[^A-Z0-9]+/g, "-")}-${Date.now().toString().slice(-4)}`,
-      };
+      if (!res.ok || !data?.event) {
+        if (res.status === 401) {
+          window.location.href = "/admin/login";
+          throw new Error("Admin session expired. Redirecting to login...");
+        }
+        throw new Error(data?.error || "Failed to save event to database.");
+      }
 
-      // Save permanently into client persistent storage
-      saveCustomEvent(savedEvent);
+      const savedEvent: EventData = data.event;
 
-      // Update state immediately
+      // Update state immediately from the database response
       setEvents((prev) => {
         const withoutOld = prev.filter((ev) => ev.id !== savedEvent.id);
         return [savedEvent, ...withoutOld];
       });
 
-      showToast("success", `Upcoming Event ${editingEvent ? "updated" : "published"} successfully!`);
+      // Also re-sync full list from database
+      await fetchData();
+
+      showToast("success", `Event "${savedEvent.title}" ${editingEvent ? "updated" : "published"} to live database!`);
 
       // Return smoothly to the appropriate archive or upcoming tab
       if (editorOrigin === "past-events" || (eventForm.date && isEventPast(eventForm.date))) {
@@ -744,15 +738,36 @@ export default function AdminDashboardPage() {
     }
   };
 
-  // Delete Event Action (Supports title confirmation & automatic return from editor)
+  // Delete Event Action (Commits directly to MongoDB Atlas before updating UI)
   const handleDeleteEvent = async (id: string, title?: string, slug?: string) => {
     const name = title ? `"${title}"` : "this event";
-    if (!window.confirm(`Are you sure you want to permanently delete ${name}? This will remove it from all website archives and listings.`)) {
+    if (!window.confirm(`Are you sure you want to permanently delete ${name}? This will remove it from the live database and all devices.`)) {
       return;
     }
 
     try {
-      // Remove from client persistent storage immediately with id, slug, and title
+      const qParams = new URLSearchParams();
+      qParams.set("id", id);
+      if (slug) qParams.set("slug", slug);
+      if (title) qParams.set("title", title);
+      const qStr = qParams.toString();
+
+      const [evDelRes, pastDelRes] = await Promise.all([
+        fetch(`/api/admin/events?${qStr}`, { method: "DELETE", cache: "no-store" }),
+        fetch(`/api/admin/past-events?${qStr}`, { method: "DELETE", cache: "no-store" }),
+      ]);
+
+      if (evDelRes.status === 401 || pastDelRes.status === 401) {
+        window.location.href = "/admin/login";
+        throw new Error("Admin session expired. Redirecting to login...");
+      }
+
+      if (!evDelRes.ok && !pastDelRes.ok) {
+        const errData = await evDelRes.json().catch(() => ({}));
+        throw new Error(errData?.error || "Failed to delete event from database.");
+      }
+
+      // Remove from client state now that database deletion succeeded
       deleteCustomEvent(id, slug, title);
       setEvents((prev) =>
         prev.filter((e) => {
@@ -763,19 +778,9 @@ export default function AdminDashboardPage() {
         })
       );
 
-      // Call BOTH /api/admin/events AND /api/admin/past-events delete endpoints
-      const qParams = new URLSearchParams();
-      qParams.set("id", id);
-      if (slug) qParams.set("slug", slug);
-      if (title) qParams.set("title", title);
-      const qStr = qParams.toString();
+      await fetchData();
 
-      await Promise.allSettled([
-        fetch(`/api/admin/events?${qStr}`, { method: "DELETE" }),
-        fetch(`/api/admin/past-events?${qStr}`, { method: "DELETE" }),
-      ]);
-
-      showToast("success", `Event ${title ? `"${title}"` : ""} deleted successfully.`);
+      showToast("success", `Event ${title ? `"${title}"` : ""} permanently deleted from database.`);
 
       // If inside dedicated editor, navigate back to listing
       if (activeTab === "event-editor") {

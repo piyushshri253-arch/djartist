@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getAuthenticatedAdmin } from "@/lib/auth";
 import {
   readJsonFile,
@@ -7,6 +8,9 @@ import {
   purgeEventEverywhere,
   unmarkDeletedEvent,
 } from "@/lib/serverData";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export interface PastEventData {
   id: string;
@@ -43,7 +47,13 @@ export async function GET() {
     if (e.title && deletedSet.has(e.title.toLowerCase().trim())) return false;
     return true;
   });
-  return NextResponse.json(activePastEvents);
+  return NextResponse.json(activePastEvents, {
+    headers: {
+      "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+      "CDN-Cache-Control": "no-store",
+      "Vercel-CDN-Cache-Control": "no-store",
+    },
+  });
 }
 
 // POST create a past event recap
@@ -111,6 +121,14 @@ export async function POST(request: Request) {
     await writeJsonFile("past-events.json", pastEvents);
     await unmarkDeletedEvent([newPastEvent.id, newPastEvent.slug, newPastEvent.title]);
 
+    try {
+      revalidatePath("/", "layout");
+      revalidatePath("/events");
+      revalidatePath("/past-events");
+      revalidatePath(`/past-events/${newPastEvent.slug}`);
+      revalidatePath("/admin");
+    } catch (_) {}
+
     return NextResponse.json({ success: true, event: newPastEvent }, { status: 201 });
   } catch (error) {
     console.error("Create past event error:", error);
@@ -168,6 +186,15 @@ export async function PUT(request: Request) {
     };
 
     await writeJsonFile("past-events.json", pastEvents);
+
+    try {
+      revalidatePath("/", "layout");
+      revalidatePath("/events");
+      revalidatePath("/past-events");
+      revalidatePath(`/past-events/${pastEvents[index].slug}`);
+      revalidatePath("/admin");
+    } catch (_) {}
+
     return NextResponse.json({ success: true, event: pastEvents[index] });
   } catch (error) {
     console.error("Edit past event error:", error);
@@ -193,6 +220,15 @@ export async function DELETE(request: Request) {
     }
 
     await purgeEventEverywhere(id, slug, title);
+
+    try {
+      revalidatePath("/", "layout");
+      revalidatePath("/events");
+      revalidatePath("/past-events");
+      if (slug) revalidatePath(`/past-events/${slug}`);
+      revalidatePath("/admin");
+    } catch (_) {}
+
     return NextResponse.json({ success: true, message: "Past event permanently deleted" });
   } catch (error) {
     console.error("Delete past event error:", error);

@@ -2,7 +2,6 @@
 
 import { useState, useEffect, use } from "react";
 import Link from "next/link";
-import rawEvents from "@/data/events.json";
 import { getMergedEvents } from "@/lib/clientStorage";
 import { EventReviewSection } from "@/components/events/EventReviewSection";
 import { MapPin, Calendar, Clock, ShieldCheck, ArrowLeft, MessageCircle, Phone, Sparkles } from "lucide-react";
@@ -15,19 +14,13 @@ export default function EventSinglePage({ params }: { params: Promise<{ slug: st
 
   useEffect(() => {
     setIsMounted(true);
-    const cachedMerged = getMergedEvents(rawEvents as any[]);
-    const cachedMatch = cachedMerged.find((e) => e.slug === slug || e.id === slug);
-    if (cachedMatch) {
-      setEvent(cachedMatch);
-      setLoading(false);
-    }
+    getMergedEvents([]);
 
     fetch("/api/events", { cache: "no-store" })
       .then((r) => r.json())
       .then((data) => {
         if (Array.isArray(data)) {
-          const merged = getMergedEvents(data);
-          const match = merged.find((e: any) => e.slug === slug || e.id === slug);
+          const match = data.find((e: any) => e.slug === slug || e.id === slug);
           setEvent(match || null);
         }
       })

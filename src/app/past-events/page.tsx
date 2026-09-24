@@ -16,7 +16,6 @@ import {
   CalendarDays
 } from "lucide-react";
 
-import rawPastEvents from "@/data/past-events.json";
 import { getMergedEvents } from "@/lib/clientStorage";
 import { isEventPast } from "@/lib/eventsHelper";
 
@@ -36,11 +35,8 @@ export default function PastEventsPage() {
 
   useEffect(() => {
     setIsMounted(true);
-    // Instant client-side hydration from localStorage before network call
-    const merged = getMergedEvents(rawPastEvents as any[]);
-    const past = merged.filter((ev) => ev.isPublished !== false && (isEventPast(ev.date || ev.dateDisplay) || ev.status === "COMPLETED"));
-    setEvents(past);
-
+    // Clear any legacy localStorage event overrides
+    getMergedEvents([]);
     fetchEvents();
   }, [sortBy]);
 
@@ -50,8 +46,7 @@ export default function PastEventsPage() {
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
-          const merged = getMergedEvents(data);
-          const past = merged.filter((ev) => ev.isPublished !== false && (isEventPast(ev.date || ev.dateDisplay) || ev.status === "COMPLETED"));
+          const past = data.filter((ev) => ev.isPublished !== false && (isEventPast(ev.date || ev.dateDisplay) || ev.status === "COMPLETED"));
           setEvents(past);
         }
       })

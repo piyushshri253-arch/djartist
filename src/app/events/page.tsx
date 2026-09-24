@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import rawEvents from "@/data/events.json";
 import { isEventPast } from "@/lib/eventsHelper";
 import { getMergedEvents } from "@/lib/clientStorage";
 import { MapPin, Calendar, Users, ArrowRight, Search, Sparkles, Filter, MessageCircle } from "lucide-react";
@@ -15,18 +14,14 @@ export default function EventsPage() {
 
   useEffect(() => {
     setIsMounted(true);
-    const merged = getMergedEvents(rawEvents as any[]);
-    const upcomingCached = merged.filter(
-      (ev: any) => ev.isPublished !== false && !isEventPast(ev.date || ev.dateDisplay)
-    );
-    setEvents(upcomingCached);
+    // Clear any legacy localStorage event overrides
+    getMergedEvents([]);
 
     fetch("/api/events?type=upcoming", { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
-          const mergedWithServer = getMergedEvents(data);
-          const upcoming = mergedWithServer.filter(
+          const upcoming = data.filter(
             (ev: any) => ev.isPublished !== false && !isEventPast(ev.date || ev.dateDisplay)
           );
           setEvents(upcoming);

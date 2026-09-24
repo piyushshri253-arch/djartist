@@ -13,38 +13,35 @@ const uri =
   "mongodb+srv://piyushshri253_db_user:q3nLhTyLn9CvwUeW@cluster0.fcclcik.mongodb.net/dj_g_spark?retryWrites=true&w=majority&appName=Cluster0";
 
 const mongoOptions = {
-  serverSelectionTimeoutMS: 3000,
-  connectTimeoutMS: 3000,
+  serverSelectionTimeoutMS: 10000,
+  connectTimeoutMS: 10000,
   maxPoolSize: 10,
+  socketTimeoutMS: 45000,
 };
 
-let client: MongoClient | null = null;
-let clientPromise: Promise<MongoClient> | null = null;
+declare global {
+  var _mongoClientPromise: Promise<MongoClient> | undefined;
+}
 
-if (uri) {
-  const globalWithMongo = global as typeof globalThis & {
-    _mongoClientPromise?: Promise<MongoClient>;
-  };
-
-  if (process.env.NODE_ENV === "development") {
-    if (!globalWithMongo._mongoClientPromise) {
-      client = new MongoClient(uri, mongoOptions);
-      globalWithMongo._mongoClientPromise = client.connect();
-    }
-    clientPromise = globalWithMongo._mongoClientPromise;
-  } else {
-    client = new MongoClient(uri, mongoOptions);
-    clientPromise = client.connect();
+function getClientPromise(): Promise<MongoClient> {
+  if (!global._mongoClientPromise) {
+    const client = new MongoClient(uri, mongoOptions);
+    global._mongoClientPromise = client.connect().catch((err) => {
+      // Clear cached promise on failure so next request can retry fresh
+      global._mongoClientPromise = undefined;
+      throw err;
+    });
   }
+  return global._mongoClientPromise;
 }
 
 export async function getDb() {
-  if (!clientPromise) return null;
   try {
-    const connectedClient = await clientPromise;
+    const connectedClient = await getClientPromise();
     return connectedClient.db("dj_g_spark");
   } catch (err) {
-    console.warn("[MongoDB] Connection warning, using fallback:", err);
+    console.error("[MongoDB] Connection error:", err);
+    global._mongoClientPromise = undefined;
     return null;
   }
 }
