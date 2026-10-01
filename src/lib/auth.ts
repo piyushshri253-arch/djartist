@@ -217,4 +217,75 @@ export function recordSuccessfulLogin(ip: string): void {
   loginAttempts.delete(ip);
 }
 
+// ---------------------------------------------------------------------------
+// TWO-FACTOR AUTHENTICATION (2FA / MFA)
+// Supports RFC 6238 TOTP (Google Authenticator) or static Admin MFA PIN
+// ---------------------------------------------------------------------------
+function base32Decode(base32: string): Buffer {
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+  let bits = 0;
+  let value = 0;
+  const output: number[] = [];
+  const clean = base32.toUpperCase().replace(/=+$/, "").replace(/[^A-Z2-7]/g, "");
+  for (let i = 0; i < clean.length; i++) {
+    const idx = alphabet.indexOf(clean[i]);
+    if (idx === -1) continue;
+    value = (value << 5) | idx;
+    bits += 5;
+    if (bits >= 8) {
+      output.push((value >>> (bits - 8)) & 255);
+      bits -= 8;
+    }
+  }
+  return Buffer.from(output);
+}
+
+export function generateTotp(secretBase32: string, timeStep = 30, windowOffset = 0): string {
+  try {
+    const key = base32Decode(secretBase32);
+    const counter = Math.floor(Date.now() / 1000 / timeStep) + windowOffset;
+    const buf = Buffer.alloc(8);
+    buf.writeBigInt64BE(BigInt(counter), 0);
+    const hmac = crypto.createHmac("sha1", key).update(buf).digest();
+    const offset = hmac[hmac.length - 1] & 0xf;
+    const code = (hmac.readUInt32BE(offset) & 0x7fffffff) % 1000000;
+    return String(code).padStart(6, "0");
+  } catch {
+    return "";
+  }
+}
+
+export function isMfaConfigured(): boolean {
+  return Boolean(
+    (process.env.ADMIN_MFA_SECRET || process.env.ADMIN_2FA_SECRET || "").trim() ||
+    (process.env.ADMIN_MFA_PIN || process.env.ADMIN_2FA_PIN || "").trim()
+  );
+}
+
+export function verifyMfa(mfaCodeInput: string): boolean {
+  const cleanCode = (mfaCodeInput || "").trim().replace(/\s+/g, "");
+  if (!cleanCode) return false;
+
+  // 1. Static Secure Secondary PIN check
+  const staticPin = (process.env.ADMIN_MFA_PIN || process.env.ADMIN_2FA_PIN || "").trim();
+  if (staticPin) {
+    if (cleanCode.length === staticPin.length && crypto.timingSafeEqual(Buffer.from(cleanCode), Buffer.from(staticPin))) {
+      return true;
+    }
+  }
+
+  // 2. RFC 6238 TOTP Check (Google / Microsoft / Apple Authenticator)
+  const totpSecret = (process.env.ADMIN_MFA_SECRET || process.env.ADMIN_2FA_SECRET || "").trim();
+  if (totpSecret) {
+    for (const offset of [0, -1, 1]) {
+      const expected = generateTotp(totpSecret, 30, offset);
+      if (expected && cleanCode.length === expected.length && crypto.timingSafeEqual(Buffer.from(cleanCode), Buffer.from(expected))) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 export { COOKIE_NAME };

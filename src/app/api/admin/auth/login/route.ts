@@ -6,6 +6,8 @@ import {
   checkLoginRateLimit,
   recordFailedLogin,
   recordSuccessfulLogin,
+  isMfaConfigured,
+  verifyMfa,
 } from "@/lib/auth";
 import { validateOrigin } from "@/lib/security";
 import { logAdminAction } from "@/lib/audit";
@@ -73,6 +75,37 @@ export async function POST(request: Request) {
         { error: "Invalid email or password. Access denied." },
         { status: 401 }
       );
+    }
+
+    // 2.1 Multi-Factor Authentication (MFA / 2FA) Verification
+    if (isMfaConfigured()) {
+      const { mfaCode } = body;
+      if (!mfaCode) {
+        return NextResponse.json(
+          {
+            mfaRequired: true,
+            error: "Two-Factor Authentication (2FA/MFA) code is required.",
+          },
+          { status: 403 }
+        );
+      }
+
+      const isMfaValid = verifyMfa(mfaCode);
+      if (!isMfaValid) {
+        recordFailedLogin(clientIp);
+        await logAdminAction({
+          action: "FAILED_LOGIN",
+          adminEmail: String(email).slice(0, 50),
+          ip: clientIp,
+          status: "FAILURE",
+          details: { reason: "Invalid 2FA/MFA token" },
+        });
+
+        return NextResponse.json(
+          { error: "Invalid Two-Factor Authentication (2FA/MFA) code." },
+          { status: 401 }
+        );
+      }
     }
 
     // 3. Clear rate limit record on successful login

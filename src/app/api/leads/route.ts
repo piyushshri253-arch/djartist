@@ -74,9 +74,33 @@ export async function GET() {
   });
 }
 
-const PABBLY_WEBHOOK_URL = process.env.WHATSAPP_WEBHOOK_URL || "";
+// Rate limiter for lead generation: max 10 leads per hour per IP
+const leadRateLimitMap = new Map<string, { count: number; resetAt: number }>();
+
+function checkLeadRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const record = leadRateLimitMap.get(ip);
+  if (!record || record.resetAt < now) {
+    leadRateLimitMap.set(ip, { count: 1, resetAt: now + 60 * 60 * 1000 });
+    return true;
+  }
+  if (record.count >= 10) return false;
+  record.count += 1;
+  return true;
+}
 
 export async function POST(req: Request) {
+  const forwardedFor = req.headers.get("x-forwarded-for");
+  const realIp = req.headers.get("x-real-ip");
+  const clientIp = (forwardedFor ? forwardedFor.split(",")[0] : realIp || "127.0.0.1").trim();
+
+  if (!checkLeadRateLimit(clientIp)) {
+    return NextResponse.json(
+      { error: "Too many inquiries submitted from this connection. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   try {
     const body = await req.json();
 
