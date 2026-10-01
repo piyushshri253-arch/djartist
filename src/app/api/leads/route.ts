@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import { sendWhatsAppLeadNotification } from "@/lib/whatsapp";
+import { getAuthenticatedAdmin } from "@/lib/auth";
 
 const leadsFilePath = path.join(process.cwd(), "src/data/leads.json");
 const tmpLeadsFilePath = path.join(
@@ -60,6 +61,11 @@ function saveLeads(leads: any[]) {
 }
 
 export async function GET() {
+  const admin = await getAuthenticatedAdmin();
+  if (!admin) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const leads = getLeads();
   return NextResponse.json(leads, {
     headers: {
@@ -265,6 +271,11 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+  const admin = await getAuthenticatedAdmin();
+  if (!admin) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");

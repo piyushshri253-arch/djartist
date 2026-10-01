@@ -42,10 +42,6 @@ export default function AdminLoginPage() {
     }
   };
 
-  const handleFillDemo = () => {
-    setEmail("admin@djgspark.com");
-    setPassword("SparkAdmin2026!");
-  };
 
   return (
     <div className="min-h-screen bg-[#0B0C10] text-[#F5F6FA] flex items-center justify-center p-4 sm:p-6 py-6 sm:py-10 relative overflow-hidden selection:bg-[#00E5FF] selection:text-black">
@@ -144,20 +140,7 @@ export default function AdminLoginPage() {
             </button>
           </form>
 
-          {/* Preset Helper Pill */}
-          <div className="mt-6 pt-6 border-t border-white/[0.08] text-center">
-            <button
-              type="button"
-              onClick={handleFillDemo}
-              className="inline-flex items-center gap-1.5 text-xs font-mono text-[#00B4D8] hover:text-white transition-colors py-1 px-3 rounded-md bg-white/[0.03] border border-white/10"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Fill Default Admin Credentials</span>
-            </button>
-            <span className="block text-[11px] text-[#666666] mt-2 font-mono">
-              admin@djgspark.com • SparkAdmin2026!
-            </span>
-          </div>
+
         </div>
 
         {/* Back Link */}

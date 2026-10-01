@@ -12,6 +12,15 @@ import {
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
+// Security content moderation filter
+const PROHIBITED_PATTERN = /\b(porn|sex|pussy|boobs|fuck|fucking|bitch|dick|cock|nude|naked|xxx|casino|viagra|cialis)\b/i;
+
+function hasProhibitedContent(obj: any): boolean {
+  if (!obj) return false;
+  const str = typeof obj === "string" ? obj : JSON.stringify(obj);
+  return PROHIBITED_PATTERN.test(str);
+}
+
 export interface EventData {
   id: string;
   slug: string;
@@ -109,6 +118,13 @@ export async function POST(request: Request) {
     if (!title || !city || !venue) {
       return NextResponse.json(
         { error: "Title, city, and venue are required" },
+        { status: 400 }
+      );
+    }
+
+    if (hasProhibitedContent(body)) {
+      return NextResponse.json(
+        { error: "Event content contains prohibited or explicit language." },
         { status: 400 }
       );
     }
@@ -212,6 +228,13 @@ export async function PUT(request: Request) {
 
     if (!id) {
       return NextResponse.json({ error: "Event ID is required" }, { status: 400 });
+    }
+
+    if (hasProhibitedContent(body)) {
+      return NextResponse.json(
+        { error: "Event content contains prohibited or explicit language." },
+        { status: 400 }
+      );
     }
 
     const events = await readJsonFile<EventData[]>("events.json");

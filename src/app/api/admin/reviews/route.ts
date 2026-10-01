@@ -1,9 +1,17 @@
 import { NextResponse } from "next/server";
 import { readJsonFile, writeJsonFile } from "@/lib/serverData";
+import { getAuthenticatedAdmin } from "@/lib/auth";
 import { ReviewItem } from "@/types";
+
+export const dynamic = "force-dynamic";
 
 // Admin GET: Returns all reviews with counts
 export async function GET() {
+  const admin = await getAuthenticatedAdmin();
+  if (!admin) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const reviews = await readJsonFile<ReviewItem[]>("reviews.json");
     const all = reviews || [];
@@ -34,6 +42,11 @@ export async function GET() {
 
 // Admin PUT: Moderate review status (approve or reject)
 export async function PUT(req: Request) {
+  const admin = await getAuthenticatedAdmin();
+  if (!admin) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const body = await req.json();
     const { id, status } = body;
@@ -74,6 +87,11 @@ export async function PUT(req: Request) {
 
 // Admin DELETE: Remove review permanently
 export async function DELETE(req: Request) {
+  const admin = await getAuthenticatedAdmin();
+  if (!admin) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");

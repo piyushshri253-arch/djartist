@@ -24,6 +24,14 @@ export async function GET() {
   }
 }
 
+const PROHIBITED_PATTERN = /\b(porn|sex|pussy|boobs|fuck|fucking|bitch|dick|cock|nude|naked|xxx|casino|viagra|cialis)\b/i;
+
+function hasProhibitedContent(obj: any): boolean {
+  if (!obj) return false;
+  const str = typeof obj === "string" ? obj : JSON.stringify(obj);
+  return PROHIBITED_PATTERN.test(str);
+}
+
 // POST: Add new gallery photo
 export async function POST(req: Request) {
   try {
@@ -38,6 +46,13 @@ export async function POST(req: Request) {
     if (!src || !title) {
       return NextResponse.json(
         { error: "Image source and title are required" },
+        { status: 400 }
+      );
+    }
+
+    if (hasProhibitedContent(body)) {
+      return NextResponse.json(
+        { error: "Content contains prohibited or explicit language." },
         { status: 400 }
       );
     }
@@ -115,6 +130,13 @@ export async function PUT(req: Request) {
     if (!id || !src || !title) {
       return NextResponse.json(
         { error: "Photo ID, image source, and title are required" },
+        { status: 400 }
+      );
+    }
+
+    if (hasProhibitedContent(body)) {
+      return NextResponse.json(
+        { error: "Content contains prohibited or explicit language." },
         { status: 400 }
       );
     }

@@ -8,6 +8,17 @@ import {
   unmarkDeletedBlog,
 } from "@/lib/serverData";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+const PROHIBITED_PATTERN = /\b(porn|sex|pussy|boobs|fuck|fucking|bitch|dick|cock|nude|naked|xxx|casino|viagra|cialis)\b/i;
+
+function hasProhibitedContent(obj: any): boolean {
+  if (!obj) return false;
+  const str = typeof obj === "string" ? obj : JSON.stringify(obj);
+  return PROHIBITED_PATTERN.test(str);
+}
+
 export interface BlogPostData {
   id: string;
   slug: string;
@@ -59,6 +70,10 @@ export async function POST(request: Request) {
 
     if (!title || !content) {
       return NextResponse.json({ error: "Title and content are required" }, { status: 400 });
+    }
+
+    if (hasProhibitedContent(body)) {
+      return NextResponse.json({ error: "Content contains prohibited or explicit language." }, { status: 400 });
     }
 
     const blogs = await readJsonFile<BlogPostData[]>("blog.json");
@@ -116,6 +131,10 @@ export async function PUT(request: Request) {
 
     if (!id) {
       return NextResponse.json({ error: "Post ID is required" }, { status: 400 });
+    }
+
+    if (hasProhibitedContent(body)) {
+      return NextResponse.json({ error: "Content contains prohibited or explicit language." }, { status: 400 });
     }
 
     const blogs = await readJsonFile<BlogPostData[]>("blog.json");

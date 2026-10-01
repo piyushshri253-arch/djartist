@@ -16,6 +16,13 @@ function sanitizeString(str: unknown, maxLength: number): string {
     .slice(0, maxLength);
 }
 
+// Block profanity, pornographic terms, and spam injection
+const PROHIBITED_PATTERN = /\b(porn|sex|pussy|boobs|fuck|fucking|bitch|dick|cock|nude|naked|xxx|casino|viagra|cialis)\b/i;
+
+function containsProhibitedContent(text: string): boolean {
+  return PROHIBITED_PATTERN.test(text);
+}
+
 // Generate initials from name (e.g. "Rohit Verma" -> "RV")
 function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/);
@@ -180,6 +187,19 @@ export async function POST(req: Request) {
     const sanitizedEventSlug = rawEventSlug ? sanitizeString(rawEventSlug, 100) : undefined;
     const sanitizedEventTitle = rawEventTitle ? sanitizeString(rawEventTitle, 150) : undefined;
 
+    // Content moderation guard: reject offensive or pornographic content
+    if (
+      containsProhibitedContent(sanitizedName) ||
+      containsProhibitedContent(sanitizedQuote) ||
+      (sanitizedOrg && containsProhibitedContent(sanitizedOrg)) ||
+      containsProhibitedContent(sanitizedRole)
+    ) {
+      return NextResponse.json(
+        { success: false, error: "Review contains prohibited or offensive content." },
+        { status: 400 }
+      );
+    }
+
     const now = new Date();
     const dateFormatted = now.toLocaleDateString("en-US", {
       day: "2-digit",
@@ -227,7 +247,7 @@ export async function POST(req: Request) {
       quote: sanitizedQuote,
       date: dateFormatted,
       category,
-      status: "approved",
+      status: "pending", // Hardened: Requires manual admin approval before appearing publicly
       createdAt: now.toISOString(),
       targetType: isArticleReview ? "article" : "event",
       articleSlug: sanitizedArticleSlug,

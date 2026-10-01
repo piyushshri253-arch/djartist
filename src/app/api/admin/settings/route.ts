@@ -1,7 +1,15 @@
-﻿import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { readJsonFile, writeJsonFile } from "@/lib/serverData";
+import { getAuthenticatedAdmin } from "@/lib/auth";
+
+export const dynamic = "force-dynamic";
 
 export async function GET() {
+  const admin = await getAuthenticatedAdmin();
+  if (!admin) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const settings = await readJsonFile<any>("settings.json");
     return NextResponse.json(settings, {
@@ -15,6 +23,10 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  const admin = await getAuthenticatedAdmin();
+  if (!admin) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   try {
     const body = await req.json();
     let currentSettings: any = {};
