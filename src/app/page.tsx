@@ -357,15 +357,19 @@ export default function HomePage() {
     (photo) => galleryFilter === "all" || photo.category === galleryFilter
   );
 
-  const filteredReviews = reviewsList.filter(
-    (rev) => reviewCategory === "all" || rev.category === reviewCategory
-  );
+  const filteredReviews = reviewsList.filter((rev) => {
+    if (reviewCategory === "all") return true;
+    if (reviewCategory === "performance") return rev.category === "performance" || rev.category === "promoter";
+    if (reviewCategory === "punctuality") return rev.category === "punctuality" || rev.category === "critic";
+    if (reviewCategory === "behaviour") return rev.category === "behaviour" || rev.category === "fan";
+    return rev.category === reviewCategory;
+  });
 
   const fetchReviews = () => {
     fetch("/api/reviews", { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
-        if (data && Array.isArray(data.reviews) && data.reviews.length > 0) {
+        if (data && Array.isArray(data.reviews)) {
           setReviewsList(data.reviews);
         }
       })
@@ -1530,9 +1534,9 @@ export default function HomePage() {
           <div className="flex flex-wrap items-center gap-2 mb-10">
             {[
               { id: "all", label: `ALL REVIEWS (${reviewsList.length})` },
-              { id: "promoter", label: "Performance" },
-              { id: "critic", label: "Punctuality" },
-              { id: "fan", label: "Behaviour" },
+              { id: "performance", label: "Performance" },
+              { id: "punctuality", label: "Punctuality" },
+              { id: "behaviour", label: "Behaviour" },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -1549,60 +1553,75 @@ export default function HomePage() {
           </div>
 
           {/* Reviews Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredReviews.map((rev) => (
-              <div
-                key={rev.id}
-                className="group relative bg-[#0c0c11] border border-white/[0.08] hover:border-[#00E5FF]/50 rounded-2xl p-7 transition-all duration-300 hover:shadow-[0_10px_40px_rgba(0, 229, 255, 0.15)] flex flex-col justify-between"
+          {filteredReviews.length === 0 ? (
+            <div className="py-16 text-center rounded-2xl bg-white/[0.02] border border-white/[0.08] max-w-md mx-auto">
+              <Star className="w-8 h-8 text-[#00E5FF]/40 mx-auto mb-3" />
+              <p className="text-white font-bold text-sm mb-1">No reviews in this category yet</p>
+              <p className="text-xs text-[#888888] mb-4">Be the first to share your experience!</p>
+              <button
+                type="button"
+                onClick={() => setIsReviewModalOpen(true)}
+                className="px-5 py-2.5 rounded-xl bg-[#00E5FF]/15 border border-[#00E5FF]/40 text-[#00E5FF] text-xs font-mono font-bold hover:bg-[#00E5FF] hover:text-black transition-all"
               >
-                {/* Top: Stars + Badge */}
-                <div>
-                  <div className="flex items-center justify-between gap-3 mb-4">
-                    <div className="flex items-center gap-1 text-[#00E5FF]">
-                      {[...Array(rev.rating)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-[#00E5FF] text-[#00E5FF]" />
-                      ))}
-                    </div>
-                    <span
-                      className={`text-[10px] font-mono tracking-[0.18em] px-2.5 py-1 rounded-full border font-semibold uppercase ${rev.badgeColor}`}
-                    >
-                      {rev.badge}
-                    </span>
-                  </div>
-
-                  {/* Event Tag */}
-                  <span className="text-[11px] font-mono tracking-[0.2em] text-[#00B4D8] uppercase block mb-3">
-                    {rev.event}
-                  </span>
-
-                  {/* Quote */}
-                  <p className="text-sm sm:text-base text-[#D4D4D8] leading-relaxed mb-6 font-normal group-hover:text-white transition-colors">
-                    "{rev.quote}"
-                  </p>
-                </div>
-
-                {/* Bottom: Author info */}
-                <div className="pt-4 border-t border-white/[0.06] flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-full bg-[#181822] border border-[#00E5FF]/40 flex items-center justify-center font-heading font-bold text-sm text-[#00E5FF] shadow-[0_0_12px_rgba(0, 229, 255, 0.25)]">
-                      {rev.initials}
-                    </div>
-                    <div>
-                      <h4 className="font-heading font-bold text-sm text-white uppercase group-hover:text-[#00E5FF] transition-colors">
-                        {rev.name}
-                      </h4>
-                      <span className="text-xs text-[#888888] font-sans block">
-                        {rev.role} • <strong className="text-[#AAAAAA]">{rev.organization}</strong>
+                Write a Review
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredReviews.map((rev) => (
+                <div
+                  key={rev.id}
+                  className="group relative bg-[#0c0c11] border border-white/[0.08] hover:border-[#00E5FF]/50 rounded-2xl p-7 transition-all duration-300 hover:shadow-[0_10px_40px_rgba(0, 229, 255, 0.15)] flex flex-col justify-between"
+                >
+                  {/* Top: Stars + Badge */}
+                  <div>
+                    <div className="flex items-center justify-between gap-3 mb-4">
+                      <div className="flex items-center gap-1 text-[#00E5FF]">
+                        {[...Array(rev.rating)].map((_, i) => (
+                          <Star key={i} className="w-4 h-4 fill-[#00E5FF] text-[#00E5FF]" />
+                        ))}
+                      </div>
+                      <span
+                        className={`text-[10px] font-mono tracking-[0.18em] px-2.5 py-1 rounded-full border font-semibold uppercase ${rev.badgeColor}`}
+                      >
+                        {rev.badge}
                       </span>
                     </div>
+
+                    {/* Event Tag */}
+                    <span className="text-[11px] font-mono tracking-[0.2em] text-[#00B4D8] uppercase block mb-3">
+                      {rev.event}
+                    </span>
+
+                    {/* Quote */}
+                    <p className="text-sm sm:text-base text-[#D4D4D8] leading-relaxed mb-6 font-normal group-hover:text-white transition-colors">
+                      "{rev.quote}"
+                    </p>
                   </div>
-                  <span className="text-[10px] font-mono text-[#666666] uppercase whitespace-nowrap">
-                    {rev.date}
-                  </span>
+
+                  {/* Bottom: Author info */}
+                  <div className="pt-4 border-t border-white/[0.06] flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-11 h-11 rounded-full bg-[#181822] border border-[#00E5FF]/40 flex items-center justify-center font-heading font-bold text-sm text-[#00E5FF] shadow-[0_0_12px_rgba(0, 229, 255, 0.25)]">
+                        {rev.initials}
+                      </div>
+                      <div>
+                        <h4 className="font-heading font-bold text-sm text-white uppercase group-hover:text-[#00E5FF] transition-colors">
+                          {rev.name}
+                        </h4>
+                        <span className="text-xs text-[#888888] font-sans block">
+                          {rev.role} • <strong className="text-[#AAAAAA]">{rev.organization}</strong>
+                        </span>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-mono text-[#666666] uppercase whitespace-nowrap">
+                      {rev.date}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           {/* Bottom Reviewer Call-To-Action */}
           {/* <div className="mt-14 p-8 rounded-2xl bg-gradient-to-r from-[#120D08] via-[#0C0C11] to-[#0A0A0E] border border-[#00E5FF]/25 flex flex-col md:flex-row items-center justify-between gap-6 shadow-[0_10px_35px_rgba(0, 229, 255, 0.1)]">

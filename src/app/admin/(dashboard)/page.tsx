@@ -533,19 +533,15 @@ export default function AdminDashboardPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to update review status");
 
-      setReviews((prev) =>
-        prev.map((r) => (r.id === id ? { ...r, status } : r))
-      );
-
-      // Recalculate review counts
-      setReviewCounts((prev) => {
-        const updated = reviews.map((r) => (r.id === id ? { ...r, status } : r));
-        return {
+      setReviews((prev) => {
+        const updated = prev.map((r) => (r.id === id ? { ...r, status } : r));
+        setReviewCounts({
           total: updated.length,
           pending: updated.filter((r) => r.status === "pending").length,
           approved: updated.filter((r) => r.status === "approved").length,
           rejected: updated.filter((r) => r.status === "rejected").length,
-        };
+        });
+        return updated;
       });
 
       showToast("success", `Review status changed to ${status.toUpperCase()}.`);
@@ -565,7 +561,16 @@ export default function AdminDashboardPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to delete review");
 
-      setReviews((prev) => prev.filter((r) => r.id !== id));
+      setReviews((prev) => {
+        const updated = prev.filter((r) => r.id !== id);
+        setReviewCounts({
+          total: updated.length,
+          pending: updated.filter((r) => r.status === "pending").length,
+          approved: updated.filter((r) => r.status === "approved").length,
+          rejected: updated.filter((r) => r.status === "rejected").length,
+        });
+        return updated;
+      });
       showToast("success", "Review permanently deleted from database.");
     } catch (err: any) {
       showToast("error", err.message || "Failed to delete review");
