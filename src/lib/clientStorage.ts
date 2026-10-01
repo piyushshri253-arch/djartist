@@ -180,87 +180,54 @@ export function deleteCustomBlog(id: string, slug?: string, title?: string): voi
 }
 
 // ---------------------------------------------------------------------------
-// GALLERY (PHOTOS)
+// GALLERY (PHOTOS) (Single Source of Truth: MongoDB Atlas -> API -> Frontend)
 // ---------------------------------------------------------------------------
+function purgeLegacyGalleryLocalStorage(): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem(STORAGE_KEYS.gallery.custom);
+    localStorage.removeItem(STORAGE_KEYS.gallery.deleted);
+  } catch {
+    // ignore
+  }
+}
+
 export function getMergedGallery(baseGallery: any[]): any[] {
-  return mergeCollections(
-    baseGallery,
-    STORAGE_KEYS.gallery.custom,
-    STORAGE_KEYS.gallery.deleted
-  );
+  purgeLegacyGalleryLocalStorage();
+  return Array.isArray(baseGallery) ? baseGallery : [];
 }
 
-export function saveCustomGallery(photo: any): void {
-  if (typeof window === "undefined" || !photo?.id) return;
-  const custom = getLocalJson<any[]>(STORAGE_KEYS.gallery.custom, []);
-  const deleted = getLocalJson<string[]>(STORAGE_KEYS.gallery.deleted, []);
-
-  const updatedDeleted = deleted.filter((id) => id !== photo.id);
-  setLocalJson(STORAGE_KEYS.gallery.deleted, updatedDeleted);
-
-  const existingIdx = custom.findIndex((p) => p.id === photo.id);
-  let updatedCustom: any[];
-  if (existingIdx >= 0) {
-    updatedCustom = [...custom];
-    updatedCustom[existingIdx] = { ...updatedCustom[existingIdx], ...photo };
-  } else {
-    updatedCustom = [photo, ...custom];
-  }
-  setLocalJson(STORAGE_KEYS.gallery.custom, updatedCustom);
+export function saveCustomGallery(_photo: any): void {
+  purgeLegacyGalleryLocalStorage();
 }
 
-export function deleteCustomGallery(id: string): void {
-  if (typeof window === "undefined" || !id) return;
-  const custom = getLocalJson<any[]>(STORAGE_KEYS.gallery.custom, []);
-  const deleted = getLocalJson<string[]>(STORAGE_KEYS.gallery.deleted, []);
-
-  const updatedCustom = custom.filter((p) => p.id !== id);
-  setLocalJson(STORAGE_KEYS.gallery.custom, updatedCustom);
-
-  if (!deleted.includes(id)) {
-    setLocalJson(STORAGE_KEYS.gallery.deleted, [...deleted, id]);
-  }
+export function deleteCustomGallery(_id: string): void {
+  purgeLegacyGalleryLocalStorage();
 }
 
 // ---------------------------------------------------------------------------
-// VIDEOS
+// VIDEOS (Single Source of Truth: MongoDB Atlas -> API -> Frontend)
 // ---------------------------------------------------------------------------
+function purgeLegacyVideoLocalStorage(): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem(STORAGE_KEYS.videos.custom);
+    localStorage.removeItem(STORAGE_KEYS.videos.deleted);
+  } catch {
+    // ignore
+  }
+}
+
 export function getMergedVideos(baseVideos: any[]): any[] {
-  return mergeCollections(
-    baseVideos,
-    STORAGE_KEYS.videos.custom,
-    STORAGE_KEYS.videos.deleted
-  );
+  purgeLegacyVideoLocalStorage();
+  return Array.isArray(baseVideos) ? baseVideos : [];
 }
 
-export function saveCustomVideo(video: any): void {
-  if (typeof window === "undefined" || !video?.id) return;
-  const custom = getLocalJson<any[]>(STORAGE_KEYS.videos.custom, []);
-  const deleted = getLocalJson<string[]>(STORAGE_KEYS.videos.deleted, []);
-
-  const updatedDeleted = deleted.filter((id) => id !== video.id);
-  setLocalJson(STORAGE_KEYS.videos.deleted, updatedDeleted);
-
-  const existingIdx = custom.findIndex((v) => v.id === video.id);
-  let updatedCustom: any[];
-  if (existingIdx >= 0) {
-    updatedCustom = [...custom];
-    updatedCustom[existingIdx] = { ...updatedCustom[existingIdx], ...video };
-  } else {
-    updatedCustom = [video, ...custom];
-  }
-  setLocalJson(STORAGE_KEYS.videos.custom, updatedCustom);
+export function saveCustomVideo(_video: any): void {
+  purgeLegacyVideoLocalStorage();
 }
 
-export function deleteCustomVideo(id: string): void {
-  if (typeof window === "undefined" || !id) return;
-  const custom = getLocalJson<any[]>(STORAGE_KEYS.videos.custom, []);
-  const deleted = getLocalJson<string[]>(STORAGE_KEYS.videos.deleted, []);
-
-  const updatedCustom = custom.filter((v) => v.id !== id);
-  setLocalJson(STORAGE_KEYS.videos.custom, updatedCustom);
-
-  if (!deleted.includes(id)) {
-    setLocalJson(STORAGE_KEYS.videos.deleted, [...deleted, id]);
-  }
+export function deleteCustomVideo(_id: string): void {
+  purgeLegacyVideoLocalStorage();
 }
+
