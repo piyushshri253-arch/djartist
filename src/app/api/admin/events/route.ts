@@ -8,6 +8,8 @@ import {
   purgeEventEverywhere,
   unmarkDeletedEvent,
 } from "@/lib/serverData";
+import { sanitizeString, isSafeUrl, validateOrigin, unauthorizedResponse } from "@/lib/security";
+import { logAdminAction } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -56,22 +58,24 @@ export interface EventData {
 export async function GET() {
   const admin = await getAuthenticatedAdmin();
   if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   const [events, deletedSet] = await Promise.all([
     readJsonFile<EventData[]>("events.json"),
     getDeletedEventIdentifiers(),
   ]);
+
   const activeEvents = (events || []).filter((e) => {
     if (e.id && deletedSet.has(e.id.toLowerCase().trim())) return false;
     if (e.slug && deletedSet.has(e.slug.toLowerCase().trim())) return false;
     if (e.title && deletedSet.has(e.title.toLowerCase().trim())) return false;
     return true;
   });
+
   return NextResponse.json(activeEvents, {
     headers: {
-      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+      "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
       "CDN-Cache-Control": "no-store",
       "Vercel-CDN-Cache-Control": "no-store",
     },
@@ -80,40 +84,44 @@ export async function GET() {
 
 // POST create a new upcoming event
 export async function POST(request: Request) {
+  if (!validateOrigin(request)) {
+    return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+  }
+
   const admin = await getAuthenticatedAdmin();
   if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   try {
-    const body = await request.json();
-    const {
-      title,
-      eventType,
-      artist,
-      city,
-      country,
-      region,
-      venue,
-      address,
-      date,
-      dateDisplay,
-      time,
-      doors,
-      capacity,
-      status,
-      priceFrom,
-      priceINR,
-      priceUSD,
-      showPrice,
-      isPublished,
-      currency,
-      image,
-      description,
-      detailedAbout,
-      lineup,
-      ticketCategories,
-    } = body;
+    const rawBody = await request.json();
+
+    if (hasProhibitedContent(rawBody)) {
+      return NextResponse.json(
+        { error: "Event content contains prohibited or explicit language." },
+        { status: 400 }
+      );
+    }
+
+    const title = sanitizeString(rawBody.title).slice(0, 200);
+    const city = sanitizeString(rawBody.city).slice(0, 100);
+    const venue = sanitizeString(rawBody.venue).slice(0, 200);
+    const description = sanitizeString(rawBody.description).slice(0, 3000);
+    const detailedAbout = sanitizeString(rawBody.detailedAbout).slice(0, 5000);
+    const artist = sanitizeString(rawBody.artist || "Dj G-Spark").slice(0, 100);
+    const address = sanitizeString(rawBody.address || `${venue}, ${city}`).slice(0, 250);
+    const eventType = sanitizeString(rawBody.eventType || "Arena Concert").slice(0, 100);
+    const status = sanitizeString(rawBody.status || "SELLING FAST").slice(0, 50);
+    const date = sanitizeString(rawBody.date || "2026-11-20").slice(0, 20);
+    const dateDisplay = sanitizeString(rawBody.dateDisplay || "20 NOV 2026").slice(0, 50);
+    const time = sanitizeString(rawBody.time || "20:00 - 02:00 IST").slice(0, 50);
+    const doors = sanitizeString(rawBody.doors || "18:00 IST").slice(0, 50);
+    const capacity = sanitizeString(rawBody.capacity || "25,000").slice(0, 50);
+
+    const imageUrl = rawBody.image?.trim() || "/images/past_event_crowd.jpg";
+    if (!isSafeUrl(imageUrl)) {
+      return NextResponse.json({ error: "Invalid or unsafe image URL" }, { status: 400 });
+    }
 
     if (!title || !city || !venue) {
       return NextResponse.json(
@@ -122,77 +130,75 @@ export async function POST(request: Request) {
       );
     }
 
-    if (hasProhibitedContent(body)) {
-      return NextResponse.json(
-        { error: "Event content contains prohibited or explicit language." },
-        { status: 400 }
-      );
-    }
-
     const events = await readJsonFile<EventData[]>("events.json");
 
     const slug =
-      body.slug?.trim() ||
+      sanitizeString(rawBody.slug)?.replace(/[^a-z0-9-]+/gi, "-").toLowerCase().slice(0, 120) ||
       `${city.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${venue
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")}-2026`;
 
     const statusClass =
-      status?.toLowerCase().replace(/[^a-z0-9]+/g, "-") || "selling-fast";
+      status.toLowerCase().replace(/[^a-z0-9]+/g, "-") || "selling-fast";
 
-    // Format display price string from INR / USD if not explicit
-    let resolvedPriceFrom = priceFrom;
+    let resolvedPriceFrom = sanitizeString(rawBody.priceFrom);
     if (!resolvedPriceFrom) {
-      if (priceINR && priceUSD) {
-        resolvedPriceFrom = `₹ ${String(priceINR).replace(/[^0-9,]/g, "")} / $ ${String(priceUSD).replace(/[^0-9,]/g, "")}`;
-      } else if (priceINR) {
-        resolvedPriceFrom = `₹ ${String(priceINR).replace(/[^0-9,]/g, "")}`;
-      } else if (priceUSD) {
-        resolvedPriceFrom = `$ ${String(priceUSD).replace(/[^0-9,]/g, "")}`;
+      if (rawBody.priceINR && rawBody.priceUSD) {
+        resolvedPriceFrom = `₹ ${String(rawBody.priceINR).replace(/[^0-9,]/g, "")} / $ ${String(rawBody.priceUSD).replace(/[^0-9,]/g, "")}`;
+      } else if (rawBody.priceINR) {
+        resolvedPriceFrom = `₹ ${String(rawBody.priceINR).replace(/[^0-9,]/g, "")}`;
+      } else if (rawBody.priceUSD) {
+        resolvedPriceFrom = `$ ${String(rawBody.priceUSD).replace(/[^0-9,]/g, "")}`;
       } else {
         resolvedPriceFrom = "By VIP Reservation";
       }
     }
 
+    const safeId = `EV-${city.toUpperCase().replace(/[^A-Z0-9]+/g, "-")}-${Date.now().toString().slice(-4)}`;
+
     const newEvent: EventData = {
-      id: body.id || `EV-${city.toUpperCase().replace(/[^A-Z0-9]+/g, "-")}-${Date.now().toString().slice(-4)}`,
+      id: safeId,
       slug,
       title,
-      eventType: eventType || "Arena Concert",
-      artist: artist || "Dj G-Spark",
+      eventType,
+      artist,
       city,
-      country: country || "INDIA",
-      region: region || "india",
+      country: sanitizeString(rawBody.country || "INDIA").slice(0, 50),
+      region: sanitizeString(rawBody.region || "india").slice(0, 50),
       venue,
-      address: address || `${venue}, ${city}`,
-      date: date || "2026-11-20",
-      dateDisplay: dateDisplay || "20 NOV 2026",
-      time: time || "20:00 - 02:00 IST",
-      doors: doors || "18:00 IST",
-      capacity: capacity || "25,000",
-      status: status || "SELLING FAST",
+      address,
+      date,
+      dateDisplay,
+      time,
+      doors,
+      capacity,
+      status,
       statusClass,
       priceFrom: resolvedPriceFrom,
-      priceINR: priceINR || "",
-      priceUSD: priceUSD || "",
-      showPrice: showPrice !== undefined ? Boolean(showPrice) : false,
-      isPublished: isPublished !== undefined ? Boolean(isPublished) : true,
-      currency: currency || "BOTH",
-      image: image || "/images/past_event_crowd.jpg",
+      priceINR: rawBody.priceINR ? String(rawBody.priceINR).slice(0, 20) : "",
+      priceUSD: rawBody.priceUSD ? String(rawBody.priceUSD).slice(0, 20) : "",
+      showPrice: rawBody.showPrice !== undefined ? Boolean(rawBody.showPrice) : false,
+      isPublished: rawBody.isPublished !== undefined ? Boolean(rawBody.isPublished) : true,
+      currency: rawBody.currency || "BOTH",
+      image: imageUrl,
       description: description || `Dj G-Spark Live Concert in ${city} at ${venue}.`,
       detailedAbout: detailedAbout || description || "",
-      lineup: Array.isArray(lineup)
-        ? lineup
-        : typeof lineup === "string"
-        ? lineup.split(",").map((s) => s.trim())
+      lineup: Array.isArray(rawBody.lineup)
+        ? rawBody.lineup.map((l: any) => sanitizeString(l).slice(0, 100)).filter(Boolean)
         : [artist || "Dj G-Spark (Headliner Extended Set)"],
-      ticketCategories: Array.isArray(ticketCategories) ? ticketCategories : undefined,
     };
 
-    // Prepend new event so it shows immediately at the top of the events list
     events.unshift(newEvent);
     await writeJsonFile("events.json", events);
     await unmarkDeletedEvent([newEvent.id, newEvent.slug, newEvent.title]);
+
+    await logAdminAction({
+      action: "CREATE_EVENT",
+      adminEmail: admin.email,
+      resource: newEvent.id,
+      status: "SUCCESS",
+      details: { title: newEvent.title, city: newEvent.city },
+    });
 
     try {
       revalidatePath("/", "layout");
@@ -217,20 +223,24 @@ export async function POST(request: Request) {
 
 // PUT edit an existing event
 export async function PUT(request: Request) {
+  if (!validateOrigin(request)) {
+    return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+  }
+
   const admin = await getAuthenticatedAdmin();
   if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   try {
-    const body = await request.json();
-    const { id } = body;
+    const rawBody = await request.json();
+    const { id } = rawBody;
 
     if (!id) {
       return NextResponse.json({ error: "Event ID is required" }, { status: 400 });
     }
 
-    if (hasProhibitedContent(body)) {
+    if (hasProhibitedContent(rawBody)) {
       return NextResponse.json(
         { error: "Event content contains prohibited or explicit language." },
         { status: 400 }
@@ -246,10 +256,10 @@ export async function PUT(request: Request) {
 
     const current = events[index];
 
-    let resolvedPriceFrom = body.priceFrom ?? current.priceFrom;
-    if (body.priceINR !== undefined || body.priceUSD !== undefined) {
-      const inrVal = body.priceINR ?? current.priceINR;
-      const usdVal = body.priceUSD ?? current.priceUSD;
+    let resolvedPriceFrom = rawBody.priceFrom ? sanitizeString(rawBody.priceFrom) : current.priceFrom;
+    if (rawBody.priceINR !== undefined || rawBody.priceUSD !== undefined) {
+      const inrVal = rawBody.priceINR ?? current.priceINR;
+      const usdVal = rawBody.priceUSD ?? current.priceUSD;
       if (inrVal && usdVal) {
         resolvedPriceFrom = `₹ ${String(inrVal).replace(/[^0-9,]/g, "")} / $ ${String(usdVal).replace(/[^0-9,]/g, "")}`;
       } else if (inrVal) {
@@ -259,44 +269,54 @@ export async function PUT(request: Request) {
       }
     }
 
+    const safeImage = rawBody.image ? rawBody.image.trim() : current.image;
+    if (!isSafeUrl(safeImage)) {
+      return NextResponse.json({ error: "Invalid image URL" }, { status: 400 });
+    }
+
     events[index] = {
       ...current,
-      title: body.title ?? current.title,
-      eventType: body.eventType ?? current.eventType ?? "Arena Concert",
-      artist: body.artist ?? current.artist ?? "Dj G-Spark",
-      slug: body.slug ?? current.slug,
-      city: body.city ?? current.city,
-      country: body.country ?? current.country,
-      region: body.region ?? current.region,
-      venue: body.venue ?? current.venue,
-      address: body.address ?? current.address,
-      date: body.date ?? current.date,
-      dateDisplay: body.dateDisplay ?? current.dateDisplay,
-      time: body.time ?? current.time,
-      doors: body.doors ?? current.doors,
-      capacity: body.capacity ?? current.capacity,
-      status: body.status ?? current.status,
-      statusClass: body.status
-        ? body.status.toLowerCase().replace(/[^a-z0-9]+/g, "-")
+      title: rawBody.title ? sanitizeString(rawBody.title).slice(0, 200) : current.title,
+      eventType: rawBody.eventType ? sanitizeString(rawBody.eventType).slice(0, 100) : current.eventType,
+      artist: rawBody.artist ? sanitizeString(rawBody.artist).slice(0, 100) : current.artist,
+      slug: rawBody.slug ? sanitizeString(rawBody.slug).replace(/[^a-z0-9-]+/gi, "-").toLowerCase().slice(0, 120) : current.slug,
+      city: rawBody.city ? sanitizeString(rawBody.city).slice(0, 100) : current.city,
+      country: rawBody.country ? sanitizeString(rawBody.country).slice(0, 50) : current.country,
+      region: rawBody.region ? sanitizeString(rawBody.region).slice(0, 50) : current.region,
+      venue: rawBody.venue ? sanitizeString(rawBody.venue).slice(0, 200) : current.venue,
+      address: rawBody.address ? sanitizeString(rawBody.address).slice(0, 250) : current.address,
+      date: rawBody.date ? sanitizeString(rawBody.date).slice(0, 20) : current.date,
+      dateDisplay: rawBody.dateDisplay ? sanitizeString(rawBody.dateDisplay).slice(0, 50) : current.dateDisplay,
+      time: rawBody.time ? sanitizeString(rawBody.time).slice(0, 50) : current.time,
+      doors: rawBody.doors ? sanitizeString(rawBody.doors).slice(0, 50) : current.doors,
+      capacity: rawBody.capacity ? sanitizeString(rawBody.capacity).slice(0, 50) : current.capacity,
+      status: rawBody.status ? sanitizeString(rawBody.status).slice(0, 50) : current.status,
+      statusClass: rawBody.status
+        ? sanitizeString(rawBody.status).toLowerCase().replace(/[^a-z0-9]+/g, "-")
         : current.statusClass,
       priceFrom: resolvedPriceFrom,
-      priceINR: body.priceINR ?? current.priceINR,
-      priceUSD: body.priceUSD ?? current.priceUSD,
-      showPrice: body.showPrice !== undefined ? Boolean(body.showPrice) : (current.showPrice ?? true),
-      isPublished: body.isPublished !== undefined ? Boolean(body.isPublished) : (current.isPublished ?? true),
-      currency: body.currency ?? current.currency,
-      image: body.image ?? current.image,
-      description: body.description ?? current.description,
-      detailedAbout: body.detailedAbout ?? current.detailedAbout,
-      lineup: Array.isArray(body.lineup)
-        ? body.lineup
-        : typeof body.lineup === "string"
-        ? body.lineup.split(",").map((s: string) => s.trim())
+      priceINR: rawBody.priceINR ? String(rawBody.priceINR).slice(0, 20) : current.priceINR,
+      priceUSD: rawBody.priceUSD ? String(rawBody.priceUSD).slice(0, 20) : current.priceUSD,
+      showPrice: rawBody.showPrice !== undefined ? Boolean(rawBody.showPrice) : current.showPrice,
+      isPublished: rawBody.isPublished !== undefined ? Boolean(rawBody.isPublished) : current.isPublished,
+      currency: rawBody.currency || current.currency,
+      image: safeImage,
+      description: rawBody.description ? sanitizeString(rawBody.description).slice(0, 3000) : current.description,
+      detailedAbout: rawBody.detailedAbout ? sanitizeString(rawBody.detailedAbout).slice(0, 5000) : current.detailedAbout,
+      lineup: Array.isArray(rawBody.lineup)
+        ? rawBody.lineup.map((l: any) => sanitizeString(l).slice(0, 100)).filter(Boolean)
         : current.lineup,
-      ticketCategories: body.ticketCategories ?? current.ticketCategories,
     };
 
     await writeJsonFile("events.json", events);
+
+    await logAdminAction({
+      action: "UPDATE_EVENT",
+      adminEmail: admin.email,
+      resource: id,
+      status: "SUCCESS",
+      details: { title: events[index].title },
+    });
 
     try {
       revalidatePath("/", "layout");
@@ -318,9 +338,13 @@ export async function PUT(request: Request) {
 
 // DELETE an event
 export async function DELETE(request: Request) {
+  if (!validateOrigin(request)) {
+    return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+  }
+
   const admin = await getAuthenticatedAdmin();
   if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   try {
@@ -334,6 +358,14 @@ export async function DELETE(request: Request) {
     }
 
     await purgeEventEverywhere(id, slug, title);
+
+    await logAdminAction({
+      action: "DELETE_EVENT",
+      adminEmail: admin.email,
+      resource: id,
+      status: "SUCCESS",
+      details: { slug, title },
+    });
 
     try {
       revalidatePath("/", "layout");

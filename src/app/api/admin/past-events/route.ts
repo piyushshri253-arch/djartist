@@ -8,6 +8,8 @@ import {
   purgeEventEverywhere,
   unmarkDeletedEvent,
 } from "@/lib/serverData";
+import { sanitizeString, isSafeUrl, validateOrigin, unauthorizedResponse } from "@/lib/security";
+import { logAdminAction } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -42,7 +44,7 @@ export interface PastEventData {
 export async function GET() {
   const admin = await getAuthenticatedAdmin();
   if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   const [pastEvents, deletedSet] = await Promise.all([
@@ -66,31 +68,36 @@ export async function GET() {
 
 // POST create a past event recap
 export async function POST(request: Request) {
+  if (!validateOrigin(request)) {
+    return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+  }
+
   const admin = await getAuthenticatedAdmin();
   if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   try {
-    const body = await request.json();
-    if (hasProhibitedContent(body)) {
+    const rawBody = await request.json();
+    if (hasProhibitedContent(rawBody)) {
       return NextResponse.json({ error: "Content contains prohibited or explicit language." }, { status: 400 });
     }
-    const {
-      title,
-      year,
-      city,
-      country,
-      venue,
-      date,
-      dateDisplay,
-      attendance,
-      image,
-      excerpt,
-      description,
-      highlights,
-      tracklist,
-    } = body;
+
+    const title = sanitizeString(rawBody.title).slice(0, 200);
+    const city = sanitizeString(rawBody.city).slice(0, 100);
+    const year = sanitizeString(rawBody.year || "2026").slice(0, 10);
+    const country = sanitizeString(rawBody.country || "INDIA").slice(0, 50);
+    const venue = sanitizeString(rawBody.venue || `${city} Mainstage Arena`).slice(0, 200);
+    const date = sanitizeString(rawBody.date || `${year}-12-01`).slice(0, 20);
+    const dateDisplay = sanitizeString(rawBody.dateDisplay || `DEC ${year}`).slice(0, 50);
+    const attendance = sanitizeString(rawBody.attendance || "40,000+ Fans").slice(0, 50);
+    const excerpt = sanitizeString(rawBody.excerpt || `Legendary concert night in ${city}.`).slice(0, 500);
+    const description = sanitizeString(rawBody.description || `Dj G-Spark delivered an unforgettable headline set in ${city}.`).slice(0, 3000);
+
+    const imageUrl = rawBody.image?.trim() || "/images/past_event_crowd.jpg";
+    if (!isSafeUrl(imageUrl)) {
+      return NextResponse.json({ error: "Invalid image URL" }, { status: 400 });
+    }
 
     if (!title || !city || !year) {
       return NextResponse.json({ error: "Title, city, and year are required" }, { status: 400 });
@@ -99,38 +106,42 @@ export async function POST(request: Request) {
     const pastEvents = await readJsonFile<PastEventData[]>("past-events.json");
 
     const slug =
-      body.slug?.trim() ||
+      sanitizeString(rawBody.slug)?.replace(/[^a-z0-9-]+/gi, "-").toLowerCase().slice(0, 120) ||
       `${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${year}`;
 
     const newPastEvent: PastEventData = {
-      id: `PAST-${city.toUpperCase().replace(/[^A-Z0-9]+/g, "-")}-${year}`,
+      id: `PAST-${city.toUpperCase().replace(/[^A-Z0-9]+/g, "-")}-${year}-${Date.now().toString().slice(-4)}`,
       slug,
       title,
       year: String(year),
       city,
-      country: country || "INDIA",
-      venue: venue || `${city} Mainstage Arena`,
-      date: date || `${year}-12-01`,
-      dateDisplay: dateDisplay || `DEC ${year}`,
-      attendance: attendance || "40,000+ Fans",
-      image: image || "/images/past_event_crowd.jpg",
-      excerpt: excerpt || `Legendary concert night in ${city}.`,
-      description: description || `Dj G-Spark delivered an unforgettable headline set in ${city}.`,
-      highlights: Array.isArray(highlights)
-        ? highlights
-        : typeof highlights === "string"
-        ? highlights.split("\n").map((s) => s.trim()).filter(Boolean)
+      country,
+      venue,
+      date,
+      dateDisplay,
+      attendance,
+      image: imageUrl,
+      excerpt,
+      description,
+      highlights: Array.isArray(rawBody.highlights)
+        ? rawBody.highlights.map((h: any) => sanitizeString(h).slice(0, 150)).filter(Boolean)
         : ["Full stadium attendance", "Volumetric laser show"],
-      tracklist: Array.isArray(tracklist)
-        ? tracklist
-        : typeof tracklist === "string"
-        ? tracklist.split("\n").map((s) => s.trim()).filter(Boolean)
+      tracklist: Array.isArray(rawBody.tracklist)
+        ? rawBody.tracklist.map((t: any) => sanitizeString(t).slice(0, 150)).filter(Boolean)
         : ["01. Dj G-Spark - Spark Theory (Live Intro VIP)"],
     };
 
     pastEvents.unshift(newPastEvent);
     await writeJsonFile("past-events.json", pastEvents);
     await unmarkDeletedEvent([newPastEvent.id, newPastEvent.slug, newPastEvent.title]);
+
+    await logAdminAction({
+      action: "CREATE_EVENT",
+      adminEmail: admin.email,
+      resource: newPastEvent.id,
+      status: "SUCCESS",
+      details: { title: newPastEvent.title, type: "past_event" },
+    });
 
     try {
       revalidatePath("/", "layout");
@@ -149,17 +160,21 @@ export async function POST(request: Request) {
 
 // PUT edit an existing past event
 export async function PUT(request: Request) {
+  if (!validateOrigin(request)) {
+    return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+  }
+
   const admin = await getAuthenticatedAdmin();
   if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   try {
-    const body = await request.json();
-    if (hasProhibitedContent(body)) {
+    const rawBody = await request.json();
+    if (hasProhibitedContent(rawBody)) {
       return NextResponse.json({ error: "Content contains prohibited or explicit language." }, { status: 400 });
     }
-    const { id } = body;
+    const { id } = rawBody;
 
     if (!id) {
       return NextResponse.json({ error: "Past event ID is required" }, { status: 400 });
@@ -173,33 +188,42 @@ export async function PUT(request: Request) {
     }
 
     const current = pastEvents[index];
+    const safeImage = rawBody.image ? rawBody.image.trim() : current.image;
+    if (!isSafeUrl(safeImage)) {
+      return NextResponse.json({ error: "Invalid image URL" }, { status: 400 });
+    }
+
     pastEvents[index] = {
       ...current,
-      title: body.title ?? current.title,
-      slug: body.slug ?? current.slug,
-      year: body.year ? String(body.year) : current.year,
-      city: body.city ?? current.city,
-      country: body.country ?? current.country,
-      venue: body.venue ?? current.venue,
-      date: body.date ?? current.date,
-      dateDisplay: body.dateDisplay ?? current.dateDisplay,
-      attendance: body.attendance ?? current.attendance,
-      image: body.image ?? current.image,
-      excerpt: body.excerpt ?? current.excerpt,
-      description: body.description ?? current.description,
-      highlights: Array.isArray(body.highlights)
-        ? body.highlights
-        : typeof body.highlights === "string"
-        ? body.highlights.split("\n").map((s: string) => s.trim()).filter(Boolean)
+      title: rawBody.title ? sanitizeString(rawBody.title).slice(0, 200) : current.title,
+      slug: rawBody.slug ? sanitizeString(rawBody.slug).replace(/[^a-z0-9-]+/gi, "-").toLowerCase().slice(0, 120) : current.slug,
+      year: rawBody.year ? sanitizeString(String(rawBody.year)).slice(0, 10) : current.year,
+      city: rawBody.city ? sanitizeString(rawBody.city).slice(0, 100) : current.city,
+      country: rawBody.country ? sanitizeString(rawBody.country).slice(0, 50) : current.country,
+      venue: rawBody.venue ? sanitizeString(rawBody.venue).slice(0, 200) : current.venue,
+      date: rawBody.date ? sanitizeString(rawBody.date).slice(0, 20) : current.date,
+      dateDisplay: rawBody.dateDisplay ? sanitizeString(rawBody.dateDisplay).slice(0, 50) : current.dateDisplay,
+      attendance: rawBody.attendance ? sanitizeString(rawBody.attendance).slice(0, 50) : current.attendance,
+      image: safeImage,
+      excerpt: rawBody.excerpt ? sanitizeString(rawBody.excerpt).slice(0, 500) : current.excerpt,
+      description: rawBody.description ? sanitizeString(rawBody.description).slice(0, 3000) : current.description,
+      highlights: Array.isArray(rawBody.highlights)
+        ? rawBody.highlights.map((s: any) => sanitizeString(s).slice(0, 150)).filter(Boolean)
         : current.highlights,
-      tracklist: Array.isArray(body.tracklist)
-        ? body.tracklist
-        : typeof body.tracklist === "string"
-        ? body.tracklist.split("\n").map((s: string) => s.trim()).filter(Boolean)
+      tracklist: Array.isArray(rawBody.tracklist)
+        ? rawBody.tracklist.map((s: any) => sanitizeString(s).slice(0, 150)).filter(Boolean)
         : current.tracklist,
     };
 
     await writeJsonFile("past-events.json", pastEvents);
+
+    await logAdminAction({
+      action: "UPDATE_EVENT",
+      adminEmail: admin.email,
+      resource: id,
+      status: "SUCCESS",
+      details: { title: pastEvents[index].title, type: "past_event" },
+    });
 
     try {
       revalidatePath("/", "layout");
@@ -218,9 +242,13 @@ export async function PUT(request: Request) {
 
 // DELETE a past event
 export async function DELETE(request: Request) {
+  if (!validateOrigin(request)) {
+    return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+  }
+
   const admin = await getAuthenticatedAdmin();
   if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   try {
@@ -234,6 +262,14 @@ export async function DELETE(request: Request) {
     }
 
     await purgeEventEverywhere(id, slug, title);
+
+    await logAdminAction({
+      action: "DELETE_EVENT",
+      adminEmail: admin.email,
+      resource: id,
+      status: "SUCCESS",
+      details: { slug, title, type: "past_event" },
+    });
 
     try {
       revalidatePath("/", "layout");

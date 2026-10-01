@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { readJsonFile, writeJsonFile } from "@/lib/serverData";
 import { GalleryItem } from "@/types";
 import { getAuthenticatedAdmin } from "@/lib/auth";
+import { sanitizeString, isSafeUrl, validateOrigin, unauthorizedResponse } from "@/lib/security";
+import { logAdminAction } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
 
@@ -10,7 +12,7 @@ export async function GET() {
   try {
     const admin = await getAuthenticatedAdmin();
     if (!admin) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorizedResponse();
     }
 
     const items = (await readJsonFile<GalleryItem[]>("gallery.json")) || [];
@@ -34,10 +36,14 @@ function hasProhibitedContent(obj: any): boolean {
 
 // POST: Add new gallery photo
 export async function POST(req: Request) {
+  if (!validateOrigin(req)) {
+    return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+  }
+
   try {
     const admin = await getAuthenticatedAdmin();
     if (!admin) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorizedResponse();
     }
 
     const body = await req.json();
@@ -50,6 +56,10 @@ export async function POST(req: Request) {
       );
     }
 
+    if (!isSafeUrl(src)) {
+      return NextResponse.json({ error: "Invalid image source URL" }, { status: 400 });
+    }
+
     if (hasProhibitedContent(body)) {
       return NextResponse.json(
         { error: "Content contains prohibited or explicit language." },
@@ -58,19 +68,29 @@ export async function POST(req: Request) {
     }
 
     const items = (await readJsonFile<GalleryItem[]>("gallery.json")) || [];
+    const cleanTitle = sanitizeString(title).slice(0, 150);
+    const cleanSubtitle = sanitizeString(subtitle || "Live Performance").slice(0, 150);
+    const cleanCategory = ["live", "festivals", "backstage"].includes(category) ? category : "live";
+
     const newItem: GalleryItem = {
       id: `gal-${Date.now()}`,
       src: src.trim(),
-      title: title.trim(),
-      subtitle: subtitle ? subtitle.trim() : "Live Performance",
-      category: ["live", "festivals", "backstage"].includes(category)
-        ? category
-        : "live",
+      title: cleanTitle,
+      subtitle: cleanSubtitle,
+      category: cleanCategory,
       createdAt: new Date().toISOString(),
     };
 
     items.unshift(newItem);
     await writeJsonFile("gallery.json", items);
+
+    await logAdminAction({
+      action: "UPLOAD_IMAGE",
+      adminEmail: admin.email,
+      resource: newItem.id,
+      status: "SUCCESS",
+      details: { title: newItem.title },
+    });
 
     return NextResponse.json({ success: true, item: newItem }, { status: 201 });
   } catch (error) {
@@ -81,10 +101,14 @@ export async function POST(req: Request) {
 
 // DELETE: Remove a gallery photo by ID
 export async function DELETE(req: Request) {
+  if (!validateOrigin(req)) {
+    return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+  }
+
   try {
     const admin = await getAuthenticatedAdmin();
     if (!admin) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorizedResponse();
     }
 
     const { searchParams } = new URL(req.url);
@@ -109,6 +133,14 @@ export async function DELETE(req: Request) {
     }
 
     await writeJsonFile("gallery.json", filtered);
+
+    await logAdminAction({
+      action: "DELETE_IMAGE",
+      adminEmail: admin.email,
+      resource: id,
+      status: "SUCCESS",
+    });
+
     return NextResponse.json({ success: true, message: "Photo deleted successfully" });
   } catch (error) {
     console.error("Admin gallery delete error:", error);
@@ -118,10 +150,14 @@ export async function DELETE(req: Request) {
 
 // PUT: Edit existing gallery photo
 export async function PUT(req: Request) {
+  if (!validateOrigin(req)) {
+    return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+  }
+
   try {
     const admin = await getAuthenticatedAdmin();
     if (!admin) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorizedResponse();
     }
 
     const body = await req.json();
@@ -132,6 +168,10 @@ export async function PUT(req: Request) {
         { error: "Photo ID, image source, and title are required" },
         { status: 400 }
       );
+    }
+
+    if (!isSafeUrl(src)) {
+      return NextResponse.json({ error: "Invalid image source URL" }, { status: 400 });
     }
 
     if (hasProhibitedContent(body)) {
@@ -148,14 +188,18 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: "Photo not found" }, { status: 404 });
     }
 
+    const cleanTitle = sanitizeString(title).slice(0, 150);
+    const cleanSubtitle = sanitizeString(subtitle || items[index].subtitle).slice(0, 150);
+    const cleanCategory = ["live", "festivals", "backstage"].includes(category)
+      ? category
+      : items[index].category || "live";
+
     const updatedItem: GalleryItem = {
       ...items[index],
       src: src.trim(),
-      title: title.trim(),
-      subtitle: subtitle ? subtitle.trim() : items[index].subtitle,
-      category: ["live", "festivals", "backstage"].includes(category)
-        ? category
-        : items[index].category || "live",
+      title: cleanTitle,
+      subtitle: cleanSubtitle,
+      category: cleanCategory,
     };
 
     items[index] = updatedItem;
@@ -167,4 +211,3 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: "Failed to update gallery photo" }, { status: 500 });
   }
 }
-

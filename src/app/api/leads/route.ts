@@ -74,9 +74,7 @@ export async function GET() {
   });
 }
 
-const PABBLY_WEBHOOK_URL =
-  process.env.WHATSAPP_WEBHOOK_URL ||
-  "https://connect.pabbly.com/webhook-listener/webhook/IjU3NjMwNTZmMDYzMDA0MzI1MjY4NTUzNCI_3D_pc/IjU3NjcwNTY4MDYzMzA0M2M1MjZkNTUzNzUxMzci_pc";
+const PABBLY_WEBHOOK_URL = process.env.WHATSAPP_WEBHOOK_URL || "";
 
 export async function POST(req: Request) {
   try {
@@ -234,20 +232,24 @@ export async function POST(req: Request) {
     }
 
     // 2. Automatic dispatch to Pabbly Webhook (redundancy backup)
-    try {
-      const webhookRes = await fetch(PABBLY_WEBHOOK_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(webhookPayload),
-      });
-      if (webhookRes.ok) {
-        newLead.webhookStatus = "delivered";
-      } else {
-        newLead.webhookStatus = `http_${webhookRes.status}`;
+    if (PABBLY_WEBHOOK_URL) {
+      try {
+        const webhookRes = await fetch(PABBLY_WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(webhookPayload),
+        });
+        if (webhookRes.ok) {
+          newLead.webhookStatus = "delivered";
+        } else {
+          newLead.webhookStatus = `http_${webhookRes.status}`;
+        }
+      } catch (e: any) {
+        console.error("Pabbly WhatsApp webhook dispatch error:", e?.message || e);
+        newLead.webhookStatus = "failed";
       }
-    } catch (e: any) {
-      console.error("Pabbly WhatsApp webhook dispatch error:", e?.message || e);
-      newLead.webhookStatus = "failed";
+    } else {
+      newLead.webhookStatus = "skipped_not_configured";
     }
 
     leads.unshift(newLead);

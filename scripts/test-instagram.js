@@ -1,7 +1,7 @@
 const crypto = require("crypto");
 
 // 1. Test AES-256-GCM Encryption / Decryption
-const ENCRYPTION_KEY_RAW = process.env.SESSION_SECRET || "spark-super-secret-key-dj-2026-prod-instagram";
+const ENCRYPTION_KEY_RAW = process.env.TEST_ENCRYPTION_KEY || crypto.randomBytes(32).toString("hex");
 const ENCRYPTION_KEY = crypto.createHash("sha256").update(ENCRYPTION_KEY_RAW).digest();
 
 function encryptToken(plainText) {

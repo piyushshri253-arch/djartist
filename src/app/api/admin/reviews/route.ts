@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { readJsonFile, writeJsonFile } from "@/lib/serverData";
 import { getAuthenticatedAdmin } from "@/lib/auth";
 import { ReviewItem } from "@/types";
+import { validateOrigin, unauthorizedResponse } from "@/lib/security";
+import { logAdminAction } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
 
@@ -9,7 +11,7 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   const admin = await getAuthenticatedAdmin();
   if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   try {
@@ -42,9 +44,13 @@ export async function GET() {
 
 // Admin PUT: Moderate review status (approve or reject)
 export async function PUT(req: Request) {
+  if (!validateOrigin(req)) {
+    return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+  }
+
   const admin = await getAuthenticatedAdmin();
   if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   try {
@@ -71,6 +77,14 @@ export async function PUT(req: Request) {
     reviews[index].status = status;
     await writeJsonFile("reviews.json", reviews);
 
+    await logAdminAction({
+      action: "MODERATE_REVIEW",
+      adminEmail: admin.email,
+      resource: id,
+      status: "SUCCESS",
+      details: { newStatus: status },
+    });
+
     return NextResponse.json({
       success: true,
       message: `Review marked as ${status}`,
@@ -87,9 +101,13 @@ export async function PUT(req: Request) {
 
 // Admin DELETE: Remove review permanently
 export async function DELETE(req: Request) {
+  if (!validateOrigin(req)) {
+    return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+  }
+
   const admin = await getAuthenticatedAdmin();
   if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   try {
@@ -108,6 +126,14 @@ export async function DELETE(req: Request) {
 
     await writeJsonFile("reviews.json", updated);
 
+    await logAdminAction({
+      action: "MODERATE_REVIEW",
+      adminEmail: admin.email,
+      resource: id,
+      status: "SUCCESS",
+      details: { action: "delete_review" },
+    });
+
     return NextResponse.json({
       success: true,
       message: "Review permanently deleted",
@@ -120,4 +146,3 @@ export async function DELETE(req: Request) {
     );
   }
 }
-

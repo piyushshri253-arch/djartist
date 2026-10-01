@@ -3,11 +3,22 @@ import fs from "fs";
 import path from "path";
 import { InstagramDatabase, InstagramConnection, InstagramReel, SocialMediaSettings } from "@/types";
 
-const ENCRYPTION_KEY_RAW = process.env.INSTAGRAM_ENCRYPTION_KEY || process.env.SESSION_SECRET || "spark-super-secret-key-dj-2026-prod-instagram";
-// Derive a strictly 32-byte key for AES-256-GCM
-const ENCRYPTION_KEY = crypto.createHash("sha256").update(ENCRYPTION_KEY_RAW).digest();
+function getEncryptionKey(): Buffer {
+  const raw = process.env.INSTAGRAM_ENCRYPTION_KEY || process.env.SESSION_SECRET;
+  if (!raw && process.env.NODE_ENV === "production") {
+    throw new Error("[SECURITY CRITICAL] INSTAGRAM_ENCRYPTION_KEY or SESSION_SECRET must be set in production.");
+  }
+  return crypto.createHash("sha256").update(raw || "dev-ig-key-fallback").digest();
+}
 
-const STATE_SECRET = process.env.INSTAGRAM_STATE_SECRET || "spark-instagram-oauth-state-secret-2026";
+function getStateSecret(): string {
+  const raw = process.env.INSTAGRAM_STATE_SECRET || process.env.SESSION_SECRET;
+  if (!raw && process.env.NODE_ENV === "production") {
+    throw new Error("[SECURITY CRITICAL] INSTAGRAM_STATE_SECRET or SESSION_SECRET must be set in production.");
+  }
+  return raw || "dev-ig-state-fallback";
+}
+
 const DATA_FILE_PATH = path.join(process.cwd(), "src", "data", "instagram.json");
 
 /**
@@ -15,7 +26,7 @@ const DATA_FILE_PATH = path.join(process.cwd(), "src", "data", "instagram.json")
  */
 export function encryptToken(plainText: string): { encrypted: string; iv: string; tag: string } {
   const iv = crypto.randomBytes(12); // 96-bit IV recommended for GCM
-  const cipher = crypto.createCipheriv("aes-256-gcm", ENCRYPTION_KEY, iv);
+  const cipher = crypto.createCipheriv("aes-256-gcm", getEncryptionKey(), iv);
   let encrypted = cipher.update(plainText, "utf8", "hex");
   encrypted += cipher.final("hex");
   const tag = cipher.getAuthTag().toString("hex");
@@ -34,7 +45,7 @@ export function decryptToken(encryptedHex: string, ivHex: string, tagHex: string
   try {
     const iv = Buffer.from(ivHex, "hex");
     const tag = Buffer.from(tagHex, "hex");
-    const decipher = crypto.createDecipheriv("aes-256-gcm", ENCRYPTION_KEY, iv);
+    const decipher = crypto.createDecipheriv("aes-256-gcm", getEncryptionKey(), iv);
     decipher.setAuthTag(tag);
     let decrypted = decipher.update(encryptedHex, "hex", "utf8");
     decrypted += decipher.final("utf8");
@@ -52,7 +63,7 @@ export function generateOAuthState(): { state: string; signedCookie: string } {
   const nonce = crypto.randomBytes(16).toString("hex");
   const timestamp = Date.now();
   const payload = `${nonce}:${timestamp}`;
-  const signature = crypto.createHmac("sha256", STATE_SECRET).update(payload).digest("hex");
+  const signature = crypto.createHmac("sha256", getStateSecret()).update(payload).digest("hex");
   const signedCookie = `${payload}:${signature}`;
   const state = Buffer.from(signedCookie).toString("base64url");
 
@@ -81,7 +92,7 @@ export function verifyOAuthState(stateParam: string | null, cookieValue: string 
     }
 
     const payload = `${nonce}:${timestamp}`;
-    const expectedSig = crypto.createHmac("sha256", STATE_SECRET).update(payload).digest("hex");
+    const expectedSig = crypto.createHmac("sha256", getStateSecret()).update(payload).digest("hex");
 
     return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSig));
   } catch {

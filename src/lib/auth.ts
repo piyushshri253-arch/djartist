@@ -10,11 +10,22 @@ export interface AdminUser {
   permissions: string[];
 }
 
+// Global in-memory session version for instant multi-device revocation ("Logout from all devices")
+let currentSessionVersion = 1;
+
+export function revokeAllSessions(): void {
+  currentSessionVersion += 1;
+}
+
+export function getCurrentSessionVersion(): number {
+  return currentSessionVersion;
+}
+
 function getSessionSecret(): string {
   const secret = process.env.SESSION_SECRET;
   if (!secret) {
     if (process.env.NODE_ENV === "production") {
-      console.warn("[SECURITY WARNING] SESSION_SECRET is not set in production. Using derived key.");
+      throw new Error("[SECURITY CRITICAL] SESSION_SECRET must be configured in production environment variables.");
     }
     return "spark-session-secret-hardened-2026-fallback-salt";
   }
@@ -22,21 +33,58 @@ function getSessionSecret(): string {
 }
 
 /**
- * Creates a signed token containing user data and expiration timestamp
+ * Validates password strength according to enterprise security policy:
+ * - Minimum 10 characters
+ * - At least one uppercase letter
+ * - At least one lowercase letter
+ * - At least one numeric digit
+ * - At least one special symbol
+ */
+export function validatePasswordPolicy(password: string): { valid: boolean; message?: string } {
+  if (!password || password.length < 10) {
+    return { valid: false, message: "Password must be at least 10 characters long." };
+  }
+  if (!/[A-Z]/.test(password)) {
+    return { valid: false, message: "Password must contain at least one uppercase letter." };
+  }
+  if (!/[a-z]/.test(password)) {
+    return { valid: false, message: "Password must contain at least one lowercase letter." };
+  }
+  if (!/[0-9]/.test(password)) {
+    return { valid: false, message: "Password must contain at least one numeric digit." };
+  }
+  if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) {
+    return { valid: false, message: "Password must contain at least one special character." };
+  }
+  return { valid: true };
+}
+
+/**
+ * Creates a signed token containing user data, session version, and expiration timestamp
  */
 export function createSessionToken(email: string): string {
   const secret = getSessionSecret();
-  const expiresAt = Date.now() + 24 * 60 * 60 * 1000; // 24 hours (hardened from 7 days)
-  const payload = Buffer.from(JSON.stringify({ email, expiresAt })).toString("base64url");
+  const sessionId = crypto.randomBytes(16).toString("hex");
+  const expiresAt = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+  const payload = Buffer.from(
+    JSON.stringify({
+      email,
+      sessionId,
+      sessionVersion: currentSessionVersion,
+      expiresAt,
+    })
+  ).toString("base64url");
+
   const signature = crypto
     .createHmac("sha256", secret)
     .update(payload)
     .digest("base64url");
+
   return `${payload}.${signature}`;
 }
 
 /**
- * Verifies the signed session token and checks expiration
+ * Verifies the signed session token, checks expiration, and validates session version
  */
 export function verifySessionToken(token: string): { valid: boolean; email?: string } {
   try {
@@ -50,7 +98,7 @@ export function verifySessionToken(token: string): { valid: boolean; email?: str
       .update(payload)
       .digest("base64url");
 
-    // Timing-safe signature verification
+    // Timing-safe signature verification to prevent side-channel attacks
     const sigBuffer = Buffer.from(signature);
     const expectedSigBuffer = Buffer.from(expectedSig);
     if (sigBuffer.length !== expectedSigBuffer.length) return { valid: false };
@@ -58,6 +106,11 @@ export function verifySessionToken(token: string): { valid: boolean; email?: str
 
     const data = JSON.parse(Buffer.from(payload, "base64url").toString("utf-8"));
     if (!data.expiresAt || data.expiresAt < Date.now()) {
+      return { valid: false };
+    }
+
+    // Reject tokens created before a session revocation event
+    if (data.sessionVersion && data.sessionVersion < currentSessionVersion) {
       return { valid: false };
     }
 
@@ -154,7 +207,7 @@ export function recordFailedLogin(ip: string): void {
   const record = loginAttempts.get(ip) || { attempts: 0, lockedUntil: 0 };
   record.attempts += 1;
   if (record.attempts >= 5) {
-    record.lockedUntil = now + 15 * 60 * 1000; // 15-minute lock
+    record.lockedUntil = now + 15 * 60 * 1000; // 15-minute lockout
     record.attempts = 0;
   }
   loginAttempts.set(ip, record);

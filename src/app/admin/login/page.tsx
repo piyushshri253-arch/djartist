@@ -91,7 +91,7 @@ export default function AdminLoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@djgspark.com"
+                  placeholder="admin@example.com"
                   className="w-full bg-[#14141c] border border-white/10 rounded-lg px-4 py-3 pl-10 text-sm text-white focus:outline-none focus:border-[#00E5FF] transition-colors placeholder:text-neutral-600 font-sans"
                 />
                 <Mail className="w-4 h-4 text-[#666666] absolute left-3.5 top-1/2 -translate-y-1/2" />

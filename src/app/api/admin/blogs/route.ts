@@ -7,6 +7,8 @@ import {
   purgeBlogEverywhere,
   unmarkDeletedBlog,
 } from "@/lib/serverData";
+import { sanitizeString, isSafeUrl, validateOrigin, unauthorizedResponse } from "@/lib/security";
+import { logAdminAction } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -39,7 +41,7 @@ export interface BlogPostData {
 export async function GET() {
   const admin = await getAuthenticatedAdmin();
   if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   const [blogs, deletedSet] = await Promise.all([
@@ -54,32 +56,51 @@ export async function GET() {
     return true;
   });
 
-  return NextResponse.json(active);
+  return NextResponse.json(active, {
+    headers: {
+      "Cache-Control": "no-store, max-age=0",
+    },
+  });
 }
 
 // POST create a new blog post
 export async function POST(request: Request) {
+  if (!validateOrigin(request)) {
+    return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+  }
+
   const admin = await getAuthenticatedAdmin();
   if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   try {
-    const body = await request.json();
-    const { title, category, excerpt, content, image, author, authorRole, readTime } = body;
+    const rawBody = await request.json();
+    if (hasProhibitedContent(rawBody)) {
+      return NextResponse.json({ error: "Content contains prohibited or explicit language." }, { status: 400 });
+    }
+
+    const title = sanitizeString(rawBody.title).slice(0, 200);
+    const content = sanitizeString(rawBody.content).slice(0, 20000);
+    const category = sanitizeString(rawBody.category || "MUSIC").slice(0, 50);
+    const excerpt = sanitizeString(rawBody.excerpt || title).slice(0, 500);
+    const author = sanitizeString(rawBody.author || "Dj G-Spark").slice(0, 100);
+    const authorRole = sanitizeString(rawBody.authorRole || "Artist & Performer").slice(0, 100);
+    const readTime = sanitizeString(rawBody.readTime || "5 MIN READ").slice(0, 50);
+
+    const imageUrl = rawBody.image?.trim() || "/images/dj_hero.jpg";
+    if (!isSafeUrl(imageUrl)) {
+      return NextResponse.json({ error: "Invalid image URL" }, { status: 400 });
+    }
 
     if (!title || !content) {
       return NextResponse.json({ error: "Title and content are required" }, { status: 400 });
     }
 
-    if (hasProhibitedContent(body)) {
-      return NextResponse.json({ error: "Content contains prohibited or explicit language." }, { status: 400 });
-    }
-
     const blogs = await readJsonFile<BlogPostData[]>("blog.json");
 
     const slug =
-      body.slug?.trim() ||
+      sanitizeString(rawBody.slug)?.replace(/[^a-z0-9-]+/gi, "-").toLowerCase().slice(0, 120) ||
       title
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
@@ -94,22 +115,29 @@ export async function POST(request: Request) {
       id: `BLOG-${Date.now()}`,
       slug,
       title,
-      category: category || "MUSIC",
-      categorySlug: (category || "music").toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+      category,
+      categorySlug: category.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
       date: dateIso,
       dateDisplay,
-      readTime: readTime || "5 MIN READ",
-      author: author || "Dj G-Spark",
-      authorRole: authorRole || "Artist & Performer",
-      image: image || "/images/dj_hero.jpg",
-      excerpt: excerpt || title,
+      readTime,
+      author,
+      authorRole,
+      image: imageUrl,
+      excerpt,
       content,
     };
 
-    // Prepend to list
     blogs.unshift(newPost);
     await writeJsonFile("blog.json", blogs);
     await unmarkDeletedBlog([newPost.id, newPost.slug, newPost.title]);
+
+    await logAdminAction({
+      action: "CREATE_BLOG",
+      adminEmail: admin.email,
+      resource: newPost.id,
+      status: "SUCCESS",
+      details: { title: newPost.title },
+    });
 
     return NextResponse.json({ success: true, post: newPost }, { status: 201 });
   } catch (error) {
@@ -120,21 +148,24 @@ export async function POST(request: Request) {
 
 // PUT edit an existing blog post
 export async function PUT(request: Request) {
+  if (!validateOrigin(request)) {
+    return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+  }
+
   const admin = await getAuthenticatedAdmin();
   if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   try {
-    const body = await request.json();
-    const { id, title, category, excerpt, content, image, author, authorRole, readTime, slug } = body;
-
-    if (!id) {
-      return NextResponse.json({ error: "Post ID is required" }, { status: 400 });
+    const rawBody = await request.json();
+    if (hasProhibitedContent(rawBody)) {
+      return NextResponse.json({ error: "Content contains prohibited or explicit language." }, { status: 400 });
     }
 
-    if (hasProhibitedContent(body)) {
-      return NextResponse.json({ error: "Content contains prohibited or explicit language." }, { status: 400 });
+    const { id } = rawBody;
+    if (!id) {
+      return NextResponse.json({ error: "Post ID is required" }, { status: 400 });
     }
 
     const blogs = await readJsonFile<BlogPostData[]>("blog.json");
@@ -144,21 +175,37 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: "Blog post not found" }, { status: 404 });
     }
 
+    const safeImage = rawBody.image ? rawBody.image.trim() : blogs[index].image;
+    if (!isSafeUrl(safeImage)) {
+      return NextResponse.json({ error: "Invalid image URL" }, { status: 400 });
+    }
+
+    const category = rawBody.category ? sanitizeString(rawBody.category).slice(0, 50) : blogs[index].category;
+
     blogs[index] = {
       ...blogs[index],
-      title: title ?? blogs[index].title,
-      slug: slug ?? blogs[index].slug,
-      category: category ?? blogs[index].category,
-      categorySlug: category ? category.toLowerCase().replace(/[^a-z0-9]+/g, "-") : blogs[index].categorySlug,
-      excerpt: excerpt ?? blogs[index].excerpt,
-      content: content ?? blogs[index].content,
-      image: image ?? blogs[index].image,
-      author: author ?? blogs[index].author,
-      authorRole: authorRole ?? blogs[index].authorRole,
-      readTime: readTime ?? blogs[index].readTime,
+      title: rawBody.title ? sanitizeString(rawBody.title).slice(0, 200) : blogs[index].title,
+      slug: rawBody.slug ? sanitizeString(rawBody.slug).replace(/[^a-z0-9-]+/gi, "-").toLowerCase().slice(0, 120) : blogs[index].slug,
+      category,
+      categorySlug: category.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+      excerpt: rawBody.excerpt ? sanitizeString(rawBody.excerpt).slice(0, 500) : blogs[index].excerpt,
+      content: rawBody.content ? sanitizeString(rawBody.content).slice(0, 20000) : blogs[index].content,
+      image: safeImage,
+      author: rawBody.author ? sanitizeString(rawBody.author).slice(0, 100) : blogs[index].author,
+      authorRole: rawBody.authorRole ? sanitizeString(rawBody.authorRole).slice(0, 100) : blogs[index].authorRole,
+      readTime: rawBody.readTime ? sanitizeString(rawBody.readTime).slice(0, 50) : blogs[index].readTime,
     };
 
     await writeJsonFile("blog.json", blogs);
+
+    await logAdminAction({
+      action: "UPDATE_BLOG",
+      adminEmail: admin.email,
+      resource: id,
+      status: "SUCCESS",
+      details: { title: blogs[index].title },
+    });
+
     return NextResponse.json({ success: true, post: blogs[index] });
   } catch (error) {
     console.error("Edit blog error:", error);
@@ -168,9 +215,13 @@ export async function PUT(request: Request) {
 
 // DELETE a blog post
 export async function DELETE(request: Request) {
+  if (!validateOrigin(request)) {
+    return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+  }
+
   const admin = await getAuthenticatedAdmin();
   if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   try {
@@ -184,6 +235,15 @@ export async function DELETE(request: Request) {
     }
 
     await purgeBlogEverywhere(id, slug, title);
+
+    await logAdminAction({
+      action: "DELETE_BLOG",
+      adminEmail: admin.email,
+      resource: id,
+      status: "SUCCESS",
+      details: { slug, title },
+    });
+
     return NextResponse.json({ success: true, message: "Blog post deleted permanently" });
   } catch (error) {
     console.error("Delete blog error:", error);

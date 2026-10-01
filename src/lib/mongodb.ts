@@ -8,9 +8,10 @@ try {
   // Ignore in environments where setServers is restricted
 }
 
-const uri =
-  process.env.MONGODB_URI ||
-  "mongodb+srv://piyushshri253_db_user:q3nLhTyLn9CvwUeW@cluster0.fcclcik.mongodb.net/dj_g_spark?retryWrites=true&w=majority&appName=Cluster0";
+const uri = process.env.MONGODB_URI || "";
+if (!uri && process.env.NODE_ENV === "production") {
+  console.error("[SECURITY ALERT] MONGODB_URI is not configured in environment variables.");
+}
 
 const mongoOptions = {
   serverSelectionTimeoutMS: 10000,
@@ -24,6 +25,9 @@ declare global {
 }
 
 function getClientPromise(): Promise<MongoClient> {
+  if (!uri) {
+    return Promise.reject(new Error("MONGODB_URI is not configured"));
+  }
   if (!global._mongoClientPromise) {
     const client = new MongoClient(uri, mongoOptions);
     global._mongoClientPromise = client.connect().catch((err) => {

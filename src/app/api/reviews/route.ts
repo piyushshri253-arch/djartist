@@ -134,8 +134,34 @@ export async function GET(req: Request) {
   }
 }
 
+// IP Rate Limiter for public review submissions: max 5 reviews per hour per IP
+const reviewAttempts = new Map<string, { count: number; resetAt: number }>();
+
+function checkReviewRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const record = reviewAttempts.get(ip);
+  if (!record || record.resetAt < now) {
+    reviewAttempts.set(ip, { count: 1, resetAt: now + 60 * 60 * 1000 });
+    return true;
+  }
+  if (record.count >= 5) return false;
+  record.count += 1;
+  return true;
+}
+
 // Public POST: Fans/Readers submit review for moderation
 export async function POST(req: Request) {
+  const forwardedFor = req.headers.get("x-forwarded-for");
+  const realIp = req.headers.get("x-real-ip");
+  const clientIp = (forwardedFor ? forwardedFor.split(",")[0] : realIp || "127.0.0.1").trim();
+
+  if (!checkReviewRateLimit(clientIp)) {
+    return NextResponse.json(
+      { success: false, error: "Too many review submissions. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   try {
     const body = await req.json();
 

@@ -4,9 +4,9 @@ const fs = require("fs");
 const path = require("path");
 
 // Native crypto tests
-const ENCRYPTION_KEY_RAW = "spark-super-secret-key-dj-2026-prod-instagram";
+const ENCRYPTION_KEY_RAW = process.env.TEST_ENCRYPTION_KEY || crypto.randomBytes(32).toString("hex");
 const ENCRYPTION_KEY = crypto.createHash("sha256").update(ENCRYPTION_KEY_RAW).digest();
-const STATE_SECRET = "spark-instagram-oauth-state-secret-2026";
+const STATE_SECRET = process.env.TEST_STATE_SECRET || crypto.randomBytes(32).toString("hex");
 
 function encryptToken(plainText) {
   const iv = crypto.randomBytes(12);

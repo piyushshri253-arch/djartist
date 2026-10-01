@@ -7,9 +7,18 @@ import {
   recordFailedLogin,
   recordSuccessfulLogin,
 } from "@/lib/auth";
+import { validateOrigin } from "@/lib/security";
+import { logAdminAction } from "@/lib/audit";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
+    // 0. CSRF / Origin Validation
+    if (!validateOrigin(request)) {
+      return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+    }
+
     // 1. IP Rate Limiting Check
     const forwardedFor = request.headers.get("x-forwarded-for");
     const realIp = request.headers.get("x-real-ip");
@@ -17,6 +26,14 @@ export async function POST(request: Request) {
 
     const rateLimit = checkLoginRateLimit(clientIp);
     if (!rateLimit.allowed) {
+      await logAdminAction({
+        action: "FAILED_LOGIN",
+        adminEmail: "rate_limited",
+        ip: clientIp,
+        status: "FAILURE",
+        details: { reason: "Rate limited" },
+      });
+
       return NextResponse.json(
         {
           error: `Too many failed login attempts from this IP. Please wait ${rateLimit.retryAfterSeconds} seconds before trying again.`,
@@ -45,6 +62,13 @@ export async function POST(request: Request) {
     const isValid = validateCredentials(email, password);
     if (!isValid) {
       recordFailedLogin(clientIp);
+      await logAdminAction({
+        action: "FAILED_LOGIN",
+        adminEmail: String(email).slice(0, 50),
+        ip: clientIp,
+        status: "FAILURE",
+      });
+
       return NextResponse.json(
         { error: "Invalid email or password. Access denied." },
         { status: 401 }
@@ -53,6 +77,13 @@ export async function POST(request: Request) {
 
     // 3. Clear rate limit record on successful login
     recordSuccessfulLogin(clientIp);
+
+    await logAdminAction({
+      action: "LOGIN",
+      adminEmail: email,
+      ip: clientIp,
+      status: "SUCCESS",
+    });
 
     const token = createSessionToken(email);
     const response = NextResponse.json({
@@ -78,6 +109,6 @@ export async function POST(request: Request) {
     return response;
   } catch (error) {
     console.error("Login error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: "Authentication service error" }, { status: 500 });
   }
 }

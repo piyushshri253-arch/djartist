@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { readJsonFile, writeJsonFile } from "@/lib/serverData";
 import { VideoShowcaseItem } from "@/types";
 import { getAuthenticatedAdmin } from "@/lib/auth";
+import { sanitizeString, isSafeUrl, validateOrigin, unauthorizedResponse } from "@/lib/security";
+import { logAdminAction } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
 
@@ -10,7 +12,7 @@ export async function GET() {
   try {
     const admin = await getAuthenticatedAdmin();
     if (!admin) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorizedResponse();
     }
 
     const items = (await readJsonFile<VideoShowcaseItem[]>("videos.json")) || [];
@@ -34,10 +36,14 @@ function hasProhibitedContent(obj: any): boolean {
 
 // POST: Add new video
 export async function POST(req: Request) {
+  if (!validateOrigin(req)) {
+    return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+  }
+
   try {
     const admin = await getAuthenticatedAdmin();
     if (!admin) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorizedResponse();
     }
 
     const body = await req.json();
@@ -50,6 +56,15 @@ export async function POST(req: Request) {
       );
     }
 
+    if (!isSafeUrl(videoSrc)) {
+      return NextResponse.json({ error: "Invalid or unsafe video URL" }, { status: 400 });
+    }
+
+    const thumbUrl = thumbnail ? thumbnail.trim() : "/images/past_event_crowd.jpg";
+    if (!isSafeUrl(thumbUrl)) {
+      return NextResponse.json({ error: "Invalid thumbnail URL" }, { status: 400 });
+    }
+
     if (hasProhibitedContent(body)) {
       return NextResponse.json(
         { error: "Content contains prohibited or explicit language." },
@@ -58,18 +73,30 @@ export async function POST(req: Request) {
     }
 
     const items = (await readJsonFile<VideoShowcaseItem[]>("videos.json")) || [];
+    const cleanTitle = sanitizeString(title).slice(0, 150);
+    const cleanTag = sanitizeString(tag || "4K CINEMATIC // ARENA DROP").slice(0, 50);
+    const cleanDuration = sanitizeString(duration || "03:30").slice(0, 20);
+
     const newItem: VideoShowcaseItem = {
       id: `vid-${Date.now()}`,
-      title: title.trim(),
-      tag: tag ? tag.trim() : "4K CINEMATIC // ARENA DROP",
-      duration: duration ? duration.trim() : "03:30",
-      thumbnail: thumbnail ? thumbnail.trim() : "/images/past_event_crowd.jpg",
+      title: cleanTitle,
+      tag: cleanTag,
+      duration: cleanDuration,
+      thumbnail: thumbUrl,
       videoSrc: videoSrc.trim(),
       createdAt: new Date().toISOString(),
     };
 
     items.unshift(newItem);
     await writeJsonFile("videos.json", items);
+
+    await logAdminAction({
+      action: "UPLOAD_IMAGE",
+      adminEmail: admin.email,
+      resource: newItem.id,
+      status: "SUCCESS",
+      details: { title: newItem.title, type: "video" },
+    });
 
     return NextResponse.json({ success: true, item: newItem }, { status: 201 });
   } catch (error) {
@@ -80,10 +107,14 @@ export async function POST(req: Request) {
 
 // DELETE: Remove a video by ID
 export async function DELETE(req: Request) {
+  if (!validateOrigin(req)) {
+    return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+  }
+
   try {
     const admin = await getAuthenticatedAdmin();
     if (!admin) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorizedResponse();
     }
 
     const { searchParams } = new URL(req.url);
@@ -108,6 +139,15 @@ export async function DELETE(req: Request) {
     }
 
     await writeJsonFile("videos.json", filtered);
+
+    await logAdminAction({
+      action: "DELETE_IMAGE",
+      adminEmail: admin.email,
+      resource: id,
+      status: "SUCCESS",
+      details: { type: "video" },
+    });
+
     return NextResponse.json({ success: true, message: "Video deleted successfully" });
   } catch (error) {
     console.error("Admin videos delete error:", error);
@@ -117,10 +157,14 @@ export async function DELETE(req: Request) {
 
 // PUT: Edit existing video
 export async function PUT(req: Request) {
+  if (!validateOrigin(req)) {
+    return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+  }
+
   try {
     const admin = await getAuthenticatedAdmin();
     if (!admin) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorizedResponse();
     }
 
     const body = await req.json();
@@ -131,6 +175,14 @@ export async function PUT(req: Request) {
         { error: "Video ID, title, and video source/URL are required" },
         { status: 400 }
       );
+    }
+
+    if (!isSafeUrl(videoSrc)) {
+      return NextResponse.json({ error: "Invalid or unsafe video URL" }, { status: 400 });
+    }
+
+    if (thumbnail && !isSafeUrl(thumbnail.trim())) {
+      return NextResponse.json({ error: "Invalid thumbnail URL" }, { status: 400 });
     }
 
     if (hasProhibitedContent(body)) {
@@ -147,12 +199,17 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: "Video not found" }, { status: 404 });
     }
 
+    const cleanTitle = sanitizeString(title).slice(0, 150);
+    const cleanTag = tag ? sanitizeString(tag).slice(0, 50) : items[index].tag;
+    const cleanDuration = duration ? sanitizeString(duration).slice(0, 20) : items[index].duration;
+    const thumbUrl = thumbnail ? thumbnail.trim() : items[index].thumbnail;
+
     const updatedItem: VideoShowcaseItem = {
       ...items[index],
-      title: title.trim(),
-      tag: tag ? tag.trim() : items[index].tag,
-      duration: duration ? duration.trim() : items[index].duration,
-      thumbnail: thumbnail ? thumbnail.trim() : items[index].thumbnail,
+      title: cleanTitle,
+      tag: cleanTag,
+      duration: cleanDuration,
+      thumbnail: thumbUrl,
       videoSrc: videoSrc.trim(),
     };
 
@@ -165,4 +222,3 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: "Failed to update video" }, { status: 500 });
   }
 }
-

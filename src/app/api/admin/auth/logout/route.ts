@@ -1,10 +1,34 @@
 import { NextResponse } from "next/server";
-import { COOKIE_NAME } from "@/lib/auth";
+import { COOKIE_NAME, getAuthenticatedAdmin, revokeAllSessions } from "@/lib/auth";
+import { logAdminAction } from "@/lib/audit";
 
-export async function POST() {
+export const dynamic = "force-dynamic";
+
+export async function POST(request: Request) {
+  const admin = await getAuthenticatedAdmin();
+  let logoutAll = false;
+
+  try {
+    const body = await request.json().catch(() => ({}));
+    logoutAll = Boolean(body?.logoutAll);
+  } catch {}
+
+  if (logoutAll) {
+    revokeAllSessions();
+  }
+
+  if (admin) {
+    await logAdminAction({
+      action: logoutAll ? "SESSION_REVOKED" : "LOGOUT",
+      adminEmail: admin.email,
+      status: "SUCCESS",
+      details: { logoutAll },
+    });
+  }
+
   const response = NextResponse.json({
     success: true,
-    message: "Logged out successfully",
+    message: logoutAll ? "Logged out from all devices" : "Logged out successfully",
   });
 
   response.cookies.set({
