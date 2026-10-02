@@ -10,9 +10,10 @@ export function middleware(request: NextRequest) {
   // Public exceptions inside the admin tree
   const isLoginPageRoute = pathname === "/admin/login";
   const isLoginApiRoute = pathname === "/api/admin/auth/login";
+  const isLogoutApiRoute = pathname === "/api/admin/auth/logout";
   const isInstagramCallback = pathname === "/api/admin/social/instagram/callback";
 
-  if (isSecurityAdminPath && !isLoginPageRoute && !isLoginApiRoute && !isInstagramCallback) {
+  if (isSecurityAdminPath && !isLoginPageRoute && !isLoginApiRoute && !isLogoutApiRoute && !isInstagramCallback) {
     const sessionCookie = request.cookies.get("dj_admin_session");
 
     if (!sessionCookie || !sessionCookie.value) {
