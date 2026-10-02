@@ -6,6 +6,7 @@ import { sanitizeString, isSafeUrl, validateOrigin, unauthorizedResponse } from 
 import { logAdminAction } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 // GET: Returns all gallery items
 export async function GET() {
@@ -126,7 +127,13 @@ export async function DELETE(req: Request) {
     }
 
     const items = (await readJsonFile<GalleryItem[]>("gallery.json")) || [];
-    const filtered = items.filter((item) => item.id !== id);
+    const cleanId = String(id).trim().toLowerCase();
+    const filtered = items.filter((item) => {
+      const itemId = String(item.id || "").trim().toLowerCase();
+      const itemSrc = String(item.src || "").trim().toLowerCase();
+      const itemTitle = String(item.title || "").trim().toLowerCase();
+      return itemId !== cleanId && itemSrc !== cleanId && itemTitle !== cleanId;
+    });
 
     if (filtered.length === items.length) {
       return NextResponse.json({ error: "Photo not found" }, { status: 404 });
@@ -182,7 +189,8 @@ export async function PUT(req: Request) {
     }
 
     const items = (await readJsonFile<GalleryItem[]>("gallery.json")) || [];
-    const index = items.findIndex((i) => i.id === id);
+    const cleanId = String(id).trim().toLowerCase();
+    const index = items.findIndex((i) => String(i.id || "").trim().toLowerCase() === cleanId);
 
     if (index === -1) {
       return NextResponse.json({ error: "Photo not found" }, { status: 404 });

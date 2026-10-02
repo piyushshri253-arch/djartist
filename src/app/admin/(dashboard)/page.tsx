@@ -834,6 +834,8 @@ export default function AdminDashboardPage() {
         body: JSON.stringify(payload),
       });
       const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || "Failed to save photo");
+
       const savedPhoto: any = data?.item || { ...payload, id: (payload as any).id || `GAL-${Date.now()}` };
 
       saveCustomGallery(savedPhoto);
@@ -864,9 +866,12 @@ export default function AdminDashboardPage() {
       return;
     }
     try {
+      const res = await fetch(`/api/admin/gallery?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || "Failed to delete photo from server");
+
       deleteCustomGallery(id);
       setGalleryItems((prev) => prev.filter((item) => item.id !== id));
-      await fetch(`/api/admin/gallery?id=${id}`, { method: "DELETE" }).catch(() => {});
       showToast("success", "Photo removed from gallery.");
     } catch (err: any) {
       showToast("error", err.message || "Failed to delete photo");
@@ -953,9 +958,12 @@ export default function AdminDashboardPage() {
       return;
     }
     try {
+      const res = await fetch(`/api/admin/videos?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || "Failed to delete video from server");
+
       deleteCustomVideo(id);
       setVideoItems((prev) => prev.filter((item) => item.id !== id));
-      await fetch(`/api/admin/videos?id=${id}`, { method: "DELETE" }).catch(() => {});
       showToast("success", "Video removed from showcase.");
     } catch (err: any) {
       showToast("error", err.message || "Failed to delete video");
@@ -1028,6 +1036,7 @@ export default function AdminDashboardPage() {
         body: JSON.stringify(payload),
       });
       const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || "Failed to save article");
 
       const savedBlog = data?.post || {
         ...payload,
@@ -1059,6 +1068,14 @@ export default function AdminDashboardPage() {
     }
 
     try {
+      const qParams = new URLSearchParams();
+      qParams.set("id", id);
+      if (slug) qParams.set("slug", slug);
+      if (title) qParams.set("title", title);
+      const res = await fetch(`/api/admin/blogs?${qParams.toString()}`, { method: "DELETE" });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || "Failed to delete article from server");
+
       deleteCustomBlog(id, slug, title);
       setBlogs((prev) =>
         prev.filter((b) => {
@@ -1068,11 +1085,6 @@ export default function AdminDashboardPage() {
           return true;
         })
       );
-      const qParams = new URLSearchParams();
-      qParams.set("id", id);
-      if (slug) qParams.set("slug", slug);
-      if (title) qParams.set("title", title);
-      await fetch(`/api/admin/blogs?${qParams.toString()}`, { method: "DELETE" }).catch(() => {});
       showToast("success", "Article removed successfully.");
     } catch (err: any) {
       showToast("error", err.message || "Failed to delete article");

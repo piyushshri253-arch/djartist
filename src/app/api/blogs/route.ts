@@ -3,6 +3,7 @@ import { readJsonFile, getDeletedBlogIdentifiers } from "@/lib/serverData";
 import { BlogPostData } from "@/app/api/admin/blogs/route";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function GET() {
   try {

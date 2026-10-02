@@ -14,9 +14,6 @@ export default function BlogPage() {
   const [filter, setFilter] = useState("all");
 
   useEffect(() => {
-    const merged = getMergedBlogs(rawBlog as unknown as BlogPostItem[]);
-    setPosts(merged);
-
     fetch("/api/blogs", { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {

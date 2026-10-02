@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { readJsonFile, writeJsonFile } from "@/lib/serverData";
 import { ReviewItem } from "@/types";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 // Sanitize string to prevent XSS / script injection
 function sanitizeString(str: unknown, maxLength: number): string {
   if (typeof str !== "string") return "";
@@ -113,11 +116,9 @@ export async function GET(req: Request) {
       );
     }
 
-    // Default: Return event / general approved reviews for homepage
-    const generalApproved = allApproved.filter((r) => r.targetType !== "article");
-
+    // Return all approved reviews for the website showcase
     return NextResponse.json(
-      { success: true, reviews: generalApproved },
+      { success: true, reviews: allApproved },
       {
         status: 200,
         headers: {

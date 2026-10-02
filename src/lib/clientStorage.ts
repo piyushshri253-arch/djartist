@@ -119,64 +119,29 @@ export function deleteCustomEvent(_id: string, _slug?: string, _title?: string):
 }
 
 // ---------------------------------------------------------------------------
-// BLOGS
+// BLOGS (Single Source of Truth: MongoDB Atlas -> API -> Frontend)
 // ---------------------------------------------------------------------------
-export function getMergedBlogs(baseBlogs: any[]): any[] {
-  return mergeCollections(
-    baseBlogs,
-    STORAGE_KEYS.blogs.custom,
-    STORAGE_KEYS.blogs.deleted
-  );
-}
-
-export function saveCustomBlog(blog: any): void {
-  if (typeof window === "undefined" || !blog?.id) return;
-  const custom = getLocalJson<any[]>(STORAGE_KEYS.blogs.custom, []);
-  const deleted = getLocalJson<string[]>(STORAGE_KEYS.blogs.deleted, []);
-
-  const identifiers = [blog.id, blog.slug, blog.title]
-    .filter(Boolean)
-    .map((s) => String(s).toLowerCase().trim());
-  const updatedDeleted = deleted.filter(
-    (id) => !identifiers.includes(String(id).toLowerCase().trim())
-  );
-  setLocalJson(STORAGE_KEYS.blogs.deleted, updatedDeleted);
-
-  const existingIdx = custom.findIndex(
-    (b) =>
-      b.id === blog.id ||
-      (blog.slug && b.slug === blog.slug) ||
-      (blog.title && b.title?.toLowerCase().trim() === blog.title.toLowerCase().trim())
-  );
-  let updatedCustom: any[];
-  if (existingIdx >= 0) {
-    updatedCustom = [...custom];
-    updatedCustom[existingIdx] = { ...updatedCustom[existingIdx], ...blog };
-  } else {
-    updatedCustom = [blog, ...custom];
+function purgeLegacyBlogLocalStorage(): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem(STORAGE_KEYS.blogs.custom);
+    localStorage.removeItem(STORAGE_KEYS.blogs.deleted);
+  } catch {
+    // ignore
   }
-  setLocalJson(STORAGE_KEYS.blogs.custom, updatedCustom);
 }
 
-export function deleteCustomBlog(id: string, slug?: string, title?: string): void {
-  if (typeof window === "undefined" || !id) return;
-  const custom = getLocalJson<any[]>(STORAGE_KEYS.blogs.custom, []);
-  const deleted = getLocalJson<string[]>(STORAGE_KEYS.blogs.deleted, []);
+export function getMergedBlogs(baseBlogs: any[]): any[] {
+  purgeLegacyBlogLocalStorage();
+  return Array.isArray(baseBlogs) ? baseBlogs : [];
+}
 
-  const keysToDelete = [id, slug, title]
-    .filter(Boolean)
-    .map((s) => String(s).toLowerCase().trim());
+export function saveCustomBlog(_blog: any): void {
+  purgeLegacyBlogLocalStorage();
+}
 
-  const updatedCustom = custom.filter((b) => {
-    if (b.id && keysToDelete.includes(String(b.id).toLowerCase().trim())) return false;
-    if (b.slug && keysToDelete.includes(String(b.slug).toLowerCase().trim())) return false;
-    if (b.title && keysToDelete.includes(String(b.title).toLowerCase().trim())) return false;
-    return true;
-  });
-  setLocalJson(STORAGE_KEYS.blogs.custom, updatedCustom);
-
-  const newDeleted = Array.from(new Set([...deleted, ...keysToDelete]));
-  setLocalJson(STORAGE_KEYS.blogs.deleted, newDeleted);
+export function deleteCustomBlog(_id: string, _slug?: string, _title?: string): void {
+  purgeLegacyBlogLocalStorage();
 }
 
 // ---------------------------------------------------------------------------

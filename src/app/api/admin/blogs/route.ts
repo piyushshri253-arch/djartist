@@ -197,6 +197,7 @@ export async function PUT(request: Request) {
     };
 
     await writeJsonFile("blog.json", blogs);
+    await unmarkDeletedBlog([blogs[index].id, blogs[index].slug, blogs[index].title]);
 
     await logAdminAction({
       action: "UPDATE_BLOG",

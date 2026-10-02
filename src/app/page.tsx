@@ -382,14 +382,12 @@ export default function HomePage() {
       heroVideoRef.current.play().catch(() => {});
     }
 
-    // Clear any legacy localStorage event overrides; load events strictly from MongoDB Atlas via API
+    // Clear any legacy localStorage overrides; load state strictly from MongoDB Atlas via APIs
     try {
       getMergedEvents([]);
-      const mergedB = getMergedBlogs(rawBlogs as any[]);
-      setLatestPosts(mergedB.slice(0, 3));
-
-      setGalleryPhotos(getMergedGallery(PHOTO_GALLERY));
-      setVideoList(getMergedVideos(VIDEO_SHOWCASE));
+      getMergedBlogs([]);
+      getMergedGallery([]);
+      getMergedVideos([]);
     } catch (_) {}
 
     fetch("/api/events?type=upcoming", { cache: "no-store" })

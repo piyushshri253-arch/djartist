@@ -6,6 +6,7 @@ import { validateOrigin, unauthorizedResponse } from "@/lib/security";
 import { logAdminAction } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 // Admin GET: Returns all reviews with counts
 export async function GET() {
@@ -65,7 +66,10 @@ export async function PUT(req: Request) {
     }
 
     const reviews = await readJsonFile<ReviewItem[]>("reviews.json");
-    const index = (reviews || []).findIndex((r) => r.id === id);
+    const targetId = String(id).trim().toLowerCase();
+    const index = (reviews || []).findIndex(
+      (r) => String(r.id || "").trim().toLowerCase() === targetId
+    );
 
     if (index === -1) {
       return NextResponse.json(
@@ -122,7 +126,10 @@ export async function DELETE(req: Request) {
     }
 
     const reviews = await readJsonFile<ReviewItem[]>("reviews.json");
-    const updated = (reviews || []).filter((r) => r.id !== id);
+    const targetId = String(id).trim().toLowerCase();
+    const updated = (reviews || []).filter(
+      (r) => String(r.id || "").trim().toLowerCase() !== targetId
+    );
 
     await writeJsonFile("reviews.json", updated);
 
