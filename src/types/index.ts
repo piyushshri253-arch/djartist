@@ -143,13 +143,25 @@ export interface AdminUserData {
 }
 
 export interface PlatformSocialConfig {
+  totalViews?: string;
   facebook: {
     url: string;
     enabled: boolean;
+    handle?: string;
+    stat?: string;
+    metric?: string;
+    subtext?: string;
+    followers?: string;
   };
   youtube: {
     channelUrl: string;
     enabled: boolean;
+    handle?: string;
+    stat?: string;
+    metric?: string;
+    subtext?: string;
+    subscribers?: string;
+    lastAutoSyncedAt?: string | null;
   };
   instagram: {
     enabled: boolean;
@@ -159,6 +171,11 @@ export interface PlatformSocialConfig {
     profilePicture?: string;
     profileUrl?: string;
     lastSyncedAt?: string | null;
+    handle?: string;
+    stat?: string;
+    metric?: string;
+    subtext?: string;
+    followers?: string;
   };
 }
 

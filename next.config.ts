@@ -68,14 +68,11 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/:path*",
-        headers: securityHeaders,
-      },
-      {
-        source: "/api/:path*",
         headers: [
+          ...securityHeaders,
           {
             key: "Access-Control-Allow-Origin",
-            value: "https://www.djgspark.com",
+            value: "*",
           },
           {
             key: "Access-Control-Allow-Methods",
@@ -83,7 +80,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Access-Control-Allow-Headers",
-            value: "Content-Type, Authorization, X-Requested-With",
+            value: "Content-Type, Authorization, X-Requested-With, rsc, next-router-state-tree, next-router-prefetch, next-url",
           },
         ],
       },

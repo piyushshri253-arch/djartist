@@ -261,6 +261,7 @@ export default function HomePage() {
     return merged.slice(0, 3);
   });
   const [siteSettings, setSiteSettings] = useState<any | null>(null);
+  const [liveSocialStats, setLiveSocialStats] = useState<any | null>(null);
   const [publicInstagram, setPublicInstagram] = useState<{
     enabled: boolean;
     account?: {
@@ -430,6 +431,16 @@ export default function HomePage() {
       })
       .catch(() => {});
 
+    // Live Social Stats Fetch (YouTube, Instagram, Facebook metrics)
+    fetch("/api/public/social/stats", { cache: "no-store" })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && (data.youtube || data.instagram || data.facebook)) {
+          setLiveSocialStats(data);
+        }
+      })
+      .catch(() => {});
+
     // Live Instagram Integration Fetch
     fetch("/api/public/social/instagram", { cache: "no-store" })
       .then((res) => res.json())
@@ -462,6 +473,63 @@ export default function HomePage() {
 
     fetchReviews();
   }, []);
+
+  const dynamicSocialPlatforms = useMemo(() => {
+    return [
+      {
+        name: "YOUTUBE",
+        handle: liveSocialStats?.youtube?.handle || "@djg-spark",
+        stat: liveSocialStats?.youtube?.stat || "18.5M+",
+        metric: liveSocialStats?.youtube?.metric || "TOTAL WATCH VIEWS",
+        subtext:
+          liveSocialStats?.youtube?.subtext ||
+          (liveSocialStats?.youtube?.subscribers
+            ? `${liveSocialStats.youtube.subscribers} Subscribers • 4K HDR Live Sets & Official Shows Aftermovies`
+            : "41.5K+ Subscribers • 4K HDR Live Sets & Official Shows Aftermovies"),
+        link: liveSocialStats?.youtube?.channelUrl || "https://youtube.com/@djg-spark",
+        badge: "OFFICIAL CHANNEL",
+        accent: "#FF0000",
+        bgHover: "hover:border-[#FF0000]/60",
+        Icon: YouTubeIcon,
+        cta: "WATCH SETS",
+      },
+      {
+        name: "INSTAGRAM",
+        handle: liveSocialStats?.instagram?.handle || "@djgspark",
+        stat: liveSocialStats?.instagram?.stat || "300k+",
+        metric: liveSocialStats?.instagram?.metric || "REEL PLAYS & ENGAGEMENT",
+        subtext:
+          liveSocialStats?.instagram?.subtext ||
+          (liveSocialStats?.instagram?.followers
+            ? `${liveSocialStats.instagram.followers} Followers • Viral Stage Drops & Exclusive Backstage Logs`
+            : "10K+ Followers • Viral Stage Drops & Exclusive Backstage Logs"),
+        link:
+          liveSocialStats?.instagram?.url ||
+          liveSocialStats?.instagram?.profileUrl ||
+          "https://www.instagram.com/djgspark",
+        badge: "VERIFIED ARTIST",
+        accent: "#E1306C",
+        bgHover: "hover:border-[#E1306C]/60",
+        Icon: InstagramIcon,
+        cta: "FOLLOW REELS",
+      },
+      {
+        name: "FACEBOOK",
+        handle: liveSocialStats?.facebook?.handle || "Dj G-Spark",
+        stat: liveSocialStats?.facebook?.stat || "100k+",
+        metric: liveSocialStats?.facebook?.metric || "COMMUNITY REACH & UPDATES",
+        subtext:
+          liveSocialStats?.facebook?.subtext ||
+          "Official Shows Announcements, Events Photos & Live Updates",
+        link: liveSocialStats?.facebook?.url || "https://www.facebook.com/share/1BxXiXLitH/",
+        badge: "OFFICIAL PAGE",
+        accent: "#1877F2",
+        bgHover: "hover:border-[#1877F2]/60",
+        Icon: FacebookIcon,
+        cta: "JOIN COMMUNITY",
+      },
+    ];
+  }, [liveSocialStats]);
 
   const instagramData = {
     enabled: publicInstagram?.enabled ?? false,
@@ -676,7 +744,7 @@ export default function HomePage() {
 
             <h2 className="font-heading font-black text-3xl sm:text-5xl lg:text-6xl tracking-[-0.03em] uppercase text-white leading-[1.15] mb-6">
               <span className="bg-gradient-to-r from-[#00E5FF] via-[#FFAA00] to-white bg-clip-text text-transparent drop-shadow-[0_0_40px_rgba(0, 229, 255, 0.4)]">
-                20M+ Views
+                {liveSocialStats?.totalViews || "20M+"} Views
               </span>{" "}
               Across All Social Media Platforms!
             </h2>
@@ -706,7 +774,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
             {/* Left: 4 Social Platform Metrics Cards */}
             <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-              {SOCIAL_PLATFORMS.map((platform) => {
+              {dynamicSocialPlatforms.map((platform) => {
                 const PlatformIcon = platform.Icon;
                 return (
                   <div

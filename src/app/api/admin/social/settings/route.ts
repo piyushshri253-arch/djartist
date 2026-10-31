@@ -31,6 +31,7 @@ export async function PUT(req: Request) {
     const current = await readJsonFile<PlatformSocialConfig>("social_settings.json");
 
     const updated: PlatformSocialConfig = {
+      totalViews: body.totalViews || current.totalViews || "20M+",
       facebook: {
         ...current.facebook,
         ...(body.facebook || {}),

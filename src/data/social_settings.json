@@ -1,19 +1,37 @@
 {
-  "facebook": {
-    "url": "https://www.facebook.com/share/1BxXiXLitH/",
-    "enabled": true
-  },
+  "totalViews": "20M+",
   "youtube": {
     "channelUrl": "https://youtube.com/@djg-spark",
-    "enabled": true
+    "handle": "@djg-spark",
+    "enabled": true,
+    "stat": "18.5M+",
+    "metric": "TOTAL WATCH VIEWS",
+    "subtext": "41.5K+ Subscribers • 4K HDR Live Sets & Official Shows Aftermovies",
+    "subscribers": "41.5K+",
+    "lastAutoSyncedAt": "2026-10-31T11:46:13.000Z"
   },
   "instagram": {
+    "url": "https://www.instagram.com/djgspark",
+    "handle": "@djgspark",
     "enabled": true,
+    "stat": "300k+",
+    "metric": "REEL PLAYS & ENGAGEMENT",
+    "subtext": "10K+ Followers • Viral Stage Drops & Exclusive Backstage Logs",
+    "followers": "10K+",
     "connected": false,
     "username": "Dj G-Spark",
     "accountName": "Dj G-Spark",
     "profilePicture": "/images/dj_hero.jpg",
     "profileUrl": "https://www.instagram.com/djgspark",
     "lastSyncedAt": null
+  },
+  "facebook": {
+    "url": "https://www.facebook.com/share/1BxXiXLitH/",
+    "handle": "Dj G-Spark",
+    "enabled": true,
+    "stat": "100k+",
+    "metric": "COMMUNITY REACH & UPDATES",
+    "subtext": "Official Shows Announcements, Events Photos & Live Updates",
+    "followers": "100k+"
   }
 }

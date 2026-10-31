@@ -227,6 +227,7 @@ export default function AdminDashboardPage() {
 
   // Social Save Loading
   const [isSavingSocial, setIsSavingSocial] = useState(false);
+  const [isSyncingYouTube, setIsSyncingYouTube] = useState(false);
 
   // Toast Helper
   const showToast = (type: "success" | "error", text: string) => {
@@ -1088,6 +1089,24 @@ export default function AdminDashboardPage() {
       showToast("success", "Article removed successfully.");
     } catch (err: any) {
       showToast("error", err.message || "Failed to delete article");
+    }
+  };
+
+  // Auto-Sync YouTube Metrics
+  const handleSyncYouTube = async () => {
+    setIsSyncingYouTube(true);
+    try {
+      const res = await fetch("/api/admin/social/sync-youtube", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to sync YouTube");
+      showToast("success", data.message || "YouTube synced successfully!");
+      if (data.settings) {
+        setSocialSettings(data.settings);
+      }
+    } catch (err: any) {
+      showToast("error", err.message || "Failed to sync YouTube");
+    } finally {
+      setIsSyncingYouTube(false);
     }
   };
 
@@ -3251,6 +3270,298 @@ export default function AdminDashboardPage() {
               <p className="text-xs text-slate-500 mt-0.5">
                 Manage the strictly authorized social media channels: Facebook, YouTube, and Instagram.
               </p>
+            </div>
+
+            {/* Live Metrics & Follower Counters Card */}
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-base font-bold text-slate-900">Homepage Live Metrics & Follower Counters</h3>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase tracking-wider">
+                      Live Dynamic Sync
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Edit real-time follower counts, view stats, and metrics shown on your public homepage.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleSyncYouTube}
+                    disabled={isSyncingYouTube}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 font-bold text-xs transition-colors cursor-pointer disabled:opacity-60"
+                  >
+                    <YouTubeIcon className="w-4 h-4" />
+                    <span>{isSyncingYouTube ? "Fetching Live..." : "⚡ Auto-Fetch YouTube"}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleSaveSocialSettings}
+                    disabled={isSavingSocial}
+                    className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-colors cursor-pointer disabled:opacity-60"
+                  >
+                    {isSavingSocial ? "Saving..." : "Save All Counts"}
+                  </button>
+                </div>
+              </div>
+
+              {/* Total Across All Platforms */}
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block mb-1">
+                  Main Headline Total Views (e.g. 20M+, 25M+)
+                </label>
+                <input
+                  type="text"
+                  value={socialSettings.totalViews || "20M+"}
+                  onChange={(e) =>
+                    setSocialSettings({
+                      ...socialSettings,
+                      totalViews: e.target.value,
+                    })
+                  }
+                  placeholder="20M+"
+                  className="w-full max-w-xs px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 text-sm font-bold focus:outline-none focus:border-blue-500 font-mono"
+                />
+                <span className="text-[11px] text-slate-400 block mt-1">
+                  Renders as: &ldquo;{socialSettings.totalViews || "20M+"} Views Across All Social Media Platforms!&rdquo;
+                </span>
+              </div>
+
+              {/* 3 Columns: YouTube, Instagram, Facebook */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {/* 1. YouTube Stats */}
+                <div className="p-4 rounded-xl border border-red-100 bg-red-50/20 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-lg bg-red-100 text-[#FF0000] flex items-center justify-center">
+                        <YouTubeIcon className="w-4 h-4" />
+                      </div>
+                      <h4 className="font-bold text-xs text-slate-900">YouTube Metrics</h4>
+                    </div>
+                    {socialSettings.youtube?.lastAutoSyncedAt && (
+                      <span className="text-[10px] text-emerald-600 font-mono">
+                        Synced
+                      </span>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-600 uppercase block mb-1">
+                      Subscribers Count
+                    </label>
+                    <input
+                      type="text"
+                      value={socialSettings.youtube?.subscribers || "41.5K+"}
+                      onChange={(e) =>
+                        setSocialSettings({
+                          ...socialSettings,
+                          youtube: {
+                            ...socialSettings.youtube,
+                            subscribers: e.target.value,
+                            subtext: `${e.target.value} Subscribers • 4K HDR Live Sets & Official Shows Aftermovies`,
+                          },
+                        })
+                      }
+                      placeholder="41.5K+"
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-mono font-bold text-slate-900"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-600 uppercase block mb-1">
+                      Big Watch Views Stat
+                    </label>
+                    <input
+                      type="text"
+                      value={socialSettings.youtube?.stat || "18.5M+"}
+                      onChange={(e) =>
+                        setSocialSettings({
+                          ...socialSettings,
+                          youtube: {
+                            ...socialSettings.youtube,
+                            stat: e.target.value,
+                          },
+                        })
+                      }
+                      placeholder="18.5M+"
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-mono font-bold text-slate-900"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-600 uppercase block mb-1">
+                      Handle / Channel
+                    </label>
+                    <input
+                      type="text"
+                      value={socialSettings.youtube?.handle || "@djg-spark"}
+                      onChange={(e) =>
+                        setSocialSettings({
+                          ...socialSettings,
+                          youtube: {
+                            ...socialSettings.youtube,
+                            handle: e.target.value,
+                          },
+                        })
+                      }
+                      placeholder="@djg-spark"
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-mono text-slate-900"
+                    />
+                  </div>
+                </div>
+
+                {/* 2. Instagram Stats */}
+                <div className="p-4 rounded-xl border border-pink-100 bg-pink-50/20 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-pink-100 text-[#E1306C] flex items-center justify-center">
+                      <InstagramIcon className="w-4 h-4" />
+                    </div>
+                    <h4 className="font-bold text-xs text-slate-900">Instagram Metrics</h4>
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-600 uppercase block mb-1">
+                      Followers Count
+                    </label>
+                    <input
+                      type="text"
+                      value={socialSettings.instagram?.followers || "10K+"}
+                      onChange={(e) =>
+                        setSocialSettings({
+                          ...socialSettings,
+                          instagram: {
+                            ...socialSettings.instagram,
+                            followers: e.target.value,
+                            subtext: `${e.target.value} Followers • Viral Stage Drops & Exclusive Backstage Logs`,
+                          },
+                        })
+                      }
+                      placeholder="10K+"
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-mono font-bold text-slate-900"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-600 uppercase block mb-1">
+                      Big Reel Plays Stat
+                    </label>
+                    <input
+                      type="text"
+                      value={socialSettings.instagram?.stat || "300k+"}
+                      onChange={(e) =>
+                        setSocialSettings({
+                          ...socialSettings,
+                          instagram: {
+                            ...socialSettings.instagram,
+                            stat: e.target.value,
+                          },
+                        })
+                      }
+                      placeholder="300k+"
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-mono font-bold text-slate-900"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-600 uppercase block mb-1">
+                      Handle
+                    </label>
+                    <input
+                      type="text"
+                      value={socialSettings.instagram?.handle || "@djgspark"}
+                      onChange={(e) =>
+                        setSocialSettings({
+                          ...socialSettings,
+                          instagram: {
+                            ...socialSettings.instagram,
+                            handle: e.target.value,
+                          },
+                        })
+                      }
+                      placeholder="@djgspark"
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-mono text-slate-900"
+                    />
+                  </div>
+                </div>
+
+                {/* 3. Facebook Stats */}
+                <div className="p-4 rounded-xl border border-blue-100 bg-blue-50/20 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-blue-100 text-[#1877F2] flex items-center justify-center">
+                      <FacebookIcon className="w-4 h-4" />
+                    </div>
+                    <h4 className="font-bold text-xs text-slate-900">Facebook Metrics</h4>
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-600 uppercase block mb-1">
+                      Reach / Followers Count
+                    </label>
+                    <input
+                      type="text"
+                      value={socialSettings.facebook?.followers || "100k+"}
+                      onChange={(e) =>
+                        setSocialSettings({
+                          ...socialSettings,
+                          facebook: {
+                            ...socialSettings.facebook,
+                            followers: e.target.value,
+                            stat: e.target.value,
+                          },
+                        })
+                      }
+                      placeholder="100k+"
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-mono font-bold text-slate-900"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-600 uppercase block mb-1">
+                      Big Community Stat
+                    </label>
+                    <input
+                      type="text"
+                      value={socialSettings.facebook?.stat || "100k+"}
+                      onChange={(e) =>
+                        setSocialSettings({
+                          ...socialSettings,
+                          facebook: {
+                            ...socialSettings.facebook,
+                            stat: e.target.value,
+                          },
+                        })
+                      }
+                      placeholder="100k+"
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-mono font-bold text-slate-900"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-600 uppercase block mb-1">
+                      Page Name / Handle
+                    </label>
+                    <input
+                      type="text"
+                      value={socialSettings.facebook?.handle || "Dj G-Spark"}
+                      onChange={(e) =>
+                        setSocialSettings({
+                          ...socialSettings,
+                          facebook: {
+                            ...socialSettings.facebook,
+                            handle: e.target.value,
+                          },
+                        })
+                      }
+                      placeholder="Dj G-Spark"
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-mono text-slate-900"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Channels Grid: Facebook & YouTube */}
