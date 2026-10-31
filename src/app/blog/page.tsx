@@ -78,7 +78,7 @@ export default function BlogPage() {
               <img
                 src={post.image || "/images/dj_hero.jpg"}
                 alt={post.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
               />
               <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/80 backdrop-blur-md text-[10px] font-bold tracking-wider text-[#00B4D8] uppercase border border-white/10">
                 {post.category}

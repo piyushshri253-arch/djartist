@@ -312,18 +312,29 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
 
         {/* Featured Cinematic Viewfinder Image */}
         <div className="max-w-5xl mx-auto mb-14">
-          <div className="cinematic-viewfinder rounded-2xl overflow-hidden border border-white/15 bg-black/80 shadow-2xl relative group">
-            <div className="relative aspect-[16/9] sm:aspect-[21/9] w-full overflow-hidden">
+          <div className="cinematic-viewfinder rounded-2xl overflow-hidden border border-white/15 bg-black/95 shadow-2xl relative group">
+            <div className="relative min-h-[340px] sm:min-h-[460px] md:min-h-[520px] w-full overflow-hidden flex items-center justify-center p-2 sm:p-4 bg-black/80">
+              {/* Ambient blurred glow background so wide screens have rich cinematic color */}
+              <img
+                src={post.image || "/images/gallery_stage_lasers.jpg"}
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 w-full h-full object-cover blur-3xl opacity-35 scale-110 pointer-events-none"
+              />
+
+              {/* Full crisp poster/photo - NEVER cropped, 100% visible */}
               <img
                 src={post.image || "/images/gallery_stage_lasers.jpg"}
                 alt={post.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                className="relative z-10 max-h-[500px] sm:max-h-[560px] w-auto max-w-full object-contain rounded-lg shadow-2xl transition-transform duration-500 group-hover:scale-[1.01]"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80" />
+
+              {/* Gradient vignette */}
+              <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
 
               {/* Top Viewfinder Telemetry Tag */}
-              <div className="absolute top-4 left-4 sm:top-6 sm:left-6 flex items-center gap-3">
-                <span className="px-3 py-1 rounded-md bg-black/75 backdrop-blur-md border border-white/15 text-[10px] font-mono font-bold text-white tracking-widest uppercase">
+              <div className="absolute top-4 left-4 sm:top-6 sm:left-6 z-20 flex items-center gap-3">
+                <span className="px-3 py-1 rounded-md bg-black/85 backdrop-blur-md border border-white/20 text-[10px] font-mono font-bold text-white tracking-widest uppercase">
                   RECORDING ID // {post.id}
                 </span>
                 <span className="px-3 py-1 rounded-md bg-[#00E5FF]/20 backdrop-blur-md border border-[#00E5FF]/40 text-[10px] font-mono font-bold text-[#00B4D8] tracking-widest uppercase hidden sm:inline-block">
