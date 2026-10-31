@@ -47,6 +47,7 @@ export default function BlogPage() {
         <div className="flex flex-wrap items-center justify-center gap-3 mt-8">
           {[
             { id: "all", label: `ALL ARTICLES (${posts.length})` },
+            { id: "press", label: "PRESS & MEDIA" },
             { id: "behind", label: "BEHIND THE SCENES" },
             { id: "music", label: "PRODUCTION" },
             { id: "events", label: "TOUR DIARIES" },

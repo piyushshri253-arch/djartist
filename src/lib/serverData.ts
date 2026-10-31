@@ -106,7 +106,7 @@ export async function writeJsonFile<T>(filename: string, content: T): Promise<vo
   }
 }
 
-async function readLocalJson<T>(filename: string): Promise<T> {
+export async function readLocalJson<T>(filename: string): Promise<T> {
   const filePath = path.join(DATA_DIR, filename);
   const data = await fs.readFile(filePath, "utf-8");
   return JSON.parse(data.replace(/^\uFEFF/, "")) as T;
