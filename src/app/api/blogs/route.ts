@@ -14,13 +14,23 @@ export async function GET() {
 
     const localBlogs = await readLocalJson<BlogPostData[]>("blog.json").catch(() => []);
 
-    // Merge any new or missing local blogs that don't exist in MongoDB yet
-    const existingIds = new Set((blogs || []).map((b) => b.id));
-    const missingBlogs = (localBlogs || []).filter((b) => !existingIds.has(b.id));
+    // Merge & sync latest article content from local blog.json into database
+    const localMap = new Map((localBlogs || []).map((b) => [b.id, b]));
+    let mergedBlogs = (blogs || []).map((b) => {
+      if (b.id && b.id.startsWith("ARTICLE-") && localMap.has(b.id)) {
+        return localMap.get(b.id)!;
+      }
+      return b;
+    });
 
-    if (missingBlogs.length > 0 || !blogs || blogs.length === 0) {
-      blogs = [...(missingBlogs || []), ...(blogs || [])];
-      // Save merged array back to MongoDB Atlas
+    const mergedIds = new Set(mergedBlogs.map((b) => b.id));
+    const missing = (localBlogs || []).filter((b) => !mergedIds.has(b.id));
+    if (missing.length > 0) {
+      mergedBlogs = [...missing, ...mergedBlogs];
+    }
+
+    if (JSON.stringify(mergedBlogs) !== JSON.stringify(blogs)) {
+      blogs = mergedBlogs;
       writeJsonFile("blog.json", blogs).catch((err) =>
         console.warn("[Blogs] Auto-sync to DB error:", err)
       );
