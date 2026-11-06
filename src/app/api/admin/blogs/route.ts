@@ -9,6 +9,7 @@ import {
 } from "@/lib/serverData";
 import { sanitizeString, isSafeUrl, validateOrigin, unauthorizedResponse } from "@/lib/security";
 import { logAdminAction } from "@/lib/audit";
+import { persistMediaUrl } from "@/lib/mediaStorage";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -92,6 +93,7 @@ export async function POST(request: Request) {
     if (!isSafeUrl(imageUrl)) {
       return NextResponse.json({ error: "Invalid image URL" }, { status: 400 });
     }
+    const finalImage = await persistMediaUrl(imageUrl, "spark_blog");
 
     if (!title || !content) {
       return NextResponse.json({ error: "Title and content are required" }, { status: 400 });
@@ -122,7 +124,7 @@ export async function POST(request: Request) {
       readTime,
       author,
       authorRole,
-      image: imageUrl,
+      image: finalImage,
       excerpt,
       content,
     };
@@ -179,6 +181,7 @@ export async function PUT(request: Request) {
     if (!isSafeUrl(safeImage)) {
       return NextResponse.json({ error: "Invalid image URL" }, { status: 400 });
     }
+    const finalImage = await persistMediaUrl(safeImage, "spark_blog");
 
     const category = rawBody.category ? sanitizeString(rawBody.category).slice(0, 50) : blogs[index].category;
 
@@ -190,7 +193,7 @@ export async function PUT(request: Request) {
       categorySlug: category.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
       excerpt: rawBody.excerpt ? sanitizeString(rawBody.excerpt).slice(0, 500) : blogs[index].excerpt,
       content: rawBody.content ? sanitizeString(rawBody.content).slice(0, 20000) : blogs[index].content,
-      image: safeImage,
+      image: finalImage,
       author: rawBody.author ? sanitizeString(rawBody.author).slice(0, 100) : blogs[index].author,
       authorRole: rawBody.authorRole ? sanitizeString(rawBody.authorRole).slice(0, 100) : blogs[index].authorRole,
       readTime: rawBody.readTime ? sanitizeString(rawBody.readTime).slice(0, 50) : blogs[index].readTime,

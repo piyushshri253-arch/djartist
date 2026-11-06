@@ -1,23 +1,36 @@
 import { NextResponse } from "next/server";
 import { getAuthenticatedAdmin } from "@/lib/auth";
-import { writeFile, mkdir } from "fs/promises";
+import { saveUploadedMedia } from "@/lib/mediaStorage";
 import path from "path";
-import crypto from "crypto";
 
 export const dynamic = "force-dynamic";
 
-// Whitelist ONLY safe raster formats. Strictly block SVG, GIF, HTML, JS, PHP, EXE
+// Whitelist safe raster formats. Strictly block executable/script formats
 const ALLOWED_MIME_TYPES = new Set([
   "image/jpeg",
+  "image/jpg",
+  "image/pjpeg",
+  "image/jfif",
   "image/png",
   "image/webp",
+  "image/gif",
+  "image/avif",
 ]);
 
-const ALLOWED_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp"]);
+const ALLOWED_EXTENSIONS = new Set([
+  ".jpg",
+  ".jpeg",
+  ".jfif",
+  ".pjpeg",
+  ".png",
+  ".webp",
+  ".gif",
+  ".avif",
+]);
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB maximum limit
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB maximum limit (matches UI)
 
-// Upload rate limiter: max 30 uploads per 10 minutes per IP
+// Upload rate limiter: max 100 uploads per 10 minutes per IP for authenticated admin
 const uploadAttempts = new Map<string, { count: number; resetAt: number }>();
 
 function checkUploadRateLimit(ip: string): boolean {
@@ -27,7 +40,7 @@ function checkUploadRateLimit(ip: string): boolean {
     uploadAttempts.set(ip, { count: 1, resetAt: now + 10 * 60 * 1000 });
     return true;
   }
-  if (record.count >= 30) {
+  if (record.count >= 100) {
     return false;
   }
   record.count += 1;
@@ -43,7 +56,7 @@ function validateImageMagicBytes(buffer: Buffer): { valid: boolean; detectedForm
     return { valid: false };
   }
 
-  // JPEG: FF D8 FF
+  // JPEG / JPG / JFIF: FF D8 FF
   if (buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff) {
     return { valid: true, detectedFormat: "jpeg" };
   }
@@ -74,6 +87,27 @@ function validateImageMagicBytes(buffer: Buffer): { valid: boolean; detectedForm
     buffer[11] === 0x50
   ) {
     return { valid: true, detectedFormat: "webp" };
+  }
+
+  // GIF: GIF87a or GIF89a
+  if (
+    buffer[0] === 0x47 &&
+    buffer[1] === 0x49 &&
+    buffer[2] === 0x46 &&
+    buffer[3] === 0x38 &&
+    (buffer[4] === 0x37 || buffer[4] === 0x39) &&
+    buffer[5] === 0x61
+  ) {
+    return { valid: true, detectedFormat: "gif" };
+  }
+
+  // AVIF: ....ftypavif or ....ftypavis
+  if (buffer.length >= 16) {
+    const ftyp = buffer.toString("ascii", 4, 8);
+    const brand = buffer.toString("ascii", 8, 12);
+    if (ftyp === "ftyp" && (brand === "avif" || brand === "avis" || brand === "mif1")) {
+      return { valid: true, detectedFormat: "avif" };
+    }
   }
 
   return { valid: false };
@@ -110,7 +144,7 @@ export async function POST(request: Request) {
     // 3. File Size Validation
     if (file.size > MAX_FILE_SIZE) {
       return NextResponse.json(
-        { error: "File size exceeds maximum allowed limit of 5MB." },
+        { error: "File size exceeds maximum allowed limit of 10MB." },
         { status: 400 }
       );
     }
@@ -119,11 +153,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid image file (empty or corrupt)." }, { status: 400 });
     }
 
-    // 4. Declared MIME Type Validation (Strict Whitelist)
-    if (!ALLOWED_MIME_TYPES.has(file.type)) {
+    // 4. Declared MIME Type Validation
+    if (file.type && !ALLOWED_MIME_TYPES.has(file.type.toLowerCase())) {
       return NextResponse.json(
         {
-          error: "Invalid file format. Only JPG, PNG, and WebP images are allowed. SVG and executable formats are blocked.",
+          error: "Invalid file format. Only JPG, PNG, WebP, GIF, and AVIF images are allowed.",
         },
         { status: 400 }
       );
@@ -131,9 +165,9 @@ export async function POST(request: Request) {
 
     // 5. File Extension Validation
     const rawExtension = path.extname(file.name || "").toLowerCase();
-    if (!ALLOWED_EXTENSIONS.has(rawExtension)) {
+    if (rawExtension && !ALLOWED_EXTENSIONS.has(rawExtension)) {
       return NextResponse.json(
-        { error: "Invalid file extension. Only .jpg, .jpeg, .png, and .webp are accepted." },
+        { error: "Invalid file extension. Only .jpg, .jpeg, .png, .webp, .gif, and .avif are accepted." },
         { status: 400 }
       );
     }
@@ -144,43 +178,27 @@ export async function POST(request: Request) {
 
     // 6. Magic Bytes / File Signature Deep Inspection
     const signatureCheck = validateImageMagicBytes(buffer);
-    if (!signatureCheck.valid) {
+    if (!signatureCheck.valid || !signatureCheck.detectedFormat) {
       return NextResponse.json(
         {
-          error: "Security verification failed: File content does not match legitimate JPEG/PNG/WebP image headers.",
+          error: "Security verification failed: File content does not match legitimate image headers.",
         },
         { status: 400 }
       );
     }
 
-    // Ensure extension matches detected format
-    let canonicalExt = ".jpg";
-    if (signatureCheck.detectedFormat === "png") canonicalExt = ".png";
-    if (signatureCheck.detectedFormat === "webp") canonicalExt = ".webp";
-
-    // 7. Cryptographically Random Server-Generated Filename (Never trust original filename)
-    // Prevents path traversal, shell injection, and overwrite attacks
-    const secureId = crypto.randomBytes(16).toString("hex");
-    const safeFileName = `spark_${Date.now()}_${secureId}${canonicalExt}`;
-
-    let publicUrl = `/uploads/${safeFileName}`;
-
-    // 8. Controlled File Storage
-    try {
-      const uploadsDir = path.join(process.cwd(), "public", "uploads");
-      await mkdir(uploadsDir, { recursive: true });
-      const filePath = path.join(uploadsDir, safeFileName);
-      await writeFile(filePath, buffer);
-    } catch (fsErr) {
-      // In read-only serverless environments like Vercel, fallback to sanitized Data URL
-      publicUrl = `data:image/${signatureCheck.detectedFormat};base64,${buffer.toString("base64")}`;
-    }
+    // 7. Controlled & Persistent Storage (MongoDB Atlas + optional disk)
+    const storageResult = await saveUploadedMedia(
+      buffer,
+      signatureCheck.detectedFormat,
+      "spark_upload"
+    );
 
     return NextResponse.json(
       {
         success: true,
-        url: publicUrl,
-        fileName: safeFileName,
+        url: storageResult.url,
+        fileName: storageResult.filename,
         size: file.size,
         type: `image/${signatureCheck.detectedFormat}`,
       },

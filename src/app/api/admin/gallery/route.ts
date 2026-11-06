@@ -4,6 +4,7 @@ import { GalleryItem } from "@/types";
 import { getAuthenticatedAdmin } from "@/lib/auth";
 import { sanitizeString, isSafeUrl, validateOrigin, unauthorizedResponse } from "@/lib/security";
 import { logAdminAction } from "@/lib/audit";
+import { persistMediaUrl } from "@/lib/mediaStorage";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -60,6 +61,7 @@ export async function POST(req: Request) {
     if (!isSafeUrl(src)) {
       return NextResponse.json({ error: "Invalid image source URL" }, { status: 400 });
     }
+    const finalSrc = await persistMediaUrl(src, "spark_gallery");
 
     if (hasProhibitedContent(body)) {
       return NextResponse.json(
@@ -75,7 +77,7 @@ export async function POST(req: Request) {
 
     const newItem: GalleryItem = {
       id: `gal-${Date.now()}`,
-      src: src.trim(),
+      src: finalSrc,
       title: cleanTitle,
       subtitle: cleanSubtitle,
       category: cleanCategory,

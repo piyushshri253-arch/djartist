@@ -36,9 +36,14 @@ export function isSafeUrl(urlStr: unknown): boolean {
   const trimmed = urlStr.trim();
   if (!trimmed) return true;
 
-  // Relative paths are safe
+  // Relative paths are safe (e.g. /images/..., /uploads/..., /api/uploads/...)
   if (trimmed.startsWith("/") && !trimmed.startsWith("//")) {
     return true;
+  }
+
+  // Safe raster image data URLs (JPEG, PNG, WebP, GIF, AVIF)
+  if (trimmed.startsWith("data:image/")) {
+    return /^data:image\/(jpe?g|png|webp|gif|avif);base64,[A-Za-z0-9+/_\-=\s]+$/i.test(trimmed);
   }
 
   try {

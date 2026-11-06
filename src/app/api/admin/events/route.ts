@@ -10,6 +10,7 @@ import {
 } from "@/lib/serverData";
 import { sanitizeString, isSafeUrl, validateOrigin, unauthorizedResponse } from "@/lib/security";
 import { logAdminAction } from "@/lib/audit";
+import { persistMediaUrl } from "@/lib/mediaStorage";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -122,6 +123,7 @@ export async function POST(request: Request) {
     if (!isSafeUrl(imageUrl)) {
       return NextResponse.json({ error: "Invalid or unsafe image URL" }, { status: 400 });
     }
+    const finalImage = await persistMediaUrl(imageUrl, "spark_event");
 
     if (!title || !city || !venue) {
       return NextResponse.json(
@@ -180,7 +182,7 @@ export async function POST(request: Request) {
       showPrice: rawBody.showPrice !== undefined ? Boolean(rawBody.showPrice) : false,
       isPublished: rawBody.isPublished !== undefined ? Boolean(rawBody.isPublished) : true,
       currency: rawBody.currency || "BOTH",
-      image: imageUrl,
+      image: finalImage,
       description: description || `Dj G-Spark Live Concert in ${city} at ${venue}.`,
       detailedAbout: detailedAbout || description || "",
       lineup: Array.isArray(rawBody.lineup)
@@ -273,6 +275,7 @@ export async function PUT(request: Request) {
     if (!isSafeUrl(safeImage)) {
       return NextResponse.json({ error: "Invalid image URL" }, { status: 400 });
     }
+    const finalImage = await persistMediaUrl(safeImage, "spark_event");
 
     events[index] = {
       ...current,
@@ -300,7 +303,7 @@ export async function PUT(request: Request) {
       showPrice: rawBody.showPrice !== undefined ? Boolean(rawBody.showPrice) : current.showPrice,
       isPublished: rawBody.isPublished !== undefined ? Boolean(rawBody.isPublished) : current.isPublished,
       currency: rawBody.currency || current.currency,
-      image: safeImage,
+      image: finalImage,
       description: rawBody.description ? sanitizeString(rawBody.description).slice(0, 3000) : current.description,
       detailedAbout: rawBody.detailedAbout ? sanitizeString(rawBody.detailedAbout).slice(0, 5000) : current.detailedAbout,
       lineup: Array.isArray(rawBody.lineup)

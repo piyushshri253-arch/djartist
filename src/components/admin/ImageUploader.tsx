@@ -39,8 +39,10 @@ export function ImageUploader({
     if (!file) return;
 
     // Client-side quick checks
-    if (!file.type.startsWith("image/")) {
-      setUploadError("Only image files (JPG, PNG, WebP, etc.) are allowed.");
+    const isImageMime = file.type.startsWith("image/");
+    const hasImageExt = /\.(jpe?g|png|webp|gif|avif|jfif)$/i.test(file.name || "");
+    if (!isImageMime && !hasImageExt) {
+      setUploadError("Only image files (JPG, PNG, WebP, GIF, AVIF) are allowed.");
       return;
     }
 
@@ -198,7 +200,7 @@ export function ImageUploader({
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml,image/avif"
+                accept="image/jpeg,image/png,image/webp,image/gif,image/avif,.jpg,.jpeg,.png,.webp,.gif,.avif,.jfif"
                 onChange={(e) => {
                   if (e.target.files && e.target.files[0]) {
                     handleFileUpload(e.target.files[0]);

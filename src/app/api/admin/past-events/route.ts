@@ -10,6 +10,7 @@ import {
 } from "@/lib/serverData";
 import { sanitizeString, isSafeUrl, validateOrigin, unauthorizedResponse } from "@/lib/security";
 import { logAdminAction } from "@/lib/audit";
+import { persistMediaUrl } from "@/lib/mediaStorage";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -98,6 +99,7 @@ export async function POST(request: Request) {
     if (!isSafeUrl(imageUrl)) {
       return NextResponse.json({ error: "Invalid image URL" }, { status: 400 });
     }
+    const finalImage = await persistMediaUrl(imageUrl, "spark_past");
 
     if (!title || !city || !year) {
       return NextResponse.json({ error: "Title, city, and year are required" }, { status: 400 });
@@ -120,7 +122,7 @@ export async function POST(request: Request) {
       date,
       dateDisplay,
       attendance,
-      image: imageUrl,
+      image: finalImage,
       excerpt,
       description,
       highlights: Array.isArray(rawBody.highlights)
@@ -192,6 +194,7 @@ export async function PUT(request: Request) {
     if (!isSafeUrl(safeImage)) {
       return NextResponse.json({ error: "Invalid image URL" }, { status: 400 });
     }
+    const finalImage = await persistMediaUrl(safeImage, "spark_past");
 
     pastEvents[index] = {
       ...current,
@@ -204,7 +207,7 @@ export async function PUT(request: Request) {
       date: rawBody.date ? sanitizeString(rawBody.date).slice(0, 20) : current.date,
       dateDisplay: rawBody.dateDisplay ? sanitizeString(rawBody.dateDisplay).slice(0, 50) : current.dateDisplay,
       attendance: rawBody.attendance ? sanitizeString(rawBody.attendance).slice(0, 50) : current.attendance,
-      image: safeImage,
+      image: finalImage,
       excerpt: rawBody.excerpt ? sanitizeString(rawBody.excerpt).slice(0, 500) : current.excerpt,
       description: rawBody.description ? sanitizeString(rawBody.description).slice(0, 3000) : current.description,
       highlights: Array.isArray(rawBody.highlights)
