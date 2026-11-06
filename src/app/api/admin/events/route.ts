@@ -250,10 +250,117 @@ export async function PUT(request: Request) {
     }
 
     const events = await readJsonFile<EventData[]>("events.json");
-    const index = events.findIndex((e) => e.id === id);
+    let index = events.findIndex((e) => e.id === id);
 
     if (index === -1) {
-      return NextResponse.json({ error: "Event not found" }, { status: 404 });
+      if (rawBody.slug) {
+        index = events.findIndex((e) => e.slug === rawBody.slug);
+      }
+      if (index === -1 && rawBody.title) {
+        index = events.findIndex(
+          (e) => e.title?.toLowerCase().trim() === rawBody.title?.toLowerCase().trim()
+        );
+      }
+    }
+
+    if (index === -1) {
+      // Upsert: Create/restore event with this ID so the admin never loses edits!
+      const title = sanitizeString(rawBody.title || "Untitled Event").slice(0, 200);
+      const city = sanitizeString(rawBody.city || "New Delhi").slice(0, 100);
+      const venue = sanitizeString(rawBody.venue || "Venue").slice(0, 200);
+      const description = sanitizeString(rawBody.description || "").slice(0, 3000);
+      const detailedAbout = sanitizeString(rawBody.detailedAbout || "").slice(0, 5000);
+      const artist = sanitizeString(rawBody.artist || "Dj G-Spark").slice(0, 100);
+      const address = sanitizeString(rawBody.address || `${venue}, ${city}`).slice(0, 250);
+      const eventType = sanitizeString(rawBody.eventType || "Arena Concert").slice(0, 100);
+      const status = sanitizeString(rawBody.status || "COMPLETED").slice(0, 50);
+      const date = sanitizeString(rawBody.date || "2026-11-20").slice(0, 20);
+      const dateDisplay = sanitizeString(rawBody.dateDisplay || "").slice(0, 50);
+      const time = sanitizeString(rawBody.time || "20:00 - 02:00 IST").slice(0, 50);
+      const doors = sanitizeString(rawBody.doors || "18:00 IST").slice(0, 50);
+      const capacity = sanitizeString(rawBody.capacity || "25,000").slice(0, 50);
+
+      const rawImage = rawBody.image ? rawBody.image.trim() : "/images/past_event_crowd.jpg";
+      if (!isSafeUrl(rawImage)) {
+        return NextResponse.json({ error: "Invalid image URL" }, { status: 400 });
+      }
+      const finalImage = await persistMediaUrl(rawImage, "spark_event");
+
+      const slug =
+        sanitizeString(rawBody.slug)?.replace(/[^a-z0-9-]+/gi, "-").toLowerCase().slice(0, 120) ||
+        `${city.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${venue.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-2026`;
+
+      const statusClass = status.toLowerCase().replace(/[^a-z0-9]+/g, "-") || "completed";
+
+      let resolvedPriceFrom = rawBody.priceFrom ? sanitizeString(rawBody.priceFrom) : "";
+      if (!resolvedPriceFrom) {
+        if (rawBody.priceINR && rawBody.priceUSD) {
+          resolvedPriceFrom = `₹ ${String(rawBody.priceINR).replace(/[^0-9,]/g, "")} / $ ${String(rawBody.priceUSD).replace(/[^0-9,]/g, "")}`;
+        } else if (rawBody.priceINR) {
+          resolvedPriceFrom = `₹ ${String(rawBody.priceINR).replace(/[^0-9,]/g, "")}`;
+        } else if (rawBody.priceUSD) {
+          resolvedPriceFrom = `$ ${String(rawBody.priceUSD).replace(/[^0-9,]/g, "")}`;
+        } else {
+          resolvedPriceFrom = "By VIP Reservation";
+        }
+      }
+
+      const upserted: EventData = {
+        id,
+        slug,
+        title,
+        eventType,
+        artist,
+        city,
+        country: sanitizeString(rawBody.country || "INDIA").slice(0, 50),
+        region: sanitizeString(rawBody.region || "india").slice(0, 50),
+        venue,
+        address,
+        date,
+        dateDisplay,
+        time,
+        doors,
+        capacity,
+        status,
+        statusClass,
+        priceFrom: resolvedPriceFrom,
+        priceINR: rawBody.priceINR ? String(rawBody.priceINR).slice(0, 20) : "",
+        priceUSD: rawBody.priceUSD ? String(rawBody.priceUSD).slice(0, 20) : "",
+        showPrice: rawBody.showPrice !== undefined ? Boolean(rawBody.showPrice) : false,
+        isPublished: rawBody.isPublished !== undefined ? Boolean(rawBody.isPublished) : true,
+        currency: rawBody.currency || "BOTH",
+        image: finalImage,
+        description: description || `Dj G-Spark Live Concert in ${city} at ${venue}.`,
+        detailedAbout: detailedAbout || description || "",
+        lineup: Array.isArray(rawBody.lineup)
+          ? rawBody.lineup.map((l: any) => sanitizeString(l).slice(0, 100)).filter(Boolean)
+          : [artist || "Dj G-Spark (Headliner Extended Set)"],
+      };
+
+      events.unshift(upserted);
+      await writeJsonFile("events.json", events);
+      await unmarkDeletedEvent([upserted.id, upserted.slug, upserted.title]);
+
+      await logAdminAction({
+        action: "UPDATE_EVENT",
+        adminEmail: admin.email,
+        resource: id,
+        status: "SUCCESS",
+        details: { title: upserted.title, note: "Upserted event" },
+      });
+
+      try {
+        revalidatePath("/", "layout");
+        revalidatePath("/events");
+        revalidatePath(`/events/${upserted.slug}`);
+        revalidatePath("/past-events");
+        revalidatePath("/admin");
+      } catch (_) {}
+
+      return NextResponse.json(
+        { success: true, event: upserted },
+        { headers: { "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0" } }
+      );
     }
 
     const current = events[index];

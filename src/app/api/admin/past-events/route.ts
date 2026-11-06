@@ -183,10 +183,68 @@ export async function PUT(request: Request) {
     }
 
     const pastEvents = await readJsonFile<PastEventData[]>("past-events.json");
-    const index = pastEvents.findIndex((e) => e.id === id);
+    let index = pastEvents.findIndex((e) => e.id === id);
 
     if (index === -1) {
-      return NextResponse.json({ error: "Past event not found" }, { status: 404 });
+      if (rawBody.slug) {
+        index = pastEvents.findIndex((e) => e.slug === rawBody.slug);
+      }
+      if (index === -1 && rawBody.title) {
+        index = pastEvents.findIndex(
+          (e) => e.title?.toLowerCase().trim() === rawBody.title?.toLowerCase().trim()
+        );
+      }
+    }
+
+    if (index === -1) {
+      // Upsert: Create/restore past event so edits are never lost
+      const title = sanitizeString(rawBody.title || "Untitled Past Event").slice(0, 200);
+      const city = sanitizeString(rawBody.city || "New Delhi").slice(0, 100);
+      const year = sanitizeString(String(rawBody.year || "2026")).slice(0, 10);
+      const country = sanitizeString(rawBody.country || "INDIA").slice(0, 50);
+      const venue = sanitizeString(rawBody.venue || `${city} Mainstage Arena`).slice(0, 200);
+      const date = sanitizeString(rawBody.date || `${year}-12-01`).slice(0, 20);
+      const dateDisplay = sanitizeString(rawBody.dateDisplay || `DEC ${year}`).slice(0, 50);
+      const attendance = sanitizeString(rawBody.attendance || "40,000+ Fans").slice(0, 50);
+      const excerpt = sanitizeString(rawBody.excerpt || `Concert night in ${city}.`).slice(0, 500);
+      const description = sanitizeString(rawBody.description || `Dj G-Spark headline set in ${city}.`).slice(0, 3000);
+
+      const rawImage = rawBody.image ? rawBody.image.trim() : "/images/past_event_crowd.jpg";
+      if (!isSafeUrl(rawImage)) {
+        return NextResponse.json({ error: "Invalid image URL" }, { status: 400 });
+      }
+      const finalImage = await persistMediaUrl(rawImage, "spark_past");
+
+      const slug =
+        sanitizeString(rawBody.slug)?.replace(/[^a-z0-9-]+/gi, "-").toLowerCase().slice(0, 120) ||
+        `${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${year}`;
+
+      const newPast: PastEventData = {
+        id,
+        slug,
+        title,
+        year,
+        city,
+        country,
+        venue,
+        date,
+        dateDisplay,
+        attendance,
+        image: finalImage,
+        excerpt,
+        description,
+        highlights: Array.isArray(rawBody.highlights)
+          ? rawBody.highlights.map((s) => sanitizeString(s).slice(0, 150)).filter(Boolean)
+          : ["Electric Mainstage Performance", "Pyro & Laser Production"],
+        tracklist: Array.isArray(rawBody.tracklist)
+          ? rawBody.tracklist.map((s) => sanitizeString(s).slice(0, 150)).filter(Boolean)
+          : ["Intro (Extended Mix)", "Festival Anthem Live"],
+      };
+
+      pastEvents.unshift(newPast);
+      await writeJsonFile("past-events.json", pastEvents);
+
+      return NextResponse.json({ success: true, event: newPast });
     }
 
     const current = pastEvents[index];
